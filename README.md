@@ -9,7 +9,7 @@
 ## Tema 1
 
 #### Deadlines semestrul 1
-- săptămâna 3 (23 octombrie): stabilirea claselor
+- săptămâna 3 (23 octombrie): stabilirea claselor și implementarea parțială a acestora
 - **săptămâna 4 (30 octombrie): tema 1 gata**
 - săptămâna 5 (6 noiembrie): (eventuale) modificări în urma feedback-ului
 
@@ -29,7 +29,7 @@
   - [ ] <a doua funcționalitate>
 - [ ] scenariu de utilizare a claselor definite: apelarea din `main` a tuturor funcțiilor _publice_ definite (nu generați constructori/getteri/setteri dacă nu aveți nevoie de ei); apelarea se va face direct sau indirect - adică din `main` se pot apela funcții care construiesc obiecte cu clasele definite și folosesc aceste obiecte
 - [ ] după ce e gata prima temă, tag de `git`: de exemplu `v0.1`
-- [ ] GitHub Actions sau alt serviciu de CI (Continuous Integrations) - TBA
+- [ ] GitHub Actions sau alt serviciu de CI (Continuous Integration) - TBA
 
 ## Tema 2
 
