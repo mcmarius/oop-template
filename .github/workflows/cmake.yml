@@ -1,0 +1,266 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    tags: ['*']
+  pull_request:
+    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        # Use a bash shell, so we can use the same syntax for environment variable
+        # access regardless of the host operating system
+        # https://github.com/saxbophone/CPP20-Cross-Platform-Template
+        shell: bash
+
+    env:
+      CC: ${{ matrix.c }}
+      CXX: ${{ matrix.cxx }}
+      BUILD_TYPE: Debug
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            c: clang-11
+            cxx: clang++-11
+            name: Ubuntu 20.04 Clang 11
+            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
+            # which is used by cppcheck and clang-tidy
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            # This env runs sanitizers
+
+          - os: ubuntu-20.04
+            c: clang-10
+            cxx: clang++-10
+            name: Ubuntu 20.04 Clang 10
+            # cmake_flags:
+            # This env runs sanitizers
+
+          - os: ubuntu-20.04
+            c: gcc-10
+            cxx: g++-10
+            name: Ubuntu 20.04 GCC 10
+            # cmake_flags:
+            # This env runs valgrind
+
+          - os: macos-11
+            c: clang
+            cxx: clang++
+            name: macOS 11 Apple Clang 13
+            # cmake_flags:
+
+          - os: macos-11
+            c: gcc-11
+            cxx: g++-11
+            name: macOS 11 GCC 11
+            # cmake_flags:
+
+          - os: windows-2022
+            c: cl
+            cxx: cl
+            name: Windows 2022 MSVC 19.30
+            # cmake_flags:
+
+          - os: windows-2022
+            c: gcc
+            cxx: g++
+            name: Windows 2022 GCC 10
+            # cmake_flags:
+            cmake_generator: Ninja
+            # Ninja is faster
+            # other generator: "\"MinGW Makefiles\""
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Prepare env
+        run: |
+          echo $GITHUB_WORKSPACE
+          mkdir $GITHUB_WORKSPACE/artifacts
+
+      # Common Linux dependencies
+      # - name: Install Linux Dependencies
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install ...
+
+      - name: Install clang-tidy
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-tidy
+
+      - name: Install valgrind
+        if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
+        run: |
+          sudo apt-get update
+          sudo apt-get install valgrind
+
+      - name: Cache tools
+        uses: actions/cache@v2
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        id: cache-tools
+        with:
+          path: tools
+          key: tools-cppcheck-2.6
+
+      - name: Build tools
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          mkdir tools/
+          wget https://github.com/danmar/cppcheck/archive/2.6.zip
+          unzip 2.6.zip
+          rm 2.6.zip
+          mv cppcheck-2.6 tools/cppcheck-2.6
+          cd tools/cppcheck-2.6
+          mkdir build
+          cmake -S . -B build
+          cmake --build build -j6
+
+      - name: Install tools
+        # this step is fast, no need for caching
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        # build/install other tools in these steps
+        run: |
+          cd tools/cppcheck-2.6
+          sudo cmake --install build
+
+      # Uncomment when using external dependencies so they will be cached
+      # - name: Cache deps
+      #   uses: actions/cache@v2
+      #   id: cache-deps
+      #   # make the key depend on the dependency version
+      #   with:
+      #     path: |
+      #       build/_deps
+      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
+
+      - name: Cache Ninja deps
+        uses: actions/cache@v2
+        if: matrix.cmake_generator == 'Ninja'
+        id: cache-deps-ninja
+        with:
+          path: |
+            build/.ninja_deps
+            build/.ninja_log
+          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache
+
+      - name: Cache MinGW
+        uses: actions/cache@v2
+        id: cache-mingw
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        with:
+          path: gcc
+          key: ${{ runner.os }}-gcc-11.2-ucrt-r5
+
+      - name: Download toolchain (MinGW)
+        uses: suisei-cn/actions-download-file@v1
+        id: downloadgcc
+        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
+        # NOTE: replace with another version if this one does not work
+        # For more versions, see https://winlibs.com or
+        # https://github.com/brechtsanders/winlibs_mingw/releases/
+        with:
+          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-9.0.0-ucrt-r5/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r5.7z"
+          target: compiler
+
+      - name: Install toolchain (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
+        run: |
+          7z x compiler/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r5.7z -ogcc
+
+      - name: Configure CMake (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        run: |
+          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
+            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+            ${{ matrix.cmake_flags }}
+
+      - name: Configure CMake
+        if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
+        run: |
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
+            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+            ${{ matrix.cmake_flags }}
+
+      - name: Build
+        # Execute the build using N jobs (-jN)
+        run: cmake --build build --config $BUILD_TYPE -j6
+
+      - name: Install
+        # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
+        run: cmake --install build --config $BUILD_TYPE --prefix artifacts
+
+      - name: Copy stdlib (MinGW)
+        if: runner.os == 'Windows' && matrix.cxx == 'g++'
+        # static linking might not work with MinGW, might be easier this way
+        run: |
+          cp gcc/mingw64/bin/libstdc++-6.dll $GITHUB_WORKSPACE/artifacts/bin
+
+      - name: Cppcheck
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        run: cppcheck --enable=all --project=build/compile_commands.json -ibuild --suppress='*:build/*' --suppress=missingIncludeSystem --suppress=unmatchedSuppression --error-exitcode=1
+
+      - name: Clang-tidy
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
+        run: |
+          cat build/compile_commands.json |
+            jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
+            grep -v "/build/_deps/" |       # ignore external dependencies
+            xargs clang-tidy -p build
+
+      - name: Sanitizers
+        # run one sanitizer for each OS to avoid building extra binaries;
+        # memory on Linux clang, address on macOS clang
+        # if: runner.os != 'Windows'
+        if: startsWith(matrix.cxx, 'clang++')
+        # detect_leaks is not supported on macOS
+        # env:
+        # ASAN_OPTIONS: detect_leaks=1
+        # NOTE: update executable name if it is changed in CMakeLists.txt
+        run: |
+          cat date.txt | ./artifacts/bin/proj
+
+      - name: Valgrind
+        if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
+        # NOTE: update executable name if it is changed in CMakeLists.txt
+        run: |
+          # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
+          cat date.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/proj
+
+      - name: Move artifacts
+        run: |
+          mv artifacts/bin bin
+
+      - name: Set Tag Name
+        if: startsWith(github.ref, 'refs/tags/')
+        # trim prefix from ref to get tag name
+        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> $GITHUB_ENV
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          type: 'zip'
+          path: bin
+          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
