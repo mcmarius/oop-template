@@ -144,6 +144,9 @@ jobs:
       #       build/_deps
       #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
 
+      # NOTE: GH Actions does not allow updating the cache yet
+      # Using the workaround found here: https://github.com/actions/cache/issues/171
+      # Since this cache is small, it should not fill the cache too much
       - name: Cache Ninja deps
         uses: actions/cache@v2
         if: matrix.cmake_generator == 'Ninja'
@@ -152,7 +155,8 @@ jobs:
           path: |
             build/.ninja_deps
             build/.ninja_log
-          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache
+          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
       - name: Cache MinGW
         uses: actions/cache@v2
