@@ -16,7 +16,7 @@
 - [ ] `operator<<` pentru toate clasele
 - [ ] cât mai multe `const`
 - [ ] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese
-- [ ] scenariu de utilizare a claselor definite
+- [ ] scenariu de utilizare a claselor definite (crearea de obiecte și apelarea funcțiilor membru publice în main)
 - [ ] tag de `git`: de exemplu `v0.1`
 - [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions
 
