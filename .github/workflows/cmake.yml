@@ -35,14 +35,14 @@ jobs:
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs sanitizers
+            # This env runs cppcheck and sanitizers
 
           - os: ubuntu-20.04
-            c: clang-10
-            cxx: clang++-10
-            name: Ubuntu 20.04 Clang 10
-            # cmake_flags:
-            # This env runs sanitizers
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 20.04 Clang 12
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            # This env runs clang-tidy and sanitizers
 
           - os: ubuntu-20.04
             c: gcc-10
@@ -93,11 +93,17 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install clang-tidy
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-tidy libc++-12-dev libc++abi-12-dev
+
+      - name: Install ninja libc++ (Linux Clang 11)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
         run: |
           sudo apt-get update
-          sudo apt-get install clang-tidy
+          sudo apt-get install ninja-build libc++-11-dev libc++abi-11-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
@@ -111,7 +117,7 @@ jobs:
         id: cache-tools
         with:
           path: tools
-          key: tools-cppcheck-2.6
+          key: tools-cppcheck-2.6-clang-11
 
       - name: Build tools
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
@@ -218,13 +224,35 @@ jobs:
         run: cppcheck --enable=all --project=build/compile_commands.json -ibuild --suppress='*:build/*' --suppress=missingIncludeSystem --suppress=unmatchedSuppression --error-exitcode=1
 
       - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
         # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
         run: |
+          # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+          # need to use | as separator because / is used in paths
+          sed -i "s|$(which clang++-12)|$(realpath $(which clang++-12))|g" build/compile_commands.json
+
           cat build/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
             grep -v "/build/_deps/" |       # ignore external dependencies
             xargs clang-tidy -p build
+
+      - name: Setup memory sanitizer
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          cd tools
+          git clone --depth=1 https://github.com/llvm/llvm-project
+          cd llvm-project
+          mkdir build; cd build
+          sudo ln -s -f /usr/bin/clang-11 /usr/bin/clang
+          sudo ln -s -f /usr/bin/clang++-11 /usr/bin/clang++
+          CC=clang-11 CXX=clang++-11 cmake -GNinja ../llvm \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
+          cmake --build . -j6 -- cxx cxxabi
 
       - name: Sanitizers
         # run one sanitizer for each OS to avoid building extra binaries;
