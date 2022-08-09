@@ -72,6 +72,7 @@ jobs:
             cxx: cl
             name: Windows 2022 MSVC 19.32
             # cmake_flags:
+            cmake_generator: Ninja
 
           # - os: windows-2022
           #   c: gcc
@@ -83,6 +84,7 @@ jobs:
             # other generator: "\"MinGW Makefiles\""
 
     steps:
+      - name: Checkout repo
       - uses: actions/checkout@v2
 
       - name: Prepare env
@@ -178,7 +180,7 @@ jobs:
 
       - name: Download toolchain (MinGW)
         uses: suisei-cn/actions-download-file@v1
-        id: downloadgcc
+        id: download-mingw-gcc
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
         # NOTE: replace with another version if this one does not work
         # For more versions, see https://winlibs.com or
@@ -190,7 +192,7 @@ jobs:
       - name: Install toolchain (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
         run: |
-          7z x compiler/winlibs-x86_64-posix-seh-gcc-11.3.0-mingw-w64msvcrt-10.0.0-r3.7z -ogcc
+          7z x compiler/${{ steps.download-mingw-gcc.outputs.filename }} -ogcc
 
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -200,6 +202,27 @@ jobs:
             -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
             -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
             ${{ matrix.cmake_flags }}
+
+      - name: Cache ninja exe
+        uses: actions/cache@v2
+        id: cache-ninja-exe
+        if: runner.os == 'Windows' && matrix.cxx == 'cl'
+        with:
+          path: ninja
+          key: ${{ runner.os }}-ninja-1.11.0
+
+      - name: Download ninja
+        uses: suisei-cn/actions-download-file@v1
+        id: download-ninja
+        if: matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+        with:
+          url: "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip"
+          target: ninja-exe
+
+      - name: Extract ninja exe
+        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+        run: |
+          7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
 
       - name: Configure CMake
         if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
@@ -282,11 +305,15 @@ jobs:
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
+          whoami
           ls -l artifacts/bin
           cat tastatura.txt
           PATH="$PATH:$(pwd)/artifacts/bin"
           echo $PATH
-          oop.exe
+          which oop || echo "no which"
+          where oop || echo "no where"
+          whereis oop || echo "no whereis"
+          oop
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
