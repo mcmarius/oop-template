@@ -284,7 +284,9 @@ jobs:
         run: |
           ls -l artifacts/bin
           cat tastatura.txt
-          PATH="$PATH:$(pwd)/artifacts/bin" oop.exe
+          PATH="$PATH:$(pwd)/artifacts/bin"
+          echo $PATH
+          oop.exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
