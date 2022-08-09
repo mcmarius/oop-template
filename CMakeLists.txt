@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive- /wd4244 /wd4267 /fsanitize=address /external:anglebrackets /external:W0)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive- /wd4244 /wd4267 /external:anglebrackets /external:W0) # /fsanitize=address
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
 
@@ -47,7 +47,7 @@ endif()
 # sanitizers
 # should disable them when releasing executables
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
+    #target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
 elseif(APPLE)
     # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # first check Apple since Apple is also a kind of Unix
