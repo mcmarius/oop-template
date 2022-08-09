@@ -311,7 +311,8 @@ jobs:
           cp artifacts/bin/oop /usr/bin/oop
           which oop || echo "no which"
           where oop || echo "no where"
-          "C:\Program Files\Git\usr\bin\oop.exe" || echo "no git oop"
+          "C:\Program Files\Git\usr\bin\oop.exe" || echo "no git oop \\"
+          "C:/Program File/Git/usr/bin/oop.exe" || echo "no git oop/"
           bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
           bash -c "$(pwd)/artifacts/bin/oop" || echo "no bash -c $(pwd)/artifacts/bin/oop"
           oop || echo "no oop"
