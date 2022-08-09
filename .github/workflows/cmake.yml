@@ -315,8 +315,8 @@ jobs:
           #which oop || echo "no which"
           #where oop || echo "no where"
           #oop.exe || echo "no oop.exe"
-          $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
-          $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
+          # $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
+          # $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
           .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
           .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
 
