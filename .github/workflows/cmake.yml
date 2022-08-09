@@ -304,12 +304,26 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
-        shell: cmd
         run: |
-          artifacts\bin\oop.exe || echo "no artifacts\bin\oop.exe"
-          artifacts\bin\oop || echo "no artifacts\bin\oop"
+          whoami
+          ls -l artifacts/bin
+          cat tastatura.txt
+          PATH="$PATH:$(pwd)/artifacts/bin"
+          echo $PATH
+          which oop || echo "no which"
+          where oop || echo "no where"
+          bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
+          oop || echo "no oop"
+          oop.exe || echo "no oop.exe"
+          $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
+          $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
           .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
           .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
+          cd artifacts/bin
+          ./oop || echo "no ./oop"
+          ./oop.exe || echo "no ./oop.exe"
+          oop.exe || echo "no oop.exe"
+          oop || echo "no oop"
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
