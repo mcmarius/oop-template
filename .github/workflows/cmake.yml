@@ -312,8 +312,11 @@ jobs:
           echo $PATH
           which oop || echo "no which"
           where oop || echo "no where"
-          whereis oop || echo "no whereis"
-          oop
+          oop.exe || echo "no oop.exe"
+          $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
+          $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
+          .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
+          .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
