@@ -268,14 +268,22 @@ jobs:
       - name: Sanitizers
         # run one sanitizer for each OS to avoid building extra binaries;
         # memory on Linux clang, address on macOS clang
-        # if: runner.os != 'Windows'
-        if: startsWith(matrix.cxx, 'clang++') || (matrix.cxx == 'cl')
+        if: startsWith(matrix.cxx, 'clang++')
         # detect_leaks is not supported on macOS
         # env:
         # ASAN_OPTIONS: detect_leaks=1
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           cat tastatura.txt | ./artifacts/bin/oop
+
+      - name: Sanitizers (Windows MSVC)
+        # run one sanitizer for each OS to avoid building extra binaries
+        if: matrix.cxx == 'cl'
+        # NOTE: update executable name if it is changed in CMakeLists.txt
+        run: |
+          cat tastatura.txt
+          ./artifacts/bin/oop || true
+          artifacts/bin/oop || true
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
