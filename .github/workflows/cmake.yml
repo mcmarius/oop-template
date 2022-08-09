@@ -68,11 +68,11 @@ jobs:
             # cmake_flags:
 
           - os: windows-2022
-            c: cl.exe
-            cxx: cl.exe
+            c: cl
+            cxx: cl
             name: Windows 2022 MSVC 19.32
             # cmake_flags:
-            cmake_generator: Ninja
+            # cmake_generator: Ninja
 
           # - os: windows-2022
           #   c: gcc
@@ -203,26 +203,26 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
             ${{ matrix.cmake_flags }}
 
-      - name: Cache ninja exe
-        uses: actions/cache@v2
-        id: cache-ninja-exe
-        if: runner.os == 'Windows' && matrix.cxx == 'cl'
-        with:
-          path: ninja
-          key: ${{ runner.os }}-ninja-1.11.0
+      # - name: Cache ninja exe
+      #   uses: actions/cache@v2
+      #   id: cache-ninja-exe
+      #   if: runner.os == 'Windows' && matrix.cxx == 'cl'
+      #   with:
+      #     path: ninja
+      #     key: ${{ runner.os }}-ninja-1.11.0
 
-      - name: Download ninja
-        uses: suisei-cn/actions-download-file@v1
-        id: download-ninja
-        if: matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
-        with:
-          url: "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip"
-          target: ninja-exe
+      # - name: Download ninja
+      #   uses: suisei-cn/actions-download-file@v1
+      #   id: download-ninja
+      #   if: matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+      #   with:
+      #     url: "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip"
+      #     target: ninja-exe
 
-      - name: Extract ninja exe
-        if: runner.os == 'Windows' && matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
-        run: |
-          7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
+      # - name: Extract ninja exe
+      #   if: runner.os == 'Windows' && matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+      #   run: |
+      #     7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
 
       - name: Configure CMake
         if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
