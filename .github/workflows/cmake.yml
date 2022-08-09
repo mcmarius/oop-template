@@ -284,8 +284,8 @@ jobs:
           pwd
           ls -l artifacts/bin
           cat tastatura.txt
-          ./artifacts/bin/oop.exe || true
-          artifacts/bin/oop.exe || true
+          ./artifacts/bin/oop.exe
+          artifacts/bin/oop.exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
