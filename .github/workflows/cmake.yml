@@ -236,6 +236,7 @@ jobs:
 
       - name: Clang-tidy
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        continue-on-error: true
         # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
         run: |
           # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
@@ -284,7 +285,9 @@ jobs:
           pwd
           ls -l artifacts/bin
           cat tastatura.txt
-          ./artifacts/bin/oop.exe
+          echo "with ./"
+          ./artifacts/bin/oop.exe || true
+          echo "wihout ./"
           artifacts/bin/oop.exe
 
       - name: Valgrind
