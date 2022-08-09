@@ -303,41 +303,30 @@ jobs:
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
-        continue-on-error: true
         # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: ./artifacts/bin/oop.exe
-
-      - name: Sanitizers 2 (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
-        continue-on-error: true
-        shell: pwsh
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: ./artifacts/bin/oop.exe
-
-      - name: Sanitizers 3 (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
-        continue-on-error: true
-        shell: pwsh
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: .\artifacts\bin\oop.exe
-
-      - name: Sanitizers 4 (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
-        continue-on-error: true
-        shell: powershell
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: .\artifacts\bin\oop.exe
-
-      - name: Sanitizers 5 (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
-        continue-on-error: true
-        shell: cmd
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: .\artifacts\bin\oop.exe
+        run: |
+          whoami
+          ls -l artifacts/bin
+          cat tastatura.txt
+          sudo cp artifacts/bin/oop /usr/bin/oop
+          which oop || echo "no which"
+          where oop || echo "no where"
+          bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
+          bash -c "$(pwd)/artifacts/bin/oop" || echo "no bash -c $(pwd)/artifacts/bin/oop"
+          oop || echo "no oop"
+          oop.exe || echo "no oop.exe"
+          $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
+          $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
+          .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
+          .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
+          cd artifacts/bin
+          chmod +rwx oop.exe
+          bash -c "$(pwd)/oop.exe" || echo "no bash -c $(pwd)/oop.exe"
+          bash -c "$(pwd)/oop" || echo "no bash -c $(pwd)/oop"
+          ./oop || echo "no ./oop"
+          ./oop.exe || echo "no ./oop.exe"
+          oop.exe || echo "no oop.exe"
+          oop || echo "no oop"
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
