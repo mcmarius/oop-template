@@ -313,6 +313,7 @@ jobs:
           which oop || echo "no which"
           where oop || echo "no where"
           bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
+          bash -c "$(pwd)/artifacts/bin/oop" || echo "no bash -c $(pwd)/artifacts/bin/oop"
           oop || echo "no oop"
           oop.exe || echo "no oop.exe"
           $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
@@ -320,6 +321,9 @@ jobs:
           .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
           .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
           cd artifacts/bin
+          chmod +rwx oop.exe
+          bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
+          bash -c "$(pwd)/artifacts/bin/oop" || echo "no bash -c $(pwd)/artifacts/bin/oop"
           ./oop || echo "no ./oop"
           ./oop.exe || echo "no ./oop.exe"
           oop.exe || echo "no oop.exe"
