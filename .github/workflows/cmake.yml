@@ -308,7 +308,7 @@ jobs:
           whoami
           ls -l artifacts/bin
           cat tastatura.txt
-          sudo cp artifacts/bin/oop /usr/bin/oop
+          cp artifacts/bin/oop /usr/bin/oop
           which oop || echo "no which"
           where oop || echo "no where"
           bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
