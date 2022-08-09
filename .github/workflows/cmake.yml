@@ -220,7 +220,7 @@ jobs:
           target: ninja-exe
 
       - name: Extract ninja exe
-        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows' && matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
         run: |
           7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
 
