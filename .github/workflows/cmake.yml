@@ -304,8 +304,10 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
+        shell: pwsh
         run: |
           whoami
+          pwd
           ls -l artifacts/bin
           cat tastatura.txt
           PATH="$PATH:$(pwd)/artifacts/bin"
