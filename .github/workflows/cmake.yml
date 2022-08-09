@@ -68,8 +68,8 @@ jobs:
             # cmake_flags:
 
           - os: windows-2022
-            c: cl
-            cxx: cl
+            c: cl.exe
+            cxx: cl.exe
             name: Windows 2022 MSVC 19.32
             # cmake_flags:
             cmake_generator: Ninja
