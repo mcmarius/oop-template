@@ -281,14 +281,11 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
+        shell: pwsh
         run: |
-          pwd
-          ls -l artifacts/bin
+          ls -l artifacts\bin
           cat tastatura.txt
-          echo "with ./"
-          ./artifacts/bin/oop.exe || true
-          echo "wihout ./"
-          artifacts/bin/oop.exe
+          .\artifacts\bin\oop.exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
