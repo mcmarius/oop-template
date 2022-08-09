@@ -32,39 +32,39 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            c: clang-13
-            cxx: clang++-13
-            name: Ubuntu 22.04 Clang 13
-            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-            # which is used by cppcheck and clang-tidy
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs cppcheck and sanitizers
+          # - os: ubuntu-22.04
+          #   c: clang-13
+          #   cxx: clang++-13
+          #   name: Ubuntu 22.04 Clang 13
+          #   # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
+          #   # which is used by cppcheck and clang-tidy
+          #   cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          #   # This env runs cppcheck and sanitizers
 
-          - os: ubuntu-22.04
-            c: clang-14
-            cxx: clang++-14
-            name: Ubuntu 22.04 Clang 14
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs clang-tidy and sanitizers
+          # - os: ubuntu-22.04
+          #   c: clang-14
+          #   cxx: clang++-14
+          #   name: Ubuntu 22.04 Clang 14
+          #   cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          #   # This env runs clang-tidy and sanitizers
 
-          - os: ubuntu-22.04
-            c: gcc-11
-            cxx: g++-11
-            name: Ubuntu 22.04 GCC 11
-            # cmake_flags:
-            # This env runs valgrind
+          # - os: ubuntu-22.04
+          #   c: gcc-11
+          #   cxx: g++-11
+          #   name: Ubuntu 22.04 GCC 11
+          #   # cmake_flags:
+          #   # This env runs valgrind
 
-          - os: macos-12
-            c: clang
-            cxx: clang++
-            name: macOS 12 Apple Clang 13
-            # cmake_flags:
+          # - os: macos-12
+          #   c: clang
+          #   cxx: clang++
+          #   name: macOS 12 Apple Clang 13
+          #   # cmake_flags:
 
-          - os: macos-12
-            c: gcc-11
-            cxx: g++-11
-            name: macOS 12 GCC 11
+          # - os: macos-12
+          #   c: gcc-11
+          #   cxx: g++-11
+          #   name: macOS 12 GCC 11
             # cmake_flags:
 
           - os: windows-2022
@@ -73,12 +73,12 @@ jobs:
             name: Windows 2022 MSVC 19.32
             # cmake_flags:
 
-          - os: windows-2022
-            c: gcc
-            cxx: g++
-            name: Windows 2022 MinGW GCC 11
-            # cmake_flags:
-            cmake_generator: Ninja
+          # - os: windows-2022
+          #   c: gcc
+          #   cxx: g++
+          #   name: Windows 2022 MinGW GCC 11
+          #   # cmake_flags:
+          #   cmake_generator: Ninja
             # Ninja is faster
             # other generator: "\"MinGW Makefiles\""
 
@@ -281,11 +281,12 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
-        shell: pwsh
+        # shell: pwsh
         run: |
+          cp artifacts/bin/oop.exe oop.exe
           ls -l artifacts\bin
           cat tastatura.txt
-          .\artifacts\bin\oop.exe
+          ./oop.exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
