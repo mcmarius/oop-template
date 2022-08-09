@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive-)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive- /wd4244 /wd4267 /fsanitize=address /external:anglebrackets /external:W0)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
 
