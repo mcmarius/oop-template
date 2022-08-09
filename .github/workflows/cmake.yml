@@ -304,19 +304,10 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
-        shell: pwsh
+        shell: cmd
         run: |
-          whoami
-          pwd
-          ls -l artifacts/bin
-          cat tastatura.txt
-          #PATH="$PATH:$(pwd)/artifacts/bin"
-          #echo $PATH
-          #which oop || echo "no which"
-          #where oop || echo "no where"
-          #oop.exe || echo "no oop.exe"
-          ./artifacts/bin/oop || echo "no ./artifacts/bin/oop"
-          ./artifacts/bin/oop.exe || echo "no ./artifacts/bin/oop.exe"
+          artifacts\bin\oop.exe || echo "no artifacts\bin\oop.exe"
+          artifacts\bin\oop || echo "no artifacts\bin\oop"
           .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
           .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
 
