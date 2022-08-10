@@ -260,6 +260,7 @@ jobs:
           cd gcc/mingw64/bin
           cp libstdc++-6.dll \
             libgcc_s_seh-1.dll \
+            libwinpthread-1.dll \
             $GITHUB_WORKSPACE/artifacts/bin
 
       - name: Cppcheck
