@@ -6,6 +6,16 @@ on:
     tags: ['*']
   pull_request:
     branches: [main] # NOTE: replace/update with appropriate branch name(s)
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: Build type
+        required: false
+        default: 'Debug'
+        type: choice
+        options:
+          - Debug
+          - Release
 
 jobs:
   build:
@@ -25,7 +35,7 @@ jobs:
     env:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
-      BUILD_TYPE: Debug
+      BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.8"
 
     strategy:
