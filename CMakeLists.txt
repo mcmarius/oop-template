@@ -40,7 +40,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /external:anglebrackets /external:W0 /fsanitize=address)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /external:anglebrackets /external:W0)
     if(WARNINGS_AS_ERRORS)
       target_compile_options(${PROJECT_NAME} PRIVATE /WX)
     endif()
@@ -61,32 +61,33 @@ endif()
 
 # sanitizers
 # disable them when releasing executables without explicitly requested debug info
+# use generator expressions to set flags correctly in both single and multi config generators
 set(is_debug "$<CONFIG:Debug>")
 set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
-if($<$<OR:${is_debug},${is_rel_with_deb}>:Debug> STREQUAL "Debug")
-    if(MSVC)
-        target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
-    elseif(APPLE)
-        # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        # first check Apple since Apple is also a kind of Unix
-        target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-        target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-        # endif()
-    elseif(UNIX)
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-            # we cannot mix sanitizers with Valgrind
-        elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
-                # check leaks on Linux since macOS does not support the leaks sanitizer yet
-                # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
-                target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-                target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-            elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
-                target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins)
-                target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib)
-            else()
-                message("No matching Clang version to add sanitizer flags!")
-            endif()
+set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
+elseif(APPLE)
+    # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    # first check Apple since Apple is also a kind of Unix
+    target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+    target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+    # endif()
+elseif(UNIX)
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+        # we cannot mix sanitizers with Valgrind
+    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
+            # check leaks on Linux since macOS does not support the leaks sanitizer yet
+            # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
+            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+        elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
+            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined -fsanitize-memory-track-origins>")
+            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib>")
+        else()
+            message("No matching Clang version to add sanitizer flags!")
         endif()
     endif()
 endif()
