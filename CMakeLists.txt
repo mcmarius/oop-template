@@ -61,7 +61,9 @@ endif()
 
 # sanitizers
 # disable them when releasing executables without explicitly requested debug info
-if(${CMAKE_BUILD_TYPE} MATCHES "Deb")
+set(is_debug "$<CONFIG:Debug>")
+set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
+if($<$<OR:${is_debug},${is_rel_with_deb}>:Debug> STREQUAL "Debug")
     if(MSVC)
         target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
     elseif(APPLE)
