@@ -84,8 +84,10 @@ elseif(UNIX)
             target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
             target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
         elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
-            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined -fsanitize-memory-track-origins>")
-            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib>")
+            # use semi-colons instead of spaces to separate arguments
+            # it is recommended to quote generator expressions in order to avoid unintentional splitting
+            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-memory-track-origins>")
+            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
         else()
             message("No matching Clang version to add sanitizer flags!")
         endif()
