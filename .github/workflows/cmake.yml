@@ -353,17 +353,17 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
           if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
-            cp $(where ucrtbased.dll) \
-               $(where VCRUNTIME140_1D.dll) \
-               $(where MSVCP140D.dll) \
-               $(where VCRUNTIME140D.dll) \
+            cp "$(which ucrtbased.dll)" \
+               "$(which VCRUNTIME140_1D.dll)" \
+               "$(which MSVCP140D.dll)" \
+               "$(which VCRUNTIME140D.dll)" \
                bin/
           fi
           if [[ "$BUILD_TYPE" =~ "Rel" ]]; then
-            cp $(where ucrtbase.dll) \
-               $(where VCRUNTIME140_1.dll) \
-               $(where MSVCP140.dll) \
-               $(where VCRUNTIME140.dll) \
+            cp "$(which ucrtbase.dll)" \
+               "$(which VCRUNTIME140_1.dll)" \
+               "$(which MSVCP140.dll)" \
+               "$(which VCRUNTIME140.dll)" \
                bin/
           fi
 
