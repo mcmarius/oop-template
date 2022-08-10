@@ -255,6 +255,7 @@ jobs:
                    -iext --suppress='*:ext/*' \
                    --suppress=missingIncludeSystem \
                    --suppress=unmatchedSuppression \
+                   --suppress=useStlAlgorithm \
                    --error-exitcode=1
 
       - name: Clang-tidy
@@ -304,31 +305,18 @@ jobs:
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         # NOTE: update executable name if it is changed in CMakeLists.txt
+        # TODO add leaks
         run: |
-          whoami
-          ls -l artifacts/bin
-          cat tastatura.txt
-          cp artifacts/bin/oop /usr/bin/oop
-          which oop || echo "no which"
-          where oop || echo "no where"
-          "C:\Program Files\Git\usr\bin\oop.exe" || echo "no git oop \\"
-          "C:/Program Files/Git/usr/bin/oop.exe" || echo "no git oop/"
-          bash -c "$(pwd)/artifacts/bin/oop.exe" || echo "no bash -c $(pwd)/artifacts/bin/oop.exe"
-          bash -c "$(pwd)/artifacts/bin/oop" || echo "no bash -c $(pwd)/artifacts/bin/oop"
-          oop || echo "no oop"
-          oop.exe || echo "no oop.exe"
-          $(pwd)/artifacts/bin/oop || echo "no $(pwd)/artifacts/bin/oop"
-          $(pwd)/artifacts/bin/oop.exe || echo "no $(pwd)/artifacts/bin/oop.exe"
-          .\artifacts\bin\oop.exe || echo "no .\artifacts\bin\oop.exe"
-          .\artifacts\bin\oop || echo "no .\artifacts\bin\oop"
-          cd artifacts/bin
-          chmod +rwx oop.exe
-          bash -c "$(pwd)/oop.exe" || echo "no bash -c $(pwd)/oop.exe"
-          bash -c "$(pwd)/oop" || echo "no bash -c $(pwd)/oop"
-          ./oop || echo "no ./oop"
-          ./oop.exe || echo "no ./oop.exe"
-          oop.exe || echo "no oop.exe"
-          oop || echo "no oop"
+          vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
+          vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
+          cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+             "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+             artifacts/bin/
+          cat tastatura.txt | ./artifacts/bin/oop.exe
+
+      - name: Application Verifier (Windows MSVC)
+        if: matrix.cxx == 'cl'
+        run: cat tastatura.txt | appverif //verify ./artifacts/bin/oop.exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
@@ -340,6 +328,15 @@ jobs:
       - name: Move artifacts
         run: |
           mv artifacts/bin bin
+
+      - name: Copy missing dlls
+        if: runner.os == 'Windows' && matrix.cxx == 'cl'
+        run: |
+          cp $(where ucrtbased.dll) \
+             $(where VCRUNTIME140_1D.dll) \
+             $(where MSVCP140D.dll) \
+             $(where VCRUNTIME140D.dll) \
+             bin/
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
