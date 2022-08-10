@@ -320,11 +320,13 @@ jobs:
         continue-on-error: true
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
-          vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
-          cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
-             "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-             artifacts/bin/
+          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
+            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
+            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+               artifacts/bin/
+          fi
           cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
