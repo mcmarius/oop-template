@@ -257,7 +257,10 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         # static linking might not work with MinGW, might be easier this way
         run: |
-          cp gcc/mingw64/bin/libstdc++-6.dll $GITHUB_WORKSPACE/artifacts/bin
+          cd gcc/mingw64/bin
+          cp libstdc++-6.dll \
+            libgcc_s_seh_1.dll \
+            $GITHUB_WORKSPACE/artifacts/bin
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
