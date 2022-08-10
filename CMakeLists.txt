@@ -8,6 +8,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# By default, treat warnings as errors; override via cmake defines or via env vars
+if(DEFINED WARNINGS_AS_ERRORS)
+  # do nothing, already defined
+elseif(DEFINED ENV{WARNINGS_AS_ERRORS})
+  set(WARNINGS_AS_ERRORS $ENV{WARNINGS_AS_ERRORS})
+else()
+  set(WARNINGS_AS_ERRORS ON)
+endif()
+
 ###############################################################################
 
 # external dependencies
@@ -31,9 +40,15 @@ add_executable(${PROJECT_NAME} main.cpp)
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX /permissive-)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /external:anglebrackets /external:W0 /fsanitize=address)
+    if(WARNINGS_AS_ERRORS)
+      target_compile_options(${PROJECT_NAME} PRIVATE /WX)
+    endif()
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+    if(WARNINGS_AS_ERRORS)
+      target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+    endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -46,7 +61,9 @@ endif()
 
 # sanitizers
 # should disable them when releasing executables
-if(APPLE)
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
+elseif(APPLE)
     # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # first check Apple since Apple is also a kind of Unix
     target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
@@ -56,14 +73,16 @@ elseif(UNIX)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
         # we cannot mix sanitizers with Valgrind
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
+        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
             # check leaks on Linux since macOS does not support the leaks sanitizer yet
             # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
             target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
             target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-        else()
+        elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
             target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins)
             target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib)
+        else()
+            message("No matching Clang version to add sanitizer flags!")
         endif()
     endif()
 endif()
