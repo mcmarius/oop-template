@@ -349,11 +349,20 @@ jobs:
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
-          cp $(where ucrtbased.dll) \
-             $(where VCRUNTIME140_1D.dll) \
-             $(where MSVCP140D.dll) \
-             $(where VCRUNTIME140D.dll) \
-             bin/
+          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+            cp $(where ucrtbased.dll) \
+               $(where VCRUNTIME140_1D.dll) \
+               $(where MSVCP140D.dll) \
+               $(where VCRUNTIME140D.dll) \
+               bin/
+          fi
+          if [[ "$BUILD_TYPE" =~ "Rel" ]]; then
+            cp $(where ucrtbase.dll) \
+               $(where VCRUNTIME140_1.dll) \
+               $(where MSVCP140.dll) \
+               $(where VCRUNTIME140.dll) \
+               bin/
+          fi
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
