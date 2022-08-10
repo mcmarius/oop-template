@@ -16,6 +16,8 @@ on:
         options:
           - Debug
           - Release
+          - RelWithDebInfo
+          - MinSizeRel
 
 jobs:
   build:
@@ -37,6 +39,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.8"
+      EXECUTABLE_NAME: "oop"
 
     strategy:
       fail-fast: false
@@ -309,7 +312,7 @@ jobs:
         # ASAN_OPTIONS: detect_leaks=1
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          cat tastatura.txt | ./artifacts/bin/oop
+          cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
@@ -322,20 +325,20 @@ jobs:
           cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
              "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
              artifacts/bin/
-          cat tastatura.txt | ./artifacts/bin/oop.exe
+          cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
       #  if: matrix.cxx == 'cl'
       #  continue-on-error: true
-      #  run: cat tastatura.txt | appverif //verify ./artifacts/bin/oop.exe
+      #  run: cat tastatura.txt | appverif //verify ./artifacts/bin/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
-          cat tastatura.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/oop
+          cat tastatura.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/"${EXECUTABLE_NAME}"
 
       - name: Move artifacts
         run: |

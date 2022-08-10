@@ -60,29 +60,31 @@ endif()
 ###############################################################################
 
 # sanitizers
-# should disable them when releasing executables
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
-elseif(APPLE)
-    # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    # first check Apple since Apple is also a kind of Unix
-    target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-    target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-    # endif()
-elseif(UNIX)
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-        # we cannot mix sanitizers with Valgrind
-    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
-            # check leaks on Linux since macOS does not support the leaks sanitizer yet
-            # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
-            target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-            target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
-        elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
-            target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins)
-            target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib)
-        else()
-            message("No matching Clang version to add sanitizer flags!")
+# disable them when releasing executables without explicitly requested debug info
+if(${CMAKE_BUILD_TYPE} MATCHES "Deb")
+    if(MSVC)
+        target_compile_options(${PROJECT_NAME} PRIVATE /fsanitize=address)
+    elseif(APPLE)
+        # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        # first check Apple since Apple is also a kind of Unix
+        target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
+        target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
+        # endif()
+    elseif(UNIX)
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+            # we cannot mix sanitizers with Valgrind
+        elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
+                # check leaks on Linux since macOS does not support the leaks sanitizer yet
+                # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
+                target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
+                target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
+            elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
+                target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins)
+                target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=memory,undefined -fsanitize-memory-track-origins -Wl,-rpath,tools/llvm-project/build/lib)
+            else()
+                message("No matching Clang version to add sanitizer flags!")
+            endif()
         endif()
     endif()
 endif()
@@ -91,6 +93,7 @@ endif()
 
 # use SYSTEM so clang-tidy does not report warnings from these directories
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
+#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext)
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 #target_link_libraries(${PROJECT_NAME} <SomeLib>)
 
