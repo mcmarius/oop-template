@@ -16,6 +16,8 @@ on:
         options:
           - Debug
           - Release
+          - RelWithDebInfo
+          - MinSizeRel
 
 jobs:
   build:
@@ -37,6 +39,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.8"
+      EXECUTABLE_NAME: "oop"
 
     strategy:
       fail-fast: false
@@ -254,7 +257,11 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         # static linking might not work with MinGW, might be easier this way
         run: |
-          cp gcc/mingw64/bin/libstdc++-6.dll $GITHUB_WORKSPACE/artifacts/bin
+          cd gcc/mingw64/bin
+          cp libstdc++-6.dll \
+            libgcc_s_seh-1.dll \
+            libwinpthread-1.dll \
+            $GITHUB_WORKSPACE/artifacts/bin
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
@@ -309,7 +316,7 @@ jobs:
         # ASAN_OPTIONS: detect_leaks=1
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          cat tastatura.txt | ./artifacts/bin/oop
+          cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
@@ -317,25 +324,27 @@ jobs:
         continue-on-error: true
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
-          vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
-          cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
-             "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-             artifacts/bin/
-          cat tastatura.txt | ./artifacts/bin/oop.exe
+          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
+            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
+            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+               artifacts/bin/
+          fi
+          cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
       #  if: matrix.cxx == 'cl'
       #  continue-on-error: true
-      #  run: cat tastatura.txt | appverif //verify ./artifacts/bin/oop.exe
+      #  run: cat tastatura.txt | appverif //verify ./artifacts/bin/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
-          cat tastatura.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/oop
+          cat tastatura.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/"${EXECUTABLE_NAME}"
 
       - name: Move artifacts
         run: |
@@ -344,11 +353,20 @@ jobs:
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
-          cp $(where ucrtbased.dll) \
-             $(where VCRUNTIME140_1D.dll) \
-             $(where MSVCP140D.dll) \
-             $(where VCRUNTIME140D.dll) \
-             bin/
+          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+            cp "$(which ucrtbased.dll)" \
+               "$(which VCRUNTIME140_1D.dll)" \
+               "$(which MSVCP140D.dll)" \
+               "$(which VCRUNTIME140D.dll)" \
+               bin/
+          fi
+          if [[ "$BUILD_TYPE" =~ "Rel" ]]; then
+            cp "$(which ucrtbase.dll)" \
+               "$(which VCRUNTIME140_1.dll)" \
+               "$(which MSVCP140.dll)" \
+               "$(which VCRUNTIME140.dll)" \
+               bin/
+          fi
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
@@ -357,11 +375,18 @@ jobs:
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         with:
           type: 'zip'
           path: bin
           filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          path: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          retention-days: 10
 
       - name: Release
         uses: softprops/action-gh-release@v1
