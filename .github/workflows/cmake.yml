@@ -375,11 +375,18 @@ jobs:
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         with:
           type: 'zip'
           path: bin
-          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || ${GITHUB_REF_NAME} }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || ${GITHUB_REF_NAME} }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          path: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || ${GITHUB_REF_NAME} }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          retention-days: 10
 
       - name: Release
         uses: softprops/action-gh-release@v1
