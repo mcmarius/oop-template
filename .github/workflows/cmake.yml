@@ -379,13 +379,13 @@ jobs:
         with:
           type: 'zip'
           path: bin
-          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || github.ref_name }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || github.ref_name }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
-          path: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME || github.ref_name }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          path: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
           retention-days: 10
 
       - name: Release
