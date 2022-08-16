@@ -67,7 +67,6 @@ set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
 set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
-    target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
 elseif(APPLE)
     # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # first check Apple since Apple is also a kind of Unix
