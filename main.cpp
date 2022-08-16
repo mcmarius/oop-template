@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype>
 #include <chrono>
 #include <thread>
 
@@ -21,7 +22,7 @@ std::string make_salt() {
     return salt;
 }
 
-std::string make_password(const std::string& plain) {
+std::string hash_password(const std::string& plain) {
     return digestpp::blake2b(512).set_salt(make_salt()).absorb(plain).hexdigest();
 }
 
@@ -29,12 +30,34 @@ int main() {
     std::cout << "-----------------------------------------------\n";
 
     std::string plain = "temaOOP12345$";
-    std::cout << make_password(plain) << "\n"
-              << make_password(plain) << "\n";
+    std::cout << hash_password(plain) << "\n"
+              << hash_password(plain) << "\n";
 
     std::cout << "-----------------------------------------------\n";
 
     rlutil::setColor(rlutil::BLUE);
+    rlutil::cls();
+    int key = rlutil::getkey(); // apel blocant; apelează kbhit și getch
+    switch(std::tolower(key)) {
+    case rlutil::KEY_SPACE:
+        std::cout << "pressed space\n";
+        break;
+    case 'w':
+        std::cout << "pressed w\n";
+        break;
+    case 'a':
+        std::cout << "pressed a\n";
+        break;
+    case 's':
+        std::cout << "pressed s\n";
+        break;
+    case 'd':
+        std::cout << "pressed d\n";
+        break;
+    default:
+        std::cout << "other key (" << key << ")\n";
+        break;
+    }
     std::cout << "test color text\n";
     rlutil::resetColor();
 

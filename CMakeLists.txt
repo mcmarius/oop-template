@@ -38,8 +38,6 @@ endif()
 
 find_package(Threads REQUIRED)
 
-###############################################################################
-
 # NOTE: update executable name in .github/workflows/cmake.yml when changing name here
 add_executable(${PROJECT_NAME} main.cpp)
 

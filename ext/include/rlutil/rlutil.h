@@ -86,6 +86,9 @@
 /// Get character without waiting for Return to be pressed.
 /// Windows has this in conio.h
 RLUTIL_INLINE int getch(void) {
+#ifdef GITHUB_ACTIONS
+	return getchar();
+#endif
 	// Here be magic.
 	struct termios oldt, newt;
 	int ch;
@@ -102,6 +105,9 @@ RLUTIL_INLINE int getch(void) {
 /// Determines if keyboard has been hit.
 /// Windows has this in conio.h
 RLUTIL_INLINE int kbhit(void) {
+#ifdef GITHUB_ACTIONS
+	return 1;
+#endif
 	// Here be dragons.
 	static struct termios oldt, newt;
 	int cnt = 0;
@@ -544,6 +550,9 @@ RLUTIL_INLINE void resetColor(void) {
 /// Function: cls
 /// Clears screen, resets all attributes and moves cursor home.
 RLUTIL_INLINE void cls(void) {
+#ifdef GITHUB_ACTIONS
+	return;
+#endif
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
 	// Based on https://msdn.microsoft.com/en-us/library/windows/desktop/ms682022%28v=vs.85%29.aspx
 	const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
