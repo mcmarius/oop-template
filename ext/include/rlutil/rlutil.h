@@ -88,7 +88,7 @@
 RLUTIL_INLINE int getch(void) {
 #ifdef GITHUB_ACTIONS
 	return getchar();
-#endif
+#else // GITHUB_ACTIONS
 	// Here be magic.
 	struct termios oldt, newt;
 	int ch;
@@ -99,6 +99,7 @@ RLUTIL_INLINE int getch(void) {
 	ch = getchar();
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return ch;
+#endif // GITHUB_ACTIONS
 }
 
 /// Function: kbhit
@@ -107,7 +108,7 @@ RLUTIL_INLINE int getch(void) {
 RLUTIL_INLINE int kbhit(void) {
 #ifdef GITHUB_ACTIONS
 	return 1;
-#endif
+#else // GITHUB_ACTIONS
 	// Here be dragons.
 	static struct termios oldt, newt;
 	int cnt = 0;
@@ -126,6 +127,7 @@ RLUTIL_INLINE int kbhit(void) {
 	select(STDIN_FILENO+1, NULL, NULL, NULL, &tv); // A small time delay
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return cnt; // Return number of characters
+#endif // GITHUB_ACTIONS
 }
 #endif // _WIN32
 
@@ -552,7 +554,7 @@ RLUTIL_INLINE void resetColor(void) {
 RLUTIL_INLINE void cls(void) {
 #ifdef GITHUB_ACTIONS
 	return;
-#endif
+#else // GITHUB_ACTIONS
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
 	// Based on https://msdn.microsoft.com/en-us/library/windows/desktop/ms682022%28v=vs.85%29.aspx
 	const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -572,6 +574,7 @@ RLUTIL_INLINE void cls(void) {
 	RLUTIL_PRINT(ANSI_CLS);
 	RLUTIL_PRINT(ANSI_CURSOR_HOME);
 #endif
+#endif // GITHUB_ACTIONS
 }
 
 /// Function: locate
