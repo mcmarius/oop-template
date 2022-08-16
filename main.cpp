@@ -62,8 +62,12 @@ int main() {
 
     std::cout << "-----------------------------------------------\n";
 
-    using namespace date;
     using namespace std::chrono;
+    using namespace date;
+    using date::sys_days;
+    using date::days;
+    using date::weeks;
+    using date::months;
     auto d1 = 2022_y/10/01;
     auto d2 = 2023_y/05/26;
 
