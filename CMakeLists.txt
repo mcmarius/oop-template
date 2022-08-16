@@ -36,7 +36,7 @@ endif()
 
 # external dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 ###############################################################################
 
@@ -113,10 +113,17 @@ endif()
 ###############################################################################
 
 # use SYSTEM so clang-tidy does not report warnings from these directories
-#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+target_include_directories(
+    ${PROJECT_NAME} SYSTEM PRIVATE
+    ext/include/digestpp
+    ext/include/rlutil
+    ext/include/random
+    ext/include/csv-parser
+    ext/include/date
+)
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-#target_link_libraries(${PROJECT_NAME} <SomeLib>)
+target_link_libraries(${PROJECT_NAME} Threads::Threads)
 
 ###############################################################################
 
