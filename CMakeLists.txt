@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-# NOTE: update executable name in .github/workflows/cmake.yml when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml:42 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
 
