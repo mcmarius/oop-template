@@ -368,6 +368,9 @@ enum {
 /// Note:
 /// Only Arrows, Esc, Enter and Space are currently working properly.
 RLUTIL_INLINE int getkey(void) {
+        #if defined(GITHUB_ACTIONS) && defined(_WIN32)
+        return getchar();
+        #else // GITHUB_ACTIONS
 	#ifndef _WIN32
 	int cnt = kbhit(); // for ANSI escapes processing
 	#endif
@@ -422,6 +425,7 @@ RLUTIL_INLINE int getkey(void) {
 #endif // _WIN32
 		default: return k;
 	}
+	#endif // GITHUB_ACTIONS
 }
 
 /// Function: nb_getch

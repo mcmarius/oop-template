@@ -35,6 +35,7 @@ int main() {
 
     std::cout << "-----------------------------------------------\n";
 
+    rlutil::saveDefaultColor();
     rlutil::setColor(rlutil::BLUE);
     rlutil::cls();
     int key = rlutil::getkey(); // apel blocant; apelează kbhit și getch
