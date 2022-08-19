@@ -31,7 +31,9 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-
+  APP_WINDOW: "My Window"
+  # NOTE: also update in CMakeLists FetchContent
+  SFML_VERSION: "2023-11-04-2.6.1"
 
 defaults:
   run:
@@ -109,18 +111,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
-            # renovate: depName=ubuntu
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
+          #   # renovate: depName=ubuntu
+          # - os: ubuntu-22.04
+          #   c: clang-18
+          #   cxx: clang++-18
+          #   clang_ver: "18"
+          #   clang_ver_full: "18.1.8"
+          #   name: "MSan: Ubuntu 22.04 Clang 18"
+          #   cmake_flags: "-DUSE_MSAN=ON -DBUILD_SHARED_LIBS=FALSE"
+          #   cmake_generator: Ninja
+          #   # This env runs memory sanitizers
+          #   runs_msan: true
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -128,7 +129,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "ASan: Ubuntu 22.04 GCC 12"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=FALSE"
             cmake_generator: Ninja
             # This env runs address sanitizers
             runs_asan: true
@@ -141,7 +142,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "Valgrind: Ubuntu 22.04 GCC 12"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
@@ -152,19 +153,18 @@ jobs:
             cxx: clang++
             # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=OFF"
+            cmake_flags: "-DUSE_ASAN=OFF -DSFML_BUILD_FRAMEWORKS=FALSE -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=FALSE"
             # cmake_generator:
             # This env runs address sanitizers
-            runs_asan: false
+            # runs_asan: false
 
-            # renovate: depName=macos
-          - os: macos-14
-            c: gcc-13
-            cxx: g++-13
-            # renovate: depName=macos
-            name: "macOS 14 GCC 13"
-            # cmake_flags:
-            # cmake_generator: Ninja
+          #   # renovate: depName=macos
+          # - os: macos-14
+          #   c: gcc-13
+          #   cxx: g++-13
+          #   name: "macOS 14 GCC 13"
+          #   cmake_flags:
+          #   cmake_generator: Ninja
 
             # renovate: depName=windows
           - os: windows-2022
@@ -172,12 +172,12 @@ jobs:
             cxx: cl
             # renovate: depName=windows
             name: "ASan: Windows 2022 MSVC 19.44"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=TRUE"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
-            runs_asan: true
+            # runs_asan: true
 
             # renovate: depName=windows
           - os: windows-2022
@@ -185,7 +185,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2022 MinGW GCC 13"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             cmake_generator: Ninja
 
     steps:
