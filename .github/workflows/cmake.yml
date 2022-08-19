@@ -109,6 +109,9 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
 
+      # NOTE: also update in CMakeLists FetchContent
+      SFML_VERSION: "2022-08-30-2.6.x"
+
     strategy:
       fail-fast: false
       matrix:
@@ -119,7 +122,7 @@ jobs:
             name: "MSan: Ubuntu 22.04 Clang 13"
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
             cmake_generator: Ninja
             runs_msan: true
             # This env runs memory sanitizers
@@ -128,15 +131,16 @@ jobs:
             c: clang-12
             cxx: clang++-12
             name: "ASan: Ubuntu 22.04 Clang 12"
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
             runs_asan: true
             # This env runs address sanitizers
+
 
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
             name: "Valgrind: Ubuntu 22.04 GCC 11"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             runs_valgrind: true
             # This env runs valgrind
 
@@ -144,28 +148,28 @@ jobs:
             c: clang
             cxx: clang++
             name: "ASan: macOS 12 Apple Clang 14"
-            # cmake_flags:
+            cmake_flags: -DSFML_BUILD_FRAMEWORKS=FALSE -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=FALSE
             # runs_asan: true
 
-          - os: macos-12
-            c: gcc-11
-            cxx: g++-11
-            name: "macOS 12 GCC 11"
-            # cmake_flags:
+          # - os: macos-12
+          #   c: gcc-11
+          #   cxx: g++-11
+          #   name: "macOS 12 GCC 11"
+          #   cmake_flags:
 
           - os: windows-2022
             c: cl
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.34"
-            # cmake_flags:
-            # runs_asan: true
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             # cmake_generator: Ninja
+            # runs_asan: true
 
           - os: windows-2022
             c: gcc
             cxx: g++
             name: "Windows 2022 MinGW GCC 11"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             cmake_generator: Ninja
             # Ninja is faster
             # other generator: "\"MinGW Makefiles\""
@@ -191,11 +195,26 @@ jobs:
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       # Common Linux dependencies
-      # - name: Install Linux Dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install ...
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends \
+            libxrandr-dev \
+            libxcursor-dev \
+            libudev-dev \
+            libopenal-dev \
+            libflac-dev \
+            libvorbis-dev \
+            libgl1-mesa-dev \
+            libegl1-mesa-dev \
+            libdrm-dev \
+            libgbm-dev \
+            xorg \
+            xdotool \
+            openbox \
+            libxkbcommon-x11-0 \
+            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
       - name: Install libc++ (Linux Clang 12)
         if: runner.os == 'Linux' && matrix.runs_asan == true
@@ -231,14 +250,14 @@ jobs:
           key: tools-clang-stdlib-msan
 
       # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v3
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       ${{ env.BUILD_DIR }}/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
+      - name: Cache deps
+        uses: actions/cache@v3
+        id: cache-deps
+        # make the key depend on the dependency version
+        with:
+          path: |
+            ${{ env.BUILD_DIR }}/_deps
+          key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}-${{ env.SFML_VERSION }}
 
       # NOTE: GH Actions does not allow updating the cache yet
       # Using the workaround found here: https://github.com/actions/cache/issues/171
@@ -339,22 +358,25 @@ jobs:
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
           cmake --build . -j6 -- cxx cxxabi
 
-      - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env;
-        # memory on Linux clang, address on macOS clang
-        if: startsWith(matrix.cxx, 'clang++')
-        # detect_leaks is not supported on macOS
-        # env:
-        # ASAN_OPTIONS: detect_leaks=1
+      - name: Make scripts executable
+        if: runner.os == 'Linux'
         run: |
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+          chmod +x scripts/*
+          # chmod +x scripts/run_sanitizers.sh scripts/run_valgrind.sh
 
-      - name: Sanitizers (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
+      - name: Sanitizers
+        uses: aganders3/headless-gui@v1
+        if: runner.os == 'Linux' && matrix.runs_asan == true
         continue-on-error: true
-        run: |
-          cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        env:
+          ASAN_OPTIONS: halt_on_error=0
+          DISPLAY: :99.0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_sanitizers.sh || true
+          working-directory: ${{github.workspace}}
+
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
@@ -363,13 +385,16 @@ jobs:
       #  run: cat "${INPUT_FILENAME}" | appverif //verify ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
+        uses: aganders3/headless-gui@v1
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
-        run: |
-          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
-              --leak-check=full --show-leak-kinds=all --track-origins=yes \
-              --error-exitcode=1 \
-              ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        continue-on-error: true
+        env:
+          DISPLAY: :99.0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_valgrind.sh || true
+          working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
