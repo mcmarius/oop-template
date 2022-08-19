@@ -86,14 +86,14 @@ jobs:
             c: gcc-10
             cxx: g++-10
             name: Ubuntu 20.04 GCC 10
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             # This env is for older glibc
 
           - os: ubuntu-20.04
             c: clang-12
             cxx: clang++-12
             name: Ubuntu 20.04 Clang 12
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             # This env is for older glibc
 
           - os: macos-12
