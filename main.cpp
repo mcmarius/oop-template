@@ -16,7 +16,7 @@ SomeClass *getC() {
 int main() {
     SomeClass *c = getC();
     std::cout << c << "\n";
-    // delete c;
+    delete c;
 
     sf::RenderWindow window;
     window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
