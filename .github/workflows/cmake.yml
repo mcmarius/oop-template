@@ -167,6 +167,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
 
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev
+
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         run: |
