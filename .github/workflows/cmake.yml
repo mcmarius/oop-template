@@ -396,6 +396,7 @@ jobs:
       - name: Sanitizers
         uses: GabrielBB/xvfb-action@v1
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        continue-on-error: true
         env:
           ASAN_OPTIONS: halt_on_error=0
           DISPLAY: :99.0
@@ -426,6 +427,7 @@ jobs:
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        continue-on-error: true
         uses: GabrielBB/xvfb-action@v1
         env:
           DISPLAY: :99.0
