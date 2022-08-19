@@ -17,15 +17,15 @@ runs:
   using: "composite"
   steps:
     # Uncomment when using external dependencies, so they will be cached
-    # - name: Cache deps
-    #   # renovate: datasource=github-tags depName=actions/cache versioning=loose
-    #   uses: actions/cache@v5.0.3
-    #   id: cache-deps
-    #   # make the key depend on the dependency version
-    #   with:
-    #     path: |
-    #       ${{ env.BUILD_DIR }}/_deps
-    #     key: ${{ inputs.cache_key }}-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}
+    - name: Cache deps
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
+      uses: actions/cache@v5.0.3
+      id: cache-deps
+      # make the key depend on the dependency version
+      with:
+        path: |
+          ${{ env.BUILD_DIR }}/_deps
+        key: ${{ inputs.cache_key }}-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}-${{ env.SFML_VERSION }}
 
     # NOTE: GH Actions does not allow updating the cache yet
     # Using the workaround found here: https://github.com/actions/cache/issues/171

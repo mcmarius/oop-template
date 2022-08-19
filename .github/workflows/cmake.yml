@@ -31,7 +31,9 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-
+  APP_WINDOW: "My Window"
+  # NOTE: also update in CMakeLists FetchContent
+  SFML_VERSION: "2024-12-21-3.0.0"
 
 defaults:
   run:
@@ -141,19 +143,19 @@ jobs:
             cxx: clang++
             # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DUSE_ASAN=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env does not currently run address sanitizers
-            runs_asan: false
+            # runs_asan: false
 
-            # renovate: depName=macos
-          - os: macos-14
-            c: gcc-13
-            cxx: g++-13
-            # renovate: depName=macos
-            name: "macOS 14 GCC 13"
-            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
-            cmake_generator: Ninja
+          #   # renovate: depName=macos
+          # - os: macos-14
+          #   c: gcc-13
+          #   cxx: g++-13
+          #   # renovate: depName=macos
+          #   name: "macOS 14 GCC 13"
+          #   cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
+          #   cmake_generator: Ninja
 
             # renovate: depName=windows
           - os: windows-2022
@@ -161,12 +163,12 @@ jobs:
             cxx: cl
             # renovate: depName=windows
             name: "ASan: Windows 2022 MSVC 19.44"
-            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
-            runs_asan: true
+            # runs_asan: true
 
             # renovate: depName=windows
           - os: windows-2022
