@@ -31,6 +31,7 @@ include(FetchContent)
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git
+  GIT_SHALLOW    1
   GIT_TAG        aa82ea132b9296a31922772027ad5d14c1fa381b # master as of 2022-08-15
   # GIT_TAG        f7c88ee7ef4e1c705531cd614efb7dcff1f873cb # last commit merged in master before API breakage (2022-04-21)
 )
