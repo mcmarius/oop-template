@@ -443,7 +443,7 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         env:
           DISPLAY: :99.0
-           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         with:
           run: |
             ./scripts/run_valgrind.sh || true
