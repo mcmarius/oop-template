@@ -17,19 +17,48 @@ else()
   set(WARNINGS_AS_ERRORS ON)
 endif()
 
+# disable them when releasing executables without explicitly requested debug info
+# use generator expressions to set flags correctly in both single and multi config generators
+set(is_debug "$<CONFIG:Debug>")
+set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
+set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+
 ###############################################################################
 
-# external dependencies with FetchContent
-#include(FetchContent)
-#
-#FetchContent_Declare(
-#        SomeLib
-#        GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#        GIT_SHALLOW    1
-#        GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#)
-#
-#FetchContent_MakeAvailable(SomeLib)
+# external dependencies
+include(FetchContent)
+
+FetchContent_Declare(
+  SFML
+  GIT_REPOSITORY https://github.com/SFML/SFML.git
+  GIT_TAG        aa82ea132b9296a31922772027ad5d14c1fa381b # master as of 2022-08-15
+  # GIT_TAG        f7c88ee7ef4e1c705531cd614efb7dcff1f873cb # last commit merged in master before API breakage (2022-04-21)
+)
+
+function(sfml_set_custom_stdlib target)
+    if(MSVC)
+        target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
+    elseif(APPLE)
+    elseif(UNIX)
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+            target_compile_options(${target} PRIVATE -stdlib=libc++)
+            target_link_libraries(${target} PRIVATE "-stdlib=libc++")
+            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
+                target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+                target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+            else()
+                target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
+                target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
+            endif()
+        endif()
+    endif()
+endfunction()
+
+FetchContent_MakeAvailable(SFML)
+
+sfml_set_custom_stdlib(sfml-system)
+sfml_set_custom_stdlib(sfml-window)
+sfml_set_custom_stdlib(sfml-graphics)
 
 ###############################################################################
 
@@ -76,11 +105,7 @@ endif()
 ###############################################################################
 
 # sanitizers
-# disable them when releasing executables without explicitly requested debug info
-# use generator expressions to set flags correctly in both single and multi config generators
-set(is_debug "$<CONFIG:Debug>")
-set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
-set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
 elseif(APPLE)
@@ -113,9 +138,9 @@ endif()
 
 # use SYSTEM so clang-tidy does not report warnings from these directories
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-#target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-#target_link_libraries(${PROJECT_NAME} <SomeLib>)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
 
 ###############################################################################
 

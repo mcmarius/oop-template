@@ -39,7 +39,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.9"
-
+      SFML_VERSION: "2022-08-15-master"
       # NOTE: update executable name if it is changed in CMakeLists.txt
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
@@ -65,21 +65,21 @@ jobs:
             name: Ubuntu 22.04 Clang 13
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
             # This env runs cppcheck and sanitizers
 
           - os: ubuntu-22.04
             c: clang-14
             cxx: clang++-14
             name: Ubuntu 22.04 Clang 14
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
             # This env runs clang-tidy and sanitizers
 
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
             name: Ubuntu 22.04 GCC 11
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             # This env runs valgrind
 
           - os: ubuntu-20.04
@@ -100,26 +100,26 @@ jobs:
             c: clang
             cxx: clang++
             name: macOS 12 Apple Clang 13
-            # cmake_flags:
+            cmake_flags: -DSFML_BUILD_FRAMEWORKS=FALSE -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=FALSE
 
-          - os: macos-12
-            c: gcc-11
-            cxx: g++-11
-            name: macOS 12 GCC 11
-            # cmake_flags:
+          # - os: macos-12
+          #   c: gcc-11
+          #   cxx: g++-11
+          #   name: macOS 12 GCC 11
+          #   cmake_flags:
 
           - os: windows-2022
             c: cl
             cxx: cl
             name: Windows 2022 MSVC 19.32
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: gcc
             cxx: g++
             name: Windows 2022 MinGW GCC 11
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             cmake_generator: Ninja
             # Ninja is faster
             # other generator: "\"MinGW Makefiles\""
@@ -134,11 +134,26 @@ jobs:
           mkdir ${GITHUB_WORKSPACE}/artifacts
 
       # Common Linux dependencies
-      # - name: Install Linux Dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install ...
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            libxrandr-dev \
+            libxcursor-dev \
+            libudev-dev \
+            libopenal-dev \
+            libflac-dev \
+            libvorbis-dev \
+            libgl1-mesa-dev \
+            libegl1-mesa-dev \
+            libdrm-dev \
+            libgbm-dev \
+            xorg \
+            xdotool \
+            openbox \
+            libxkbcommon-x11-0 \
+            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
       - name: Install clang-tidy and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
@@ -194,14 +209,14 @@ jobs:
           sudo cmake --install build
 
       # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v2
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       "${BUILD_DIR}"/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
+      - name: Cache deps
+        uses: actions/cache@v2
+        id: cache-deps
+        # make the key depend on the dependency version
+        with:
+          path: |
+            build/_deps
+          key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}-${{ env.SFML_VERSION }}
 
       # NOTE: GH Actions does not allow updating the cache yet
       # Using the workaround found here: https://github.com/actions/cache/issues/171
@@ -372,17 +387,24 @@ jobs:
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
           cmake --build . -j6 -- cxx cxxabi
 
-      - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env;
-        # memory on Linux clang, address on macOS clang
-        if: startsWith(matrix.cxx, 'clang++')
-        # detect_leaks is not supported on macOS
-        # env:
-        # ASAN_OPTIONS: detect_leaks=1
+      - name: Make scripts executable
+        if: runner.os == 'Linux'
         run: |
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
+          chmod +x scripts/*
 
-      - name: Sanitizers (Windows MSVC)
+      - name: Sanitizers
+        uses: GabrielBB/xvfb-action@v1
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        env:
+          ASAN_OPTIONS: halt_on_error=0
+          DISPLAY: :99.0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_sanitizers.sh || true
+          working-directory: ${{github.workspace}}
+
+      - name: Copy sanitizers DLLs (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         continue-on-error: true
@@ -394,7 +416,6 @@ jobs:
                "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
                bin/
           fi
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
@@ -404,9 +425,14 @@ jobs:
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
-        run: |
-          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
+        uses: GabrielBB/xvfb-action@v1
+        env:
+          DISPLAY: :99.0
+           EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
+        with:
+          run: |
+            ./scripts/run_valgrind.sh || true
+          working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
