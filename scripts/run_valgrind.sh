@@ -16,14 +16,19 @@ fi
 run_valgrind() {
     # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
     valgrind --leak-check=full \
-            --show-leak-kinds=all \
-            --track-origins=yes \
-            --error-exitcode=1 \
-            ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
+             --show-leak-kinds=all \
+             --track-origins=yes \
+             --leak-resolution=med \
+             --vgdb=no \
+             --suppressions=./scripts/valgrind-suppressions.supp \
+             --error-exitcode=0 \
+             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}" &
+    # --gen-suppressions=all \
+    bash ./scripts/run_test.sh 10 1 2
 }
 
 if [[ "${RUN_INTERACTIVE}" = true ]]; then
     run_valgrind
 else
-    cat < "${INPUT_FILE}" | tr -d '\r' | run_valgrind
+    tr -d '\r' < "${INPUT_FILE}" | run_valgrind
 fi
