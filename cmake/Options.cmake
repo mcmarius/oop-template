@@ -1,4 +1,4 @@
-option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(PROJECT_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)

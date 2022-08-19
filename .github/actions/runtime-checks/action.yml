@@ -4,26 +4,32 @@ description: 'Run dynamic analysis tools'
 runs:
   using: "composite"
   steps:
+    - name: Make scripts executable
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        chmod +x scripts/*
+
     - name: Sanitizers
       shell: bash
       # run one sanitizer for each env to avoid building extra binaries on one env
-      if: matrix.runs_asan == true && runner.os != 'Windows'
+      if: matrix.runs_asan == true && runner.os == 'Linux'
       # detect_leaks is not supported on macOS
-      # env:
-      #   ASAN_OPTIONS: detect_leaks=1
-      run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
-
-    - name: Sanitizers (Windows MSVC)
-      shell: bash
-      # run one sanitizer for each OS to avoid building extra binaries
-      if: matrix.cxx == 'cl' && matrix.runs_asan == true
+      # ASAN_OPTIONS: detect_leaks=1
       continue-on-error: true
+      env:
+        ASAN_OPTIONS: halt_on_error=0
+        EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+          xvfb-run ./scripts/run_sanitizers.sh || true
+      working-directory: ${{github.workspace}}
 
     - name: Valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
+      continue-on-error: true
+      env:
+        EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
       run: |
-        bash ./scripts/run_valgrind.sh "${{ env.ZIP_NAME }}"
+        xvfb-run ./scripts/run_valgrind.sh "${{ env.ZIP_NAME }}" || true
+      working-directory: ${{github.workspace}}
