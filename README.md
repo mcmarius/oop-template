@@ -78,6 +78,24 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
+0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+```sh
+sudo apt-get update && \
+  sudo apt-get install libxrandr-dev \
+    libxcursor-dev \
+    libudev-dev \
+    libopenal-dev \
+    libflac-dev \
+    libvorbis-dev \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev \
+    libdrm-dev \
+    libgbm-dev \
+    libfreetype6-dev
+```
+
+Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
+
 1. Pasul de configurare
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -107,4 +125,6 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
+- [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
+  - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
