@@ -18,8 +18,13 @@ run_valgrind() {
     valgrind --leak-check=full \
              --show-leak-kinds=all \
              --track-origins=yes \
-             --error-exitcode=1 \
-             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
+             --leak-resolution=med \
+             --vgdb=no \
+             --suppressions=./scripts/valgrind-suppressions.supp \
+             --error-exitcode=0 \
+             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}" &
+    # --gen-suppressions=all \
+    bash ./scripts/run_test.sh 10 1 2
 }
 
 if [[ "${RUN_INTERACTIVE}" = true ]]; then
