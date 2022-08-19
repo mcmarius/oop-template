@@ -24,18 +24,24 @@ runs:
           #   install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/${exe}"
           # done
         fi
+        # Nu exista framework in artifacts/lib (?)
+        # ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% "${{ env.ZIP_NAME }}/lib"
+        # ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
 
-    - name: Copy missing dylibs (g++)
-      shell: bash
-      if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-      run: |
-        mkdir -p "${{ env.ZIP_NAME }}/lib"
-        cp /opt/homebrew/lib/gcc/15/libstdc++.6.dylib /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/lib"
-        # both executables ship in the zip and need them
-        for exe in "${EXECUTABLE_NAME}" "${TESTS_EXECUTABLE_NAME}"; do
-          install_name_tool -change /opt/homebrew/lib/gcc/15/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib "${{ env.ZIP_NAME }}/${exe}"
-          install_name_tool -change /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/${exe}"
-        done
+    # - name: Copy missing dylibs (g++)
+    #   shell: bash
+    #   if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
+    #   run: |
+    #     mkdir -p "${{ env.ZIP_NAME }}/lib"
+    #     cp /opt/homebrew/lib/gcc/15/libstdc++.6.dylib /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/lib"
+    #     # both executables ship in the zip and need them
+    #     for exe in "${EXECUTABLE_NAME}" "${TESTS_EXECUTABLE_NAME}"; do
+    #       install_name_tool -change /opt/homebrew/lib/gcc/15/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib "${{ env.ZIP_NAME }}/${exe}"
+    #       install_name_tool -change /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/${exe}"
+    #       # not sure about these - SFML might not support GCC on macOS
+    #       ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% "${{ env.ZIP_NAME }}/lib"
+    #       ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+    #     done
 
     - name: Copy missing dlls
       shell: bash

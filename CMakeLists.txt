@@ -29,30 +29,38 @@ include(cmake/RegisterTests.cmake)
 
 # External dependencies with FetchContent
 
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-#
-# NOTE: Also update env vars used for caching in
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
+# din cauza SFML
+set(SFML_WARNINGS_AS_ERRORS OFF)
+
+# NOTE: Also update SFML_VERSION and other env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#     SomeLib
-#     SYSTEM         # keeps ext libs out of static code analysis
-#     GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#     GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-#     GIT_PROGRESS   ON
-# )
-#
-# FetchContent_MakeAvailable(SomeLib)
+FetchContent_Declare(
+    SFML
+    SYSTEM
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG        3.0.0
+    # GIT_TAG        7f1162dfea4969bc17417563ac55d93b72e84c1e # 3.0.0
+    # GIT_TAG        origin/master
+    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS   ON
+)
+
+FetchContent_MakeAvailable(SFML)
 
 ###############################################################################
 
 # External dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
+if(APPLE)
+elseif(UNIX)
+    find_package(X11)
+endif()
 
 ###############################################################################
 
@@ -103,10 +111,15 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} SFML::Graphics SFML::Window SFML::System Threads::Threads)
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+
+if(APPLE)
+elseif(UNIX)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
+endif()
 
 ###############################################################################
 
