@@ -22,8 +22,9 @@ run_valgrind() {
              --vgdb=no \
              --gen-suppressions=all \
              --suppressions=./scripts/valgrind-suppressions.supp \
-             --error-exitcode=1 \
-             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
+             --error-exitcode=0 \
+             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}" &
+    bash ./scripts/run_test.sh 25 4 8
 }
 
 if [[ "${RUN_INTERACTIVE}" = true ]]; then

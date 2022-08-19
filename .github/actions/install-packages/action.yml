@@ -5,12 +5,21 @@ runs:
   using: "composite"
   steps:
     # Common Linux dependencies
-    - name: Install Linux Dependencies
+    - name: Install common Linux Dependencies
+      if: runner.os == 'Linux'
+      uses: ./.github/actions/install-linux-deps
+
+    - name: More Linux Dependencies
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        sudo apt-get update
-        sudo apt-get install ninja-build
+        sudo apt-get install ninja-build xdotool \
+          openbox \
+          libxkbcommon-x11-0 \
+          libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
+
+        # https://github.com/llvm/llvm-project/issues/78354
+        sudo sysctl vm.mmap_rnd_bits=28
 
     - name: Install valgrind
       shell: bash
