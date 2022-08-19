@@ -4,6 +4,10 @@ description: 'Install and run cppcheck'
 runs:
   using: "composite"
   steps:
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      uses: ./.github/actions/install-linux-deps
+
     - name: Cache cppcheck
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
       uses: actions/cache/restore@v4.3.0
