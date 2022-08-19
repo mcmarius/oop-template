@@ -1,0 +1,152 @@
+{
+   <dlopen_rpath>
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   ...
+   fun:fillin_rpath.isra.0
+   fun:decompose_rpath
+   fun:cache_rpath
+   fun:cache_rpath
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+}
+
+{
+   <glx_mesa_leak>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0
+   ...
+}
+
+{
+   <glx_mesa_leak_reachable>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0
+   ...
+}
+
+{
+   <libx11>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   ...
+}
+
+{
+   <llvm>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-15.so.1
+   ...
+}
+
+{
+   <xrandr>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libXrandr.so.2.2.0
+   ...
+}
+
+{
+   <malloc_dlopen>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_dl_open
+   ...
+}
+
+{
+   <calloc_dlopen>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   fun:_dl_open
+   ...
+}
+
+{
+   <deque>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:allocate
+   ...
+   fun:_ZNSt5dequeIN2sf5EventESaIS1_EEC1Ev
+   ...
+}
+
+{
+   <deque_push>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:allocate
+   ...
+   fun:_ZNSt5queueIN2sf5EventESt5dequeIS1_SaIS1_EEE4pushERKS1_
+   ...
+}
+
+{
+   <sfml_gl_context>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN2sf4priv9GlContext12initResourceEv
+   ...
+}
+
+{
+   <sfml_gl_context_settings>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   fun:_ZN2sf4priv9GlContext6createERKNS_15ContextSettingsEPKNS0_10WindowImplEj
+   ...
+}
+
+{
+   <sfml_win_create>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEj
+   ...
+}
+
+{
+   <swrast_dri>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   ...
+}
+
+{
+   <swrast_dri>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   ...
+}
