@@ -103,6 +103,10 @@ else()
         target_compile_options(${PROJECT_NAME} PRIVATE -stdlib=libc++)
         target_link_options(${PROJECT_NAME} PRIVATE -stdlib=libc++)
     endif()
+    if(APPLE)
+    elseif(UNIX)
+        target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
+    endif()
 endif()
 
 ###############################################################################
