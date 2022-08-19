@@ -406,6 +406,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           chmod +x scripts/*
+          # chmod +x scripts/run_sanitizers.sh scripts/run_valgrind.sh
 
       - name: Sanitizers
         uses: GabrielBB/xvfb-action@v1
