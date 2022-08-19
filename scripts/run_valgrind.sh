@@ -11,6 +11,8 @@
 INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
+EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop_main}
+TESTS_EXECUTABLE_NAME=${TESTS_EXECUTABLE_NAME:-oop_test}
 EXECUTABLE_NAMES=${EXECUTABLE_NAMES:-${EXECUTABLE_NAME:-oop_main} ${TESTS_EXECUTABLE_NAME:-oop_test}}
 SCRIPT_RUN_DIR="$(dirname "${0}")"
 
@@ -56,22 +58,33 @@ run_valgrind() {
              "${BIN_DIR}/$1"
 }
 
+run_check() {
+    if [[ "$1" = "${EXECUTABLE_NAME}" ]]; then
+        # main executable
+        (run_valgrind "$1" 1) &
+        bash "./${SCRIPT_RUN_DIR}/run_test.sh" 25 4 8
+    else
+        # tests
+        run_valgrind "$1" 1
+    fi
+}
+
 exit_code=0
 
 for executable in "${EXECUTABLES[@]}"; do
     if [[ ! -f "${BIN_DIR}/${executable}" ]]; then
         echo "Error: ${BIN_DIR}/${executable} not found."
         echo "Build and install it (bash ./scripts/cmake.sh install), or check fewer executables:"
-        echo "    bash ./scripts/run_valgrind.sh ${BIN_DIR} ${EXECUTABLE_NAME:-oop_main}"
+        echo "    bash ./scripts/run_valgrind.sh ${BIN_DIR} ${executable}"
         exit_code=1
         continue
     fi
 
     echo "=== Valgrind: ${BIN_DIR}/${executable} ==="
-    if [[ "${RUN_INTERACTIVE}" = true ]]; then
-        run_valgrind "${executable}"
+    if [[ "${RUN_INTERACTIVE}" = true || "${executable}" == "${TESTS_EXECUTABLE_NAME}" ]]; then
+        run_check "${executable}"
     else
-        tr -d '\r' < "${INPUT_FILENAME}" | run_valgrind "${executable}"
+        tr -d '\r' < "${INPUT_FILENAME}" | run_check "${executable}"
     fi
     rc=$?
 
