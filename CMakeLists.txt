@@ -19,12 +19,13 @@ endif()
 
 ###############################################################################
 
-# external dependencies
+# external dependencies with FetchContent
 #include(FetchContent)
 #
 #FetchContent_Declare(
 #        SomeLib
 #        GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
+#        GIT_SHALLOW    1
 #        GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
 #)
 #
@@ -32,8 +33,23 @@ endif()
 
 ###############################################################################
 
+# external dependencies with find_package
+
+# find_package(Threads REQUIRED)
+
+###############################################################################
+
 # NOTE: update executable name in .github/workflows/cmake.yml when changing name here
 add_executable(${PROJECT_NAME} main.cpp)
+
+###############################################################################
+
+# target definitions
+
+if(GITHUB_ACTIONS)
+  message("NOTE: GITHUB_ACTIONS defined")
+  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+endif()
 
 ###############################################################################
 
@@ -85,8 +101,8 @@ elseif(UNIX)
         elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
             # use semi-colons instead of spaces to separate arguments
             # it is recommended to quote generator expressions in order to avoid unintentional splitting
-            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-memory-track-origins>")
-            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
+            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
+            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
         else()
             message("No matching Clang version to add sanitizer flags!")
         endif()
@@ -96,8 +112,8 @@ endif()
 ###############################################################################
 
 # use SYSTEM so clang-tidy does not report warnings from these directories
-#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 #target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 #target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 #target_link_libraries(${PROJECT_NAME} <SomeLib>)
 

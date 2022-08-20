@@ -116,8 +116,8 @@ jobs:
 
       - name: Prepare env
         run: |
-          echo $GITHUB_WORKSPACE
-          mkdir $GITHUB_WORKSPACE/artifacts
+          echo ${GITHUB_WORKSPACE}
+          mkdir ${GITHUB_WORKSPACE}/artifacts
 
       # Common Linux dependencies
       # - name: Install Linux Dependencies
@@ -187,7 +187,7 @@ jobs:
       #   with:
       #     path: |
       #       build/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
+      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
       # Using the workaround found here: https://github.com/actions/cache/issues/171
@@ -230,10 +230,12 @@ jobs:
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         run: |
-          PATH="$(pwd)/gcc/mingw64/bin:$PATH"  # because GH Actions does not properly prepend to $PATH
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
-            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          # because GH Actions does not properly prepend to $PATH and still chooses older gcc
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
             ${{ matrix.cmake_flags }}
 
       # - name: Cache ninja exe
@@ -260,18 +262,19 @@ jobs:
       - name: Configure CMake
         if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
         run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
-            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
             ${{ matrix.cmake_flags }}
 
       - name: Build
         # Execute the build using N jobs (-jN)
-        run: cmake --build build --config $BUILD_TYPE -j6
+        run: cmake --build build --config ${BUILD_TYPE} -j6
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
-        run: cmake --install build --config $BUILD_TYPE --prefix artifacts
+        run: cmake --install build --config ${BUILD_TYPE} --prefix artifacts
 
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -281,7 +284,7 @@ jobs:
           cp libstdc++-6.dll \
             libgcc_s_seh-1.dll \
             libwinpthread-1.dll \
-            $GITHUB_WORKSPACE/artifacts/bin
+            ${GITHUB_WORKSPACE}/artifacts/bin
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
@@ -344,7 +347,7 @@ jobs:
         continue-on-error: true
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
             vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
             vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
             cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
@@ -373,14 +376,14 @@ jobs:
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
-          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
             cp "$(which ucrtbased.dll)" \
                "$(which VCRUNTIME140_1D.dll)" \
                "$(which MSVCP140D.dll)" \
                "$(which VCRUNTIME140D.dll)" \
                bin/
           fi
-          if [[ "$BUILD_TYPE" =~ "Rel" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
             cp "$(which ucrtbase.dll)" \
                "$(which VCRUNTIME140_1.dll)" \
                "$(which MSVCP140.dll)" \
@@ -391,7 +394,7 @@ jobs:
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
         # trim prefix from ref to get tag name
-        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> ${GITHUB_ENV}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
