@@ -68,6 +68,20 @@ jobs:
             # cmake_flags:
             # This env runs valgrind
 
+          - os: ubuntu-20.04
+            c: gcc-10
+            cxx: g++-10
+            name: Ubuntu 20.04 GCC 10
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
+            # This env is for older glibc
+
+          - os: ubuntu-20.04
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 20.04 Clang 12
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
+            # This env is for older glibc
+
           - os: macos-12
             c: clang
             cxx: clang++
@@ -116,19 +130,25 @@ jobs:
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
         run: |
           sudo apt-get update
-          sudo apt-get install clang-tidy libc++-14-dev libc++abi-14-dev
+          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev
 
       - name: Install ninja libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         run: |
           sudo apt-get update
-          sudo apt-get install valgrind
+          sudo apt-get install --no-install-recommends valgrind
 
       - name: Cache tools
         uses: actions/cache@v2
