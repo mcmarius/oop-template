@@ -68,6 +68,20 @@ jobs:
             # cmake_flags:
             # This env runs valgrind
 
+          - os: ubuntu-20.04
+            c: gcc-10
+            cxx: g++-10
+            name: Ubuntu 20.04 GCC 10
+            # cmake_flags:
+            # This env is for older glibc
+
+          - os: ubuntu-20.04
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 20.04 Clang 12
+            # cmake_flags:
+            # This env is for older glibc
+
           - os: macos-12
             c: clang
             cxx: clang++
@@ -102,8 +116,8 @@ jobs:
 
       - name: Prepare env
         run: |
-          echo $GITHUB_WORKSPACE
-          mkdir $GITHUB_WORKSPACE/artifacts
+          echo ${GITHUB_WORKSPACE}
+          mkdir ${GITHUB_WORKSPACE}/artifacts
 
       # Common Linux dependencies
       # - name: Install Linux Dependencies
@@ -116,19 +130,25 @@ jobs:
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
         run: |
           sudo apt-get update
-          sudo apt-get install clang-tidy libc++-14-dev libc++abi-14-dev
+          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev
 
       - name: Install ninja libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
         run: |
           sudo apt-get update
-          sudo apt-get install ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         run: |
           sudo apt-get update
-          sudo apt-get install valgrind
+          sudo apt-get install --no-install-recommends valgrind
 
       - name: Cache tools
         uses: actions/cache@v2
@@ -167,7 +187,7 @@ jobs:
       #   with:
       #     path: |
       #       build/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
+      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
       # Using the workaround found here: https://github.com/actions/cache/issues/171
@@ -210,10 +230,12 @@ jobs:
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         run: |
-          PATH="$(pwd)/gcc/mingw64/bin:$PATH"  # because GH Actions does not properly prepend to $PATH
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
-            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          # because GH Actions does not properly prepend to $PATH and still chooses older gcc
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
             ${{ matrix.cmake_flags }}
 
       # - name: Cache ninja exe
@@ -240,18 +262,19 @@ jobs:
       - name: Configure CMake
         if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
         run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S $GITHUB_WORKSPACE -B build \
-            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-            -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts \
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
             ${{ matrix.cmake_flags }}
 
       - name: Build
         # Execute the build using N jobs (-jN)
-        run: cmake --build build --config $BUILD_TYPE -j6
+        run: cmake --build build --config ${BUILD_TYPE} -j6
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
-        run: cmake --install build --config $BUILD_TYPE --prefix artifacts
+        run: cmake --install build --config ${BUILD_TYPE} --prefix artifacts
 
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -261,7 +284,7 @@ jobs:
           cp libstdc++-6.dll \
             libgcc_s_seh-1.dll \
             libwinpthread-1.dll \
-            $GITHUB_WORKSPACE/artifacts/bin
+            ${GITHUB_WORKSPACE}/artifacts/bin
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
@@ -278,10 +301,9 @@ jobs:
       - name: Clang-tidy
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
         continue-on-error: true
-        # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
+        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+        # need to use | as sed separator because / is used in paths
         run: |
-          # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-          # need to use | as separator because / is used in paths
           sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" build/compile_commands.json
 
           cat build/compile_commands.json |
@@ -324,7 +346,7 @@ jobs:
         continue-on-error: true
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
             vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
             vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
             cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
@@ -353,14 +375,14 @@ jobs:
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
-          if [[ "$BUILD_TYPE" =~ "Deb" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
             cp "$(which ucrtbased.dll)" \
                "$(which VCRUNTIME140_1D.dll)" \
                "$(which MSVCP140D.dll)" \
                "$(which VCRUNTIME140D.dll)" \
                bin/
           fi
-          if [[ "$BUILD_TYPE" =~ "Rel" ]]; then
+          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
             cp "$(which ucrtbase.dll)" \
                "$(which VCRUNTIME140_1.dll)" \
                "$(which MSVCP140.dll)" \
@@ -371,7 +393,7 @@ jobs:
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
         # trim prefix from ref to get tag name
-        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> ${GITHUB_ENV}
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
