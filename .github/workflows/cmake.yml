@@ -309,7 +309,6 @@ jobs:
           cat build/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
             grep -v "/build/_deps/" |       # ignore external dependencies
-            grep -v "/ext/" |               # ignore external dependencies
             xargs clang-tidy -p build
 
       - name: Setup memory sanitizer
