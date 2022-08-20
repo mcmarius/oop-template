@@ -25,7 +25,7 @@ set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 
 ###############################################################################
 
-# external dependencies
+# external dependencies with FetchContent
 include(FetchContent)
 
 FetchContent_Declare(
