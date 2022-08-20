@@ -301,15 +301,15 @@ jobs:
       - name: Clang-tidy
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
         continue-on-error: true
-        # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
+        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+        # need to use | as sed separator because / is used in paths
         run: |
-          # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-          # need to use | as separator because / is used in paths
           sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" build/compile_commands.json
 
           cat build/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
             grep -v "/build/_deps/" |       # ignore external dependencies
+            grep -v "/ext/" |               # ignore external dependencies
             xargs clang-tidy -p build
 
       - name: Setup memory sanitizer
