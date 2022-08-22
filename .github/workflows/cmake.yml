@@ -406,7 +406,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}
           path: bin
           retention-days: 10
 
