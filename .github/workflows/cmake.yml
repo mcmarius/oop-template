@@ -230,7 +230,7 @@ jobs:
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         run: |
-          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
           # because GH Actions does not properly prepend to $PATH and still chooses older gcc
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
@@ -407,7 +407,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
-          path: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          path: bin
           retention-days: 10
 
       - name: Release
