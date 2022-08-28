@@ -38,7 +38,7 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-      CPPCHECK_VER: "2.8"
+      CPPCHECK_VER: "2.9"
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
       BUILD_DIR: "build"
