@@ -41,6 +41,8 @@ jobs:
       CPPCHECK_VER: "2.8"
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
+      BUILD_DIR: "build"
+      EXT_DIR: "ext"
 
     strategy:
       fail-fast: false
@@ -187,7 +189,7 @@ jobs:
       #   # make the key depend on the dependency version
       #   with:
       #     path: |
-      #       build/_deps
+      #       "${BUILD_DIR}"/_deps
       #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
@@ -199,8 +201,8 @@ jobs:
         id: cache-deps-ninja
         with:
           path: |
-            build/.ninja_deps
-            build/.ninja_log
+            "${BUILD_DIR}"/.ninja_deps
+            "${BUILD_DIR}"/.ninja_log
           key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
@@ -233,7 +235,7 @@ jobs:
         run: |
           PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
           # because GH Actions does not properly prepend to $PATH and still chooses older gcc
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
             -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
@@ -263,7 +265,7 @@ jobs:
       - name: Configure CMake
         if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
         run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B build \
+          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
             -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
@@ -271,11 +273,11 @@ jobs:
 
       - name: Build
         # Execute the build using N jobs (-jN)
-        run: cmake --build build --config ${BUILD_TYPE} -j6
+        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} -j6
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
-        run: cmake --install build --config ${BUILD_TYPE} --prefix artifacts
+        run: cmake --install "${BUILD_DIR}" --config ${BUILD_TYPE} --prefix artifacts
 
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -291,9 +293,9 @@ jobs:
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
         run: |
           cppcheck --enable=all \
-                   --project=build/compile_commands.json \
-                   -ibuild --suppress='*:build/*' \
-                   -iext --suppress='*:ext/*' \
+                   --project="${BUILD_DIR}"/compile_commands.json \
+                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
+                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
                    --suppress=missingIncludeSystem \
                    --suppress=unmatchedSuppression \
                    --suppress=useStlAlgorithm \
@@ -305,12 +307,12 @@ jobs:
         # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
         # need to use | as sed separator because / is used in paths
         run: |
-          sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" build/compile_commands.json
+          sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" "${BUILD_DIR}"/compile_commands.json
 
-          cat build/compile_commands.json |
+          cat "${BUILD_DIR}"/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
-            grep -v "/build/_deps/" |       # ignore external dependencies
-            xargs clang-tidy -p build
+            grep -v "/"${BUILD_DIR}"/_deps/" |       # ignore external dependencies
+            xargs clang-tidy -p "${BUILD_DIR}"
 
       - name: Setup memory sanitizer
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13' && steps.cache-tools.outputs.cache-hit != 'true'
@@ -366,7 +368,7 @@ jobs:
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
+          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
           cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/"${EXECUTABLE_NAME}"
 
       - name: Move artifacts
