@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:42 when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml:44 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
 
@@ -28,6 +28,7 @@ set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 # external dependencies with FetchContent
 include(FetchContent)
 
+# NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:59
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git
