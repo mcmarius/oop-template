@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:42 when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml:44 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
 
@@ -22,11 +22,12 @@ endif()
 # external dependencies with FetchContent
 #include(FetchContent)
 #
+# NOTE: Also update env vars used for caching in .github/workflows/cmake.yml
 #FetchContent_Declare(
 #        SomeLib
 #        GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#        GIT_SHALLOW    1
 #        GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
+#        GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 #)
 #
 #FetchContent_MakeAvailable(SomeLib)
