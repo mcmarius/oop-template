@@ -1,4 +1,4 @@
-cat tastatura.txt | ./artifacts/bin/"${EXECUTABLE_NAME}" &
+cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}" &
 sleep 3 && xdotool search --name "My Window" key X &&
 sleep 1 && xdotool search --name "My Window" key Y &&
 sleep 1 && xdotool search --name "My Window" key X &&
