@@ -317,7 +317,7 @@ jobs:
             ${GITHUB_WORKSPACE}/bin
 
       - name: Set current date
-        run: echo "TIMESTAMP=$(date +%Y-%m-%d.%H:%M:%S)" >> ${GITHUB_ENV}
+        run: echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
