@@ -39,7 +39,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.9"
-      SFML_VERSION: "2022-08-15-master"
+
       # NOTE: update executable name if it is changed in CMakeLists.txt
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
@@ -54,6 +54,9 @@ jobs:
       # Example:
       # MINGW_CACHE_KEY: "gcc-12.2-msvcrt-r2"
       # MINGW_VER:  "12.2.0-14.0.6-10.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-12.2.0-mingw-w64msvcrt-10.0.0-r2.7z"
+
+      # NOTE: also update in CMakeLists FetchContent
+      SFML_VERSION: "2022-08-30-2.6.x"
 
     strategy:
       fail-fast: false
