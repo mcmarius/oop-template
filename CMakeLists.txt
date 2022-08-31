@@ -31,9 +31,12 @@ include(FetchContent)
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git
-  GIT_SHALLOW    1
-  GIT_TAG        aa82ea132b9296a31922772027ad5d14c1fa381b # master as of 2022-08-15
+  GIT_TAG        863fef024619da7f59b6404087b454337a172ac1 # 2.6.x as of 2022-08-30
+  # GIT_TAG        72d88033e2f24be0fb1e9df614a56f3d5274154c # master as of 2022-08-30
   # GIT_TAG        f7c88ee7ef4e1c705531cd614efb7dcff1f873cb # last commit merged in master before API breakage (2022-04-21)
+  # GIT_TAG        origin/master
+  # GIT_TAG        origin/2.6.x
+  # GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
 
 function(sfml_set_custom_stdlib target)
