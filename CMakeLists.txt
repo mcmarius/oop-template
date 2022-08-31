@@ -28,6 +28,7 @@ set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 # external dependencies with FetchContent
 include(FetchContent)
 
+# NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:59
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git
