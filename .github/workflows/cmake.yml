@@ -322,7 +322,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_{{ env.TIMESTAMP }}
+          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
           path: bin
           retention-days: 10
 
