@@ -39,10 +39,18 @@ jobs:
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
       CPPCHECK_VER: "2.9"
+
+      # NOTE: update executable name if it is changed in CMakeLists.txt
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
       BUILD_DIR: "build"
       EXT_DIR: "ext"
+
+      # NOTE: replace with another version if this one does not work
+      # For more versions, see https://winlibs.com or
+      # https://github.com/brechtsanders/winlibs_mingw/releases/
+      MINGW_CACHE_KEY: "gcc-11.3-msvcrt-r3"
+      MINGW_VER: "11.3.0-14.0.3-10.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-11.3.0-mingw-w64msvcrt-10.0.0-r3.7z"
 
     strategy:
       fail-fast: false
@@ -212,17 +220,14 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         with:
           path: gcc
-          key: ${{ runner.os }}-gcc-11.3-msvcrt-r3
+          key: ${{ runner.os }}-${{ env.MINGW_CACHE_KEY }}
 
       - name: Download toolchain (MinGW)
         uses: suisei-cn/actions-download-file@v1
         id: download-mingw-gcc
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
-        # NOTE: replace with another version if this one does not work
-        # For more versions, see https://winlibs.com or
-        # https://github.com/brechtsanders/winlibs_mingw/releases/
         with:
-          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/11.3.0-14.0.3-10.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-11.3.0-mingw-w64msvcrt-10.0.0-r3.7z"
+          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${MINGW_VER}"
           target: compiler/
 
       - name: Install toolchain (MinGW)
@@ -279,6 +284,28 @@ jobs:
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: cmake --install "${BUILD_DIR}" --config ${BUILD_TYPE} --prefix artifacts
 
+      - name: Move artifacts
+        run: |
+          mv artifacts/bin bin
+
+      - name: Copy missing dlls
+        if: runner.os == 'Windows' && matrix.cxx == 'cl'
+        run: |
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
+            cp "$(which ucrtbased.dll)" \
+               "$(which VCRUNTIME140_1D.dll)" \
+               "$(which MSVCP140D.dll)" \
+               "$(which VCRUNTIME140D.dll)" \
+               bin/
+          fi
+          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
+            cp "$(which ucrtbase.dll)" \
+               "$(which VCRUNTIME140_1.dll)" \
+               "$(which MSVCP140.dll)" \
+               "$(which VCRUNTIME140.dll)" \
+               bin/
+          fi
+
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         # static linking might not work with MinGW, might be easier this way
@@ -287,7 +314,17 @@ jobs:
           cp libstdc++-6.dll \
             libgcc_s_seh-1.dll \
             libwinpthread-1.dll \
-            ${GITHUB_WORKSPACE}/artifacts/bin
+            ${GITHUB_WORKSPACE}/bin
+
+      - name: Set current date
+        run: echo "TIMESTAMP=$(date +%Y-%m-%d.%H:%M:%S)" >> ${GITHUB_ENV}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_{{ env.TIMESTAMP }}
+          path: bin
+          retention-days: 10
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
@@ -333,65 +370,40 @@ jobs:
           cmake --build . -j6 -- cxx cxxabi
 
       - name: Sanitizers
-        # run one sanitizer for each OS to avoid building extra binaries;
+        # run one sanitizer for each env to avoid building extra binaries on one env;
         # memory on Linux clang, address on macOS clang
         if: startsWith(matrix.cxx, 'clang++')
         # detect_leaks is not supported on macOS
         # env:
         # ASAN_OPTIONS: detect_leaks=1
-        # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          cat "${INPUT_FILENAME}" | ./artifacts/bin/"${EXECUTABLE_NAME}"
+          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         continue-on-error: true
-        # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
             vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
             vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
             cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
                "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-               artifacts/bin/
+               bin/
           fi
-          cat "${INPUT_FILENAME}" | ./artifacts/bin/"${EXECUTABLE_NAME}".exe
+          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
       #  if: matrix.cxx == 'cl'
       #  continue-on-error: true
-      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./artifacts/bin/"${EXECUTABLE_NAME}".exe
+      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
-        # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/"${EXECUTABLE_NAME}"
-
-      - name: Move artifacts
-        run: |
-          mv artifacts/bin bin
-
-      - name: Copy missing dlls
-        if: runner.os == 'Windows' && matrix.cxx == 'cl'
-        run: |
-          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-            cp "$(which ucrtbased.dll)" \
-               "$(which VCRUNTIME140_1D.dll)" \
-               "$(which MSVCP140D.dll)" \
-               "$(which VCRUNTIME140D.dll)" \
-               bin/
-          fi
-          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
-            cp "$(which ucrtbase.dll)" \
-               "$(which VCRUNTIME140_1.dll)" \
-               "$(which MSVCP140.dll)" \
-               "$(which VCRUNTIME140.dll)" \
-               bin/
-          fi
+          cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
@@ -405,13 +417,6 @@ jobs:
           type: 'zip'
           path: bin
           filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}
-          path: bin
-          retention-days: 10
 
       - name: Release
         uses: softprops/action-gh-release@v1
