@@ -322,7 +322,13 @@ jobs:
       - name: Set current date and prefix name
         run: |
           echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
+
+          # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
           echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed 's|/|_|')" >> ${GITHUB_ENV}
+
+          # or use only the repo name (github does not have a predefined environment variable for this)
+          # the regex splits by / and keeps everything after / without the / character
+          # echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
