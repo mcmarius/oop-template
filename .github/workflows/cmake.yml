@@ -164,6 +164,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends valgrind
 
+      # temp workaround, there is a bug in xcode linker 14.0.1; as of now, 14.1 is in beta
+      - name: Setup Xcode version
+        if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '13.4.1'
+
       - name: Cache tools
         uses: actions/cache@v2
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
