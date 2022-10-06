@@ -319,13 +319,21 @@ jobs:
             libwinpthread-1.dll \
             ${GITHUB_WORKSPACE}/bin
 
-      - name: Set current date
-        run: echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
+      - name: Set current date and prefix name
+        run: |
+          echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
+
+          # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
+          echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed 's|/|_|')" >> ${GITHUB_ENV}
+
+          # or use only the repo name (github does not have a predefined environment variable for this)
+          # the regex splits by / and keeps everything after / without the / character
+          # echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
+          name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
           path: bin
           retention-days: 10
 
@@ -419,11 +427,11 @@ jobs:
         with:
           type: 'zip'
           path: bin
-          filename: ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          filename: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+            ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
