@@ -230,7 +230,7 @@ jobs:
         id: download-mingw-gcc
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
         with:
-          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${MINGW_VER}"
+          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${{ env.MINGW_VER }}"
           target: compiler/
 
       - name: Install toolchain (MinGW)
