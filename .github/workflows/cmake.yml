@@ -302,12 +302,22 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
           if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
+            # runtime debug DLLs
             cp "$(which ucrtbased.dll)" \
                "$(which VCRUNTIME140_1D.dll)" \
                "$(which MSVCP140D.dll)" \
                "$(which VCRUNTIME140D.dll)" \
                bin/
+
+            # sanitizers DLLs
+            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
+            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
+            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+               bin/
           fi
+
+          # runtime release DLLs
           if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
             cp "$(which ucrtbase.dll)" \
                "$(which VCRUNTIME140_1.dll)" \
@@ -402,13 +412,6 @@ jobs:
         if: matrix.cxx == 'cl'
         continue-on-error: true
         run: |
-          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
-            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
-            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
-               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-               bin/
-          fi
           cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
