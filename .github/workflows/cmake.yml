@@ -153,7 +153,7 @@ jobs:
         id: cache-tools
         with:
           path: tools
-          key: tools-clang-msan
+          key: tools-clang-stdlib-msan
 
 
       # Uncomment when using external dependencies so they will be cached
@@ -274,7 +274,7 @@ jobs:
         # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
         # need to use | as sed separator because / is used in paths
         run: |
-          sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" "${BUILD_DIR}"/compile_commands.json
+          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
 
           cat "${BUILD_DIR}"/compile_commands.json |
             jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
@@ -289,9 +289,9 @@ jobs:
           git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
           cd llvm-project
           mkdir build; cd build
-          sudo ln -s -f /usr/bin/clang-13 /usr/bin/clang
-          sudo ln -s -f /usr/bin/clang++-13 /usr/bin/clang++
-          CC=clang-13 CXX=clang++-13 cmake -GNinja ../llvm \
+          sudo ln -s -f /usr/bin/$CC /usr/bin/clang
+          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
+          cmake -GNinja ../llvm \
             -DCMAKE_BUILD_TYPE=Release \
             -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
             -DCMAKE_C_COMPILER=clang \
