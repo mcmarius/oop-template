@@ -93,14 +93,14 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: Windows 2022 MSVC 19.32
+            name: Windows 2022 MSVC 19.34
             # cmake_flags:
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: gcc
             cxx: g++
-            name: Windows 2022 MinGW GCC 12
+            name: Windows 2022 MinGW GCC 11
             # cmake_flags:
             cmake_generator: Ninja
             # Ninja is faster
@@ -324,7 +324,7 @@ jobs:
       #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
-        if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        if: runner.os == 'Linux' && matrix.runs_valgrind == true
         run: |
           # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
           cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
