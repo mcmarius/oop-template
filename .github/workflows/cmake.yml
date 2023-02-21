@@ -2,10 +2,10 @@ name: C++ CI
 
 on:
   push:
-    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    branches: ['*'] # NOTE: replace/update with appropriate branch name(s)
     tags: ['*']
   pull_request:
-    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    branches: ['*'] # NOTE: replace/update with appropriate branch name(s)
   workflow_dispatch:
     inputs:
       build_type:
@@ -23,7 +23,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 10
     permissions:
       contents: write
 
@@ -38,22 +38,12 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
       BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-      CPPCHECK_VER: "2.9"
 
       # NOTE: update executable name if it is changed in CMakeLists.txt
       EXECUTABLE_NAME: "oop"
       INPUT_FILENAME: "tastatura.txt"
       BUILD_DIR: "build"
       EXT_DIR: "ext"
-
-      # NOTE: replace with another version if this one does not work
-      # For more versions, see https://winlibs.com or
-      # https://github.com/brechtsanders/winlibs_mingw/releases/
-      MINGW_CACHE_KEY: "gcc-11.3-msvcrt-r3"
-      MINGW_VER: "11.3.0-14.0.3-10.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-11.3.0-mingw-w64msvcrt-10.0.0-r3.7z"
-      # Example:
-      # MINGW_CACHE_KEY: "gcc-12.2-msvcrt-r2"
-      # MINGW_VER:  "12.2.0-14.0.6-10.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-12.2.0-mingw-w64msvcrt-10.0.0-r2.7z"
 
     strategy:
       fail-fast: false
@@ -66,6 +56,7 @@ jobs:
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            runs_cppcheck: true
             # This env runs cppcheck and sanitizers
 
           - os: ubuntu-22.04
@@ -118,7 +109,7 @@ jobs:
           - os: windows-2022
             c: gcc
             cxx: g++
-            name: Windows 2022 MinGW GCC 11
+            name: Windows 2022 MinGW GCC 12
             # cmake_flags:
             cmake_generator: Ninja
             # Ninja is faster
@@ -177,28 +168,8 @@ jobs:
         id: cache-tools
         with:
           path: tools
-          key: tools-cppcheck-${{ env.CPPCHECK_VER }}-clang-13
+          key: tools-clang-13
 
-      - name: Build tools
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13' && steps.cache-tools.outputs.cache-hit != 'true'
-        run: |
-          mkdir tools/
-          wget https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip
-          unzip ${CPPCHECK_VER}.zip
-          rm ${CPPCHECK_VER}.zip
-          mv cppcheck-${CPPCHECK_VER} tools/cppcheck-${CPPCHECK_VER}
-          cd tools/cppcheck-${CPPCHECK_VER}
-          mkdir build
-          cmake -S . -B build
-          cmake --build build -j6
-
-      - name: Install tools
-        # this step is fast, no need for caching
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
-        # build/install other tools in these steps
-        run: |
-          cd tools/cppcheck-${CPPCHECK_VER}
-          sudo cmake --install build
 
       # Uncomment when using external dependencies so they will be cached
       # - name: Cache deps
@@ -224,37 +195,6 @@ jobs:
           key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
-      - name: Cache MinGW
-        uses: actions/cache@v3
-        id: cache-mingw
-        if: runner.os == 'Windows' && matrix.cxx == 'g++'
-        with:
-          path: gcc
-          key: ${{ runner.os }}-${{ env.MINGW_CACHE_KEY }}
-
-      - name: Download toolchain (MinGW)
-        uses: suisei-cn/actions-download-file@v1
-        id: download-mingw-gcc
-        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
-        with:
-          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/${{ env.MINGW_VER }}"
-          target: compiler/
-
-      - name: Install toolchain (MinGW)
-        if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
-        run: |
-          7z x compiler/${{ steps.download-mingw-gcc.outputs.filename }} -ogcc
-
-      - name: Configure CMake (MinGW)
-        if: runner.os == 'Windows' && matrix.cxx == 'g++'
-        run: |
-          PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
-          # because GH Actions does not properly prepend to $PATH and still chooses older gcc
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            ${{ matrix.cmake_flags }}
 
       # - name: Cache ninja exe
       #   uses: actions/cache@v3
@@ -330,10 +270,9 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         # static linking might not work with MinGW, might be easier this way
         run: |
-          cd gcc/mingw64/bin
-          cp libstdc++-6.dll \
-            libgcc_s_seh-1.dll \
-            libwinpthread-1.dll \
+          cp $(which libstdc++-6.dll) \
+            $(which libgcc_s_seh-1.dll) \
+            $(which libwinpthread-1.dll) \
             ${GITHUB_WORKSPACE}/bin
 
       - name: Set current date and prefix name
@@ -355,9 +294,10 @@ jobs:
           retention-days: 10
 
       - name: Cppcheck
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        if: runner.os == 'Linux' && matrix.runs_cppcheck == true
         run: |
           cppcheck --enable=all \
+                   --inline-suppr \
                    --project="${BUILD_DIR}"/compile_commands.json \
                    -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
                    -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
@@ -405,7 +345,7 @@ jobs:
         # env:
         # ASAN_OPTIONS: detect_leaks=1
         run: |
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}"
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./bin/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
@@ -424,7 +364,7 @@ jobs:
         if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
         run: |
           # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
+          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
