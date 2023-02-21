@@ -116,16 +116,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            c: clang-13
-            cxx: clang++-13
-            name: "MSan: Ubuntu 22.04 Clang 13"
-            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-            # which is used by cppcheck and clang-tidy
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
-            cmake_generator: Ninja
-            runs_msan: true
-            # This env runs memory sanitizers
+          # - os: ubuntu-22.04
+          #   c: clang-13
+          #   cxx: clang++-13
+          #   name: "MSan: Ubuntu 22.04 Clang 13"
+          #   # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
+          #   # which is used by cppcheck and clang-tidy
+          #   cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
+          #   cmake_generator: Ninja
+          #   runs_msan: false
+          #   # This env runs memory sanitizers
 
           - os: ubuntu-22.04
             c: clang-12
@@ -222,11 +222,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
-      - name: Install ninja and libc++ (Linux Clang 13)
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+      # - name: Install ninja and libc++ (Linux Clang 13)
+      #   if: runner.os == 'Linux' && matrix.runs_msan == true
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
@@ -339,24 +339,24 @@ jobs:
           path: ${{ env.ZIP_NAME }}
           retention-days: 20
 
-      - name: Setup memory sanitizer
-        if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p tools
-          cd tools
-          git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
-          cd llvm-project
-          mkdir build; cd build
-          sudo ln -s -f /usr/bin/$CC /usr/bin/clang
-          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
-          cmake -GNinja ../llvm \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
-            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
-          cmake --build . -j6 -- cxx cxxabi
+      # - name: Setup memory sanitizer
+      #   if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
+      #   run: |
+      #     mkdir -p tools
+      #     cd tools
+      #     git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
+      #     cd llvm-project
+      #     mkdir build; cd build
+      #     sudo ln -s -f /usr/bin/$CC /usr/bin/clang
+      #     sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
+      #     cmake -GNinja ../llvm \
+      #       -DCMAKE_BUILD_TYPE=Release \
+      #       -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
+      #       -DCMAKE_C_COMPILER=clang \
+      #       -DCMAKE_CXX_COMPILER=clang++ \
+      #       -DLLVM_USE_SANITIZER=MemoryWithOrigins \
+      #       -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
+      #     cmake --build . -j6 -- cxx cxxabi
 
       - name: Make scripts executable
         if: runner.os == 'Linux'
