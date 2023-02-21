@@ -57,41 +57,32 @@ jobs:
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             runs_cppcheck: true
+            runs_msan: true
             # This env runs cppcheck and sanitizers
 
           - os: ubuntu-22.04
-            c: clang-14
-            cxx: clang++-14
-            name: Ubuntu 22.04 Clang 14
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 22.04 Clang 12
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs clang-tidy and sanitizers
+            runs_clang_tidy: true
+            runs_asan: true
+            # # This env runs clang-tidy and sanitizers
 
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
             name: Ubuntu 22.04 GCC 11
             # cmake_flags:
+            runs_valgrind: true
             # This env runs valgrind
-
-          - os: ubuntu-20.04
-            c: gcc-10
-            cxx: g++-10
-            name: Ubuntu 20.04 GCC 10
-            # cmake_flags:
-            # This env is for older glibc
-
-          - os: ubuntu-20.04
-            c: clang-12
-            cxx: clang++-12
-            name: Ubuntu 20.04 Clang 12
-            # cmake_flags:
-            # This env is for older glibc
 
           - os: macos-12
             c: clang
             cxx: clang++
             name: macOS 12 Apple Clang 13
             # cmake_flags:
+            runs_asan: true
 
           - os: macos-12
             c: gcc-11
@@ -131,26 +122,20 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install clang-tidy and libc++ (Linux Clang 14)
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+      - name: Install clang-tidy and libc++ (Linux Clang 12)
+        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev
+          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev
 
       - name: Install ninja libc++ (Linux Clang 13)
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
-
-      - name: Install clang-tidy and libc++ (Linux Clang 12)
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev
+          sudo apt-get install --no-install-recommends cppcheck ninja-build libc++-13-dev libc++abi-13-dev
 
       - name: Install valgrind
-        if: runner.os == 'Linux' && matrix.cxx == 'g++-11'
+        if: runner.os == 'Linux' && matrix.runs_valgrind == true
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends valgrind
@@ -164,11 +149,11 @@ jobs:
 
       - name: Cache tools
         uses: actions/cache@v3
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13'
+        if: runner.os == 'Linux' && matrix.runs_msan == true
         id: cache-tools
         with:
           path: tools
-          key: tools-clang-13
+          key: tools-clang-msan
 
 
       # Uncomment when using external dependencies so they will be cached
@@ -178,7 +163,7 @@ jobs:
       #   # make the key depend on the dependency version
       #   with:
       #     path: |
-      #       "${BUILD_DIR}"/_deps
+      #       ${{ env.BUILD_DIR }}/_deps
       #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
 
       # NOTE: GH Actions does not allow updating the cache yet
@@ -190,8 +175,8 @@ jobs:
         id: cache-deps-ninja
         with:
           path: |
-            "${BUILD_DIR}"/.ninja_deps
-            "${BUILD_DIR}"/.ninja_log
+            ${{ env.BUILD_DIR }}/.ninja_deps
+            ${{ env.BUILD_DIR}}/.ninja_log
           key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
@@ -218,7 +203,6 @@ jobs:
       #     7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
 
       - name: Configure CMake
-        if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
         run: |
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
