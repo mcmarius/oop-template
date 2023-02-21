@@ -126,7 +126,7 @@ jobs:
         if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev
+          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
       - name: Install ninja libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.runs_msan == true
@@ -179,28 +179,6 @@ jobs:
             ${{ env.BUILD_DIR}}/.ninja_log
           key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
-
-
-      # - name: Cache ninja exe
-      #   uses: actions/cache@v3
-      #   id: cache-ninja-exe
-      #   if: runner.os == 'Windows' && matrix.cxx == 'cl'
-      #   with:
-      #     path: ninja
-      #     key: ${{ runner.os }}-ninja-1.11.0
-
-      # - name: Download ninja
-      #   uses: suisei-cn/actions-download-file@v1
-      #   id: download-ninja
-      #   if: matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
-      #   with:
-      #     url: "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip"
-      #     target: ninja-exe
-
-      # - name: Extract ninja exe
-      #   if: runner.os == 'Windows' && matrix.cxx == 'cl' && steps.cache-ninja-exe.outputs.cache-hit != 'true'
-      #   run: |
-      #     7z x ninja-exe/${{ steps.download-ninja.outputs.filename }} -oninja
 
       - name: Configure CMake
         run: |
@@ -275,7 +253,7 @@ jobs:
         with:
           name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
           path: bin
-          retention-days: 10
+          retention-days: 20
 
       - name: Cppcheck
         if: runner.os == 'Linux' && matrix.runs_cppcheck == true
@@ -291,7 +269,7 @@ jobs:
                    --error-exitcode=1
 
       - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-14'
+        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         continue-on-error: true
         # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
         # need to use | as sed separator because / is used in paths
@@ -299,13 +277,14 @@ jobs:
           sed -i "s|$(which clang++-14)|$(realpath $(which clang++-14))|g" "${BUILD_DIR}"/compile_commands.json
 
           cat "${BUILD_DIR}"/compile_commands.json |
-            jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
-            grep -v "/"${BUILD_DIR}"/_deps/" |       # ignore external dependencies
+            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
+            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
             xargs clang-tidy -p "${BUILD_DIR}"
 
       - name: Setup memory sanitizer
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-13' && steps.cache-tools.outputs.cache-hit != 'true'
+        if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
         run: |
+          mkdir -p tools
           cd tools
           git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
           cd llvm-project
