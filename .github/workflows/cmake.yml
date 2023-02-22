@@ -186,6 +186,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
             -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            -DWARNINGS_AS_ERRORS=ON \
             ${{ matrix.cmake_flags }}
 
       - name: Build
