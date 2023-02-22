@@ -52,7 +52,7 @@ jobs:
           - os: ubuntu-22.04
             c: clang-13
             cxx: clang++-13
-            name: Ubuntu 22.04 Clang 13
+            name: "MSan: Ubuntu 22.04 Clang 13"
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -63,7 +63,7 @@ jobs:
           - os: ubuntu-22.04
             c: clang-12
             cxx: clang++-12
-            name: Ubuntu 22.04 Clang 12
+            name: "ASan: Ubuntu 22.04 Clang 12"
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             runs_clang_tidy: true
             runs_asan: true
@@ -72,7 +72,7 @@ jobs:
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
-            name: Ubuntu 22.04 GCC 11
+            name: "Valgrind: Ubuntu 22.04 GCC 11"
             # cmake_flags:
             runs_valgrind: true
             # This env runs valgrind
@@ -80,27 +80,27 @@ jobs:
           - os: macos-12
             c: clang
             cxx: clang++
-            name: macOS 12 Apple Clang 13
+            name: "ASan: macOS 12 Apple Clang 14"
             # cmake_flags:
             runs_asan: true
 
           - os: macos-12
             c: gcc-11
             cxx: g++-11
-            name: macOS 12 GCC 11
+            name: "macOS 12 GCC 11"
             # cmake_flags:
 
           - os: windows-2022
             c: cl
             cxx: cl
-            name: Windows 2022 MSVC 19.34
+            name: "ASan: Windows 2022 MSVC 19.34"
             # cmake_flags:
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: gcc
             cxx: g++
-            name: Windows 2022 MinGW GCC 11
+            name: "Windows 2022 MinGW GCC 11"
             # cmake_flags:
             cmake_generator: Ninja
             # Ninja is faster
