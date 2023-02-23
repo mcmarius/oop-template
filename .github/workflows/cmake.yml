@@ -49,7 +49,7 @@ jobs:
 
 
       - id: Configure CMake custom
-        uses: ./github/actions/configure-cmake@${{ env.GITHUB_REF_NAME }}
+        uses: ./github/actions/configure-cmake@main
         with:
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
           warnings_as_errors: 'OFF'
