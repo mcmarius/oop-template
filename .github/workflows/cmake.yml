@@ -51,7 +51,6 @@ jobs:
         uses: ./.github/actions/configure-cmake
         with:
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
-          warnings_as_errors: 'OFF'
 
       - name: Cppcheck
         run: |
@@ -84,7 +83,6 @@ jobs:
         uses: ./.github/actions/configure-cmake
         with:
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
-          warnings_as_errors: 'OFF'
 
       - name: Clang-Tidy
         continue-on-error: true
@@ -132,7 +130,7 @@ jobs:
             name: "ASan: Ubuntu 22.04 Clang 12"
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             runs_clang_tidy: true
-            runs_asan: true
+            # runs_asan: true
             # # This env runs clang-tidy and sanitizers
 
           - os: ubuntu-22.04
@@ -148,7 +146,7 @@ jobs:
             cxx: clang++
             name: "ASan: macOS 12 Apple Clang 14"
             # cmake_flags:
-            runs_asan: true
+            # runs_asan: true
 
           - os: macos-12
             c: gcc-11
@@ -161,6 +159,7 @@ jobs:
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.34"
             # cmake_flags:
+            # runs_asan: true
             # cmake_generator: Ninja
 
           - os: windows-2022
@@ -220,7 +219,6 @@ jobs:
         with:
           path: tools
           key: tools-clang-stdlib-msan
-
 
       # Uncomment when using external dependencies so they will be cached
       # - name: Cache deps

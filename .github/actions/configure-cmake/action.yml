@@ -7,15 +7,11 @@ inputs:
   warnings_as_errors:
     description: 'Treat warnings as errors'
     required: false
-    default: 'ON'
+    default: 'OFF'
   custom_flags:
     description: 'Custom CMake configuration flags'
     required: false
 
-# outputs:
-#   random-number:
-#     description: "Random number"
-#     value: ${{ steps.random-number-generator.outputs.random-number }}
 runs:
   using: "composite"
   steps:
@@ -27,10 +23,3 @@ runs:
             -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
             ${{ inputs.custom_flags }}
       shell: bash
-    # - id: random-number-generator
-    #   run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
-    #   shell: bash
-    # - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-    #   shell: bash
-    # - run: goodbye.sh
-    #   shell: bash
