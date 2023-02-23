@@ -47,22 +47,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
-
       - name: Configure CMake
-        uses: ./.github/actions/configure-cmake # FIXME
+        uses: ./.github/actions/configure-cmake
         with:
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
           warnings_as_errors: 'OFF'
-
-
-      # - name: Configure CMake
-      #   run: |
-      #     cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-      #       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-      #       -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-      #       -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-      #       -DWARNINGS_AS_ERRORS=OFF \
-      #       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Cppcheck
         run: |
@@ -92,13 +81,10 @@ jobs:
           sudo apt-get install --no-install-recommends clang-tidy
 
       - name: Configure CMake
-        run: |
-          cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            -DWARNINGS_AS_ERRORS=OFF \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        uses: ./.github/actions/configure-cmake
+        with:
+          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+          warnings_as_errors: 'OFF'
 
       - name: Clang-Tidy
         continue-on-error: true
@@ -261,13 +247,11 @@ jobs:
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
       - name: Configure CMake
-        run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            -DWARNINGS_AS_ERRORS=ON \
-            ${{ matrix.cmake_flags }}
+        uses: ./.github/actions/configure-cmake
+        with:
+          cmake_generator: ${{ matrix.cmake_generator }}
+          custom_flags: ${{ matrix.cmake_flags }}
+          warnings_as_errors: 'ON'
 
       - name: Build
         # Execute the build using N jobs (-jN)
