@@ -1,13 +1,13 @@
+#include <rlutil.h>
+#include <digestpp.hpp>
+#include <random.hpp>
+#include <csv.hpp>
+#include <date.h>
+
 #include <iostream>
 #include <cctype>
 #include <chrono>
 #include <thread>
-
-#include <digestpp.hpp>
-#include <rlutil.h>
-#include <random.hpp>
-#include <csv.hpp>
-#include <date.h>
 
 std::string make_salt() {
     // important este ca salt-ul să fie unic, nu contează că nu este aleator
