@@ -271,7 +271,7 @@ jobs:
       - name: Move artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
-          mv artifacts/bin bin ${{ env.ZIP_NAME }}
+          mv artifacts/bin ${{ env.ZIP_NAME }}
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
       - name: Copy missing dlls
