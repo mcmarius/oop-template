@@ -47,14 +47,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
-      - name: Configure CMake
-        run: |
-          cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            -DWARNINGS_AS_ERRORS=OFF \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - id: Configure CMake custom
+        uses: ./github/actions/configure-cmake@${{ env.GITHUB_REF_NAME }}
+        with:
+          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+          warnings_as_errors: 'OFF'
+
+
+      # - name: Configure CMake
+      #   run: |
+      #     cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+      #       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+      #       -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+      #       -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+      #       -DWARNINGS_AS_ERRORS=OFF \
+      #       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Cppcheck
         run: |
