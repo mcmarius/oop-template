@@ -19,7 +19,95 @@ on:
           - RelWithDebInfo
           - MinSizeRel
 
+env:
+  BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
+  # NOTE: update executable name if it is changed in CMakeLists.txt
+  EXECUTABLE_NAME: "oop"
+  INPUT_FILENAME: "tastatura.txt"
+  BUILD_DIR: "build"
+  EXT_DIR: "ext"
+
+defaults:
+  run:
+    # Use a bash shell, so we can use the same syntax for environment variable
+    # access regardless of the host operating system
+    # https://github.com/saxbophone/CPP20-Cross-Platform-Template
+    shell: bash
+
 jobs:
+  cppcheck:
+    name: "Cppcheck"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends cppcheck
+
+      - name: Configure CMake
+        run: |
+          cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            -DWARNINGS_AS_ERRORS=OFF \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Cppcheck
+        if: runner.os == 'Linux' && matrix.runs_cppcheck == true
+        run: |
+          cppcheck --enable=all \
+                   --inline-suppr \
+                   --project="${BUILD_DIR}"/compile_commands.json \
+                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
+                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
+                   --suppress=missingIncludeSystem \
+                   --suppress=unmatchedSuppression \
+                   --suppress=useStlAlgorithm \
+                   --error-exitcode=1
+
+  clang-tidy:
+    name: "Clang-Tidy"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install clang-tidy and libc++ (Linux Clang 14)
+        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev libunwind-14-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            -DWARNINGS_AS_ERRORS=OFF \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
+      - name: Clang-Tidy
+        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
+        continue-on-error: true
+        env:
+          CC: clang-14
+          CXX: clang++-14
+        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+        # need to use | as sed separator because / is used in paths
+        run: |
+          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
+
+          cat "${BUILD_DIR}"/compile_commands.json |
+            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
+            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
+            xargs clang-tidy -p "${BUILD_DIR}"
+
+
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -27,23 +115,9 @@ jobs:
     permissions:
       contents: write
 
-    defaults:
-      run:
-        # Use a bash shell, so we can use the same syntax for environment variable
-        # access regardless of the host operating system
-        # https://github.com/saxbophone/CPP20-Cross-Platform-Template
-        shell: bash
-
     env:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
-      BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-
-      # NOTE: update executable name if it is changed in CMakeLists.txt
-      EXECUTABLE_NAME: "oop"
-      INPUT_FILENAME: "tastatura.txt"
-      BUILD_DIR: "build"
-      EXT_DIR: "ext"
 
     strategy:
       fail-fast: false
