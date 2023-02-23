@@ -4,18 +4,11 @@ cmake_minimum_required(VERSION 3.24)
 # for now, the project name is used as the executable name
 project(oop)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# By default, treat warnings as errors; override via cmake defines or via env vars
-if(DEFINED WARNINGS_AS_ERRORS)
-  # do nothing, already defined
-elseif(DEFINED ENV{WARNINGS_AS_ERRORS})
-  set(WARNINGS_AS_ERRORS $ENV{WARNINGS_AS_ERRORS})
-else()
-  set(WARNINGS_AS_ERRORS ON)
-endif()
+option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
 ###############################################################################
 
@@ -54,18 +47,16 @@ endif()
 
 ###############################################################################
 
+if(WARNINGS_AS_ERRORS)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
+endif()
+
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
 if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0)
-    if(WARNINGS_AS_ERRORS)
-      target_compile_options(${PROJECT_NAME} PRIVATE /WX)
-    endif()
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
-    if(WARNINGS_AS_ERRORS)
-      target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
-    endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")

@@ -1,0 +1,28 @@
+name: 'Configure CMake'
+description: 'Common logic for CMake configuration'
+inputs:
+  cmake_generator:
+    description: 'CMake generator'
+    required: false
+  warnings_as_errors:
+    description: 'Treat warnings as errors'
+    required: false
+    default: 'OFF'
+  custom_flags:
+    description: 'Custom CMake configuration flags'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+          CMAKE_GENERATOR=${{ inputs.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+            -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
+            ${{ inputs.custom_flags }}
+      shell: bash
+
+# https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+# https://github.com/GuillaumeFalourd/poc-github-actions/blob/main/.github/workflows/36-local-action.yml

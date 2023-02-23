@@ -19,7 +19,84 @@ on:
           - RelWithDebInfo
           - MinSizeRel
 
+env:
+  BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
+  # NOTE: update executable name if it is changed in CMakeLists.txt
+  EXECUTABLE_NAME: "oop"
+  INPUT_FILENAME: "tastatura.txt"
+  BUILD_DIR: "build"
+  EXT_DIR: "ext"
+
+defaults:
+  run:
+    # Use a bash shell, so we can use the same syntax for environment variable
+    # access regardless of the host operating system
+    # https://github.com/saxbophone/CPP20-Cross-Platform-Template
+    shell: bash
+
 jobs:
+  cppcheck:
+    name: "Cppcheck"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends cppcheck
+
+      - name: Configure CMake
+        uses: ./.github/actions/configure-cmake
+        with:
+          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+
+      - name: Cppcheck
+        run: |
+          cppcheck --enable=all \
+                   --inline-suppr \
+                   --project="${BUILD_DIR}"/compile_commands.json \
+                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
+                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
+                   --suppress=missingIncludeSystem \
+                   --suppress=unmatchedSuppression \
+                   --suppress=useStlAlgorithm \
+                   --error-exitcode=1
+
+  clang-tidy:
+    name: "Clang-Tidy"
+    runs-on: ubuntu-22.04
+    env:
+      CC: clang-14
+      CXX: clang++-14
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install clang-tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends clang-tidy
+
+      - name: Configure CMake
+        uses: ./.github/actions/configure-cmake
+        with:
+          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+
+      - name: Clang-Tidy
+        continue-on-error: true
+        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
+        # need to use | as sed separator because / is used in paths
+        run: |
+          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
+
+          cat "${BUILD_DIR}"/compile_commands.json |
+            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
+            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
+            xargs clang-tidy -p "${BUILD_DIR}"
+
+
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
@@ -27,23 +104,9 @@ jobs:
     permissions:
       contents: write
 
-    defaults:
-      run:
-        # Use a bash shell, so we can use the same syntax for environment variable
-        # access regardless of the host operating system
-        # https://github.com/saxbophone/CPP20-Cross-Platform-Template
-        shell: bash
-
     env:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
-      BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-
-      # NOTE: update executable name if it is changed in CMakeLists.txt
-      EXECUTABLE_NAME: "oop"
-      INPUT_FILENAME: "tastatura.txt"
-      BUILD_DIR: "build"
-      EXT_DIR: "ext"
 
     strategy:
       fail-fast: false
@@ -52,10 +115,11 @@ jobs:
           - os: ubuntu-22.04
             c: clang-13
             cxx: clang++-13
-            name: Ubuntu 22.04 Clang 13
+            name: "MSan: Ubuntu 22.04 Clang 13"
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_generator: Ninja
             runs_cppcheck: true
             runs_msan: true
             # This env runs cppcheck and sanitizers
@@ -63,16 +127,16 @@ jobs:
           - os: ubuntu-22.04
             c: clang-12
             cxx: clang++-12
-            name: Ubuntu 22.04 Clang 12
+            name: "ASan: Ubuntu 22.04 Clang 12"
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             runs_clang_tidy: true
-            runs_asan: true
+            # runs_asan: true
             # # This env runs clang-tidy and sanitizers
 
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
-            name: Ubuntu 22.04 GCC 11
+            name: "Valgrind: Ubuntu 22.04 GCC 11"
             # cmake_flags:
             runs_valgrind: true
             # This env runs valgrind
@@ -80,27 +144,28 @@ jobs:
           - os: macos-12
             c: clang
             cxx: clang++
-            name: macOS 12 Apple Clang 13
+            name: "ASan: macOS 12 Apple Clang 14"
             # cmake_flags:
-            runs_asan: true
+            # runs_asan: true
 
           - os: macos-12
             c: gcc-11
             cxx: g++-11
-            name: macOS 12 GCC 11
+            name: "macOS 12 GCC 11"
             # cmake_flags:
 
           - os: windows-2022
             c: cl
             cxx: cl
-            name: Windows 2022 MSVC 19.34
+            name: "ASan: Windows 2022 MSVC 19.34"
             # cmake_flags:
+            # runs_asan: true
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: gcc
             cxx: g++
-            name: Windows 2022 MinGW GCC 11
+            name: "Windows 2022 MinGW GCC 11"
             # cmake_flags:
             cmake_generator: Ninja
             # Ninja is faster
@@ -122,17 +187,17 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install clang-tidy and libc++ (Linux Clang 12)
+      - name: Install libc++ (Linux Clang 12)
         if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev libunwind-12-dev
+          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
-      - name: Install ninja libc++ (Linux Clang 13)
+      - name: Install ninja and libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends cppcheck ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
@@ -154,7 +219,6 @@ jobs:
         with:
           path: tools
           key: tools-clang-stdlib-msan
-
 
       # Uncomment when using external dependencies so they will be cached
       # - name: Cache deps
@@ -181,12 +245,11 @@ jobs:
           restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
       - name: Configure CMake
-        run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
-            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            ${{ matrix.cmake_flags }}
+        uses: ./.github/actions/configure-cmake
+        with:
+          cmake_generator: ${{ matrix.cmake_generator }}
+          custom_flags: ${{ matrix.cmake_flags }}
+          warnings_as_errors: 'ON'
 
       - name: Build
         # Execute the build using N jobs (-jN)
@@ -254,32 +317,6 @@ jobs:
           name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
           path: bin
           retention-days: 20
-
-      - name: Cppcheck
-        if: runner.os == 'Linux' && matrix.runs_cppcheck == true
-        run: |
-          cppcheck --enable=all \
-                   --inline-suppr \
-                   --project="${BUILD_DIR}"/compile_commands.json \
-                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
-                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
-                   --suppress=missingIncludeSystem \
-                   --suppress=unmatchedSuppression \
-                   --suppress=useStlAlgorithm \
-                   --error-exitcode=1
-
-      - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
-        continue-on-error: true
-        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-        # need to use | as sed separator because / is used in paths
-        run: |
-          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
-
-          cat "${BUILD_DIR}"/compile_commands.json |
-            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
-            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
-            xargs clang-tidy -p "${BUILD_DIR}"
 
       - name: Setup memory sanitizer
         if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
