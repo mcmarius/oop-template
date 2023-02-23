@@ -46,6 +46,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
+          ls -la ./.github
+          ls -la ./.github/actions
+          ls -la ./.github/actions/configure-cmake
 
 
       - name: Configure CMake
