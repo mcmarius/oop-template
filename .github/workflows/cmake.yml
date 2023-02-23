@@ -271,8 +271,7 @@ jobs:
       - name: Move artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
-          mv artifacts/bin bin
-          mv bin ${{ env.ZIP_NAME }}
+          mv artifacts/bin/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
