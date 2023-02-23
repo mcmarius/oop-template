@@ -48,7 +48,7 @@ jobs:
           sudo apt-get install --no-install-recommends cppcheck
 
 
-      - id: Configure CMake custom
+      - name: Configure CMake
         uses: ./github/actions/configure-cmake@main
         with:
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
