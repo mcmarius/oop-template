@@ -61,7 +61,7 @@ endfunction()
 # external dependencies with FetchContent
 include(FetchContent)
 
-# NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:113
+# NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:122
 FetchContent_Declare(
   SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git

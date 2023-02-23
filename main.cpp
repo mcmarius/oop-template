@@ -27,6 +27,7 @@ int main() {
     delete c;
 
     sf::RenderWindow window;
+    // NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:30
     window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
     window.setVerticalSyncEnabled(true);
     //window.setFramerateLimit(60);
