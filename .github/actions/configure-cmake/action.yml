@@ -23,3 +23,6 @@ runs:
             -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
             ${{ inputs.custom_flags }}
       shell: bash
+
+# https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+# https://github.com/GuillaumeFalourd/poc-github-actions/blob/main/.github/workflows/36-local-action.yml
