@@ -1,8 +1,12 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-// #include <chrono>
-// #include <thread>
+#include <chrono>
+#include <thread>
+
+#ifdef __linux__
+#include <X11/Xlib.h>
+#endif
 
 class SomeClass {
 public:
@@ -14,6 +18,10 @@ SomeClass *getC() {
 }
 
 int main() {
+    #ifdef __linux__
+    XInitThreads();
+    #endif
+
     SomeClass *c = getC();
     std::cout << c << "\n";
     delete c;
@@ -42,8 +50,8 @@ int main() {
                 break;
             }
         }
-        // using namespace std::chrono_literals;
-        // std::this_thread::sleep_for(8000ms);
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(300ms);
 
         window.clear();
         window.display();

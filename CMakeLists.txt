@@ -100,7 +100,11 @@ endif()
 
 # external dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
+if(APPLE)
+elseif(UNIX)
+    find_package(X11)
+endif()
 
 ###############################################################################
 
@@ -143,7 +147,12 @@ set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system Threads::Threads)
+
+if(APPLE)
+elseif(UNIX)
+    target_link_libraries(${PROJECT_NAME} X11)
+endif()
 
 ###############################################################################
 
