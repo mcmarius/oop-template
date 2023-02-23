@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:44 when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
 
@@ -79,7 +79,7 @@ endfunction()
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml when changing name here
+# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${PROJECT_NAME} main.cpp)
 
 ###############################################################################
@@ -126,7 +126,8 @@ set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 
 ###############################################################################
 
-# copy binaries to bin folder; these are uploaded as artifacts on each release
+# copy binaries to "bin" folder; these are uploaded as artifacts on each release
+# update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 # install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)

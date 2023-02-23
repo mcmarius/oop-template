@@ -26,6 +26,7 @@ env:
   INPUT_FILENAME: "tastatura.txt"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  BIN_DIR: "bin"
 
 defaults:
   run:
@@ -271,7 +272,7 @@ jobs:
       - name: Move artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
-          mv artifacts/bin/* ${{ env.ZIP_NAME }}
+          mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
@@ -359,7 +360,7 @@ jobs:
       #- name: Application Verifier (Windows MSVC)
       #  if: matrix.cxx == 'cl'
       #  continue-on-error: true
-      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
+      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
