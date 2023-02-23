@@ -26,6 +26,7 @@ env:
   INPUT_FILENAME: "tastatura.txt"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  BIN_DIR: "bin"
 
 defaults:
   run:
@@ -120,18 +121,16 @@ jobs:
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             cmake_generator: Ninja
-            runs_cppcheck: true
             runs_msan: true
-            # This env runs cppcheck and sanitizers
+            # This env runs memory sanitizers
 
           - os: ubuntu-22.04
             c: clang-12
             cxx: clang++-12
             name: "ASan: Ubuntu 22.04 Clang 12"
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            runs_clang_tidy: true
-            # runs_asan: true
-            # # This env runs clang-tidy and sanitizers
+            runs_asan: true
+            # This env runs address sanitizers
 
           - os: ubuntu-22.04
             c: gcc-11
@@ -180,6 +179,17 @@ jobs:
           echo ${GITHUB_WORKSPACE}
           mkdir ${GITHUB_WORKSPACE}/artifacts
 
+      - name: Set timestamp and zip name
+        run: |
+          echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
+
+          # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
+          echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed 's|/|_|')" >> ${GITHUB_ENV}
+
+          # or use only the repo name (github does not have a predefined environment variable for this)
+          # the regex splits by / and keeps everything after / without the / character
+          # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
+
       # Common Linux dependencies
       # - name: Install Linux Dependencies
       #   if: runner.os == 'Linux'
@@ -188,7 +198,7 @@ jobs:
       #     sudo apt-get install ...
 
       - name: Install libc++ (Linux Clang 12)
-        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
+        if: runner.os == 'Linux' && matrix.runs_asan == true
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev libunwind-12-dev
@@ -261,7 +271,10 @@ jobs:
 
       - name: Move artifacts
         run: |
-          mv artifacts/bin bin
+          mkdir ${{ env.ZIP_NAME }}
+          mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          ls -la ${{ env.ZIP_NAME }}
+          cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
@@ -272,14 +285,14 @@ jobs:
                "$(which VCRUNTIME140_1D.dll)" \
                "$(which MSVCP140D.dll)" \
                "$(which VCRUNTIME140D.dll)" \
-               bin/
+               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
 
             # sanitizers DLLs
             vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
             vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
             cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
                "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-               bin/
+               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
           fi
 
           # runtime release DLLs
@@ -288,7 +301,7 @@ jobs:
                "$(which VCRUNTIME140_1.dll)" \
                "$(which MSVCP140.dll)" \
                "$(which VCRUNTIME140.dll)" \
-               bin/
+               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
           fi
 
       - name: Copy stdlib (MinGW)
@@ -298,24 +311,13 @@ jobs:
           cp $(which libstdc++-6.dll) \
             $(which libgcc_s_seh-1.dll) \
             $(which libwinpthread-1.dll) \
-            ${GITHUB_WORKSPACE}/bin
-
-      - name: Set current date and prefix name
-        run: |
-          echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
-
-          # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
-          echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed 's|/|_|')" >> ${GITHUB_ENV}
-
-          # or use only the repo name (github does not have a predefined environment variable for this)
-          # the regex splits by / and keeps everything after / without the / character
-          # echo "ZIP_PREFIX=$(echo ${GITHUB_REPOSITORY} | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
+            ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
-          path: bin
+          name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
+          path: ${{ env.ZIP_NAME }}
           retention-days: 20
 
       - name: Setup memory sanitizer
@@ -345,26 +347,29 @@ jobs:
         # env:
         # ASAN_OPTIONS: detect_leaks=1
         run: |
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./bin/"${EXECUTABLE_NAME}"
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
         if: matrix.cxx == 'cl'
         continue-on-error: true
         run: |
-          cat "${INPUT_FILENAME}" | ./bin/"${EXECUTABLE_NAME}".exe
+          cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
 
       # Application Verifier does not work with sanitizers, need separate executable
       #- name: Application Verifier (Windows MSVC)
       #  if: matrix.cxx == 'cl'
       #  continue-on-error: true
-      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./bin/"${EXECUTABLE_NAME}".exe
+      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
         run: |
           # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./bin/"${EXECUTABLE_NAME}"
+          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
+              --leak-check=full --show-leak-kinds=all --track-origins=yes \
+              --error-exitcode=1 \
+              ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
@@ -373,15 +378,15 @@ jobs:
 
       - name: Archive Release
         uses: thedoctor0/zip-release@master
-        # if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           type: 'zip'
-          path: bin
-          filename: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+          path: ${{ env.ZIP_NAME }}
+          filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ env.TAG_NAME }}_${{ matrix.os }}_${{ matrix.cxx }}.zip
+            ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:44 when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
 
@@ -9,6 +9,52 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+
+# disable sanitizers when releasing executables without explicitly requested debug info
+# use generator expressions to set flags correctly in both single and multi config generators
+set(is_debug "$<CONFIG:Debug>")
+set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
+set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+
+###############################################################################
+
+# custom functions
+
+function(set_custom_stdlib_and_sanitizers target add_apple_asan)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE "$<${debug_mode}:/fsanitize=address>")
+        return()
+    endif()
+
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        target_compile_options(${target} PRIVATE -stdlib=libc++)
+        target_link_options(${target} PRIVATE -stdlib=libc++)
+    endif()
+
+    if(APPLE)
+        # first check Apple since Apple is also a kind of Unix
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND add_apple_asan MATCHES true)
+            target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+            target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+        endif()
+    elseif(UNIX)
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
+                # check leaks on Linux since macOS does not support the leaks sanitizer yet
+                # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
+                target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+                target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
+            elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
+                # use semi-colons instead of spaces to separate arguments
+                # it is recommended to quote generator expressions in order to avoid unintentional splitting
+                target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
+                target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
+            else()
+                message("No matching Clang version to add sanitizer flags!")
+            endif()
+        endif()
+    endif()
+endfunction()
 
 ###############################################################################
 
@@ -33,7 +79,7 @@ option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml when changing name here
+# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${PROJECT_NAME} main.cpp)
 
 ###############################################################################
@@ -68,38 +114,7 @@ endif()
 ###############################################################################
 
 # sanitizers
-# disable them when releasing executables without explicitly requested debug info
-# use generator expressions to set flags correctly in both single and multi config generators
-set(is_debug "$<CONFIG:Debug>")
-set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
-set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
-if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:/fsanitize=address>")
-elseif(APPLE)
-    # if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    # first check Apple since Apple is also a kind of Unix
-    target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-    target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-    # endif()
-elseif(UNIX)
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-        # we cannot mix sanitizers with Valgrind
-    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
-            # check leaks on Linux since macOS does not support the leaks sanitizer yet
-            # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
-            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-        elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
-            # use semi-colons instead of spaces to separate arguments
-            # it is recommended to quote generator expressions in order to avoid unintentional splitting
-            target_compile_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
-            target_link_options(${PROJECT_NAME} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
-        else()
-            message("No matching Clang version to add sanitizer flags!")
-        endif()
-    endif()
-endif()
+set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 
 ###############################################################################
 
@@ -111,7 +126,8 @@ endif()
 
 ###############################################################################
 
-# copy binaries to bin folder; these are uploaded as artifacts on each release
+# copy binaries to "bin" folder; these are uploaded as artifacts on each release
+# update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 # install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
