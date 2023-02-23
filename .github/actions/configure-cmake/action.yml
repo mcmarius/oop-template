@@ -20,7 +20,7 @@ runs:
   using: "composite"
   steps:
     - run: |
-          ${{ inputs.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
+          CMAKE_GENERATOR=${{ inputs.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B "${BUILD_DIR}" \
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
             -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
