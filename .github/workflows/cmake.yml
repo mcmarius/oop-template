@@ -48,6 +48,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
+
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
@@ -79,6 +83,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy
+
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
@@ -134,7 +142,6 @@ jobs:
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=FALSE
             runs_asan: true
             # This env runs address sanitizers
-
 
           - os: ubuntu-22.04
             c: gcc-11
@@ -195,26 +202,18 @@ jobs:
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       # Common Linux dependencies
+      - name: Install common Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
+
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends \
-            libxrandr-dev \
-            libxcursor-dev \
-            libudev-dev \
-            libopenal-dev \
-            libflac-dev \
-            libvorbis-dev \
-            libgl1-mesa-dev \
-            libegl1-mesa-dev \
-            libdrm-dev \
-            libgbm-dev \
-            xorg \
-            xdotool \
-            openbox \
-            libxkbcommon-x11-0 \
-            libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
+          sudo apt-get install --no-install-recommends xdotool \
+          openbox \
+          libxkbcommon-x11-0 \
+          libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
       - name: Install libc++ (Linux Clang 12)
         if: runner.os == 'Linux' && matrix.runs_asan == true
