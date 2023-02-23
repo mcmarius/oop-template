@@ -103,12 +103,6 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
-
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        target_compile_options(${PROJECT_NAME} PRIVATE -stdlib=libc++)
-        target_link_options(${PROJECT_NAME} PRIVATE -stdlib=libc++)
-    endif()
 endif()
 
 ###############################################################################
