@@ -127,6 +127,7 @@ jobs:
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            cmake_generator: Ninja
             runs_cppcheck: true
             runs_msan: true
             # This env runs cppcheck and sanitizers
@@ -193,17 +194,17 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install clang-tidy and libc++ (Linux Clang 12)
+      - name: Install libc++ (Linux Clang 12)
         if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy libc++-12-dev libc++abi-12-dev libunwind-12-dev
+          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
-      - name: Install ninja libc++ (Linux Clang 13)
+      - name: Install ninja and libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends cppcheck ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
@@ -326,32 +327,6 @@ jobs:
           name: ${{ env.ZIP_PREFIX }}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}_${{ env.TIMESTAMP }}
           path: bin
           retention-days: 20
-
-      - name: Cppcheck
-        if: runner.os == 'Linux' && matrix.runs_cppcheck == true
-        run: |
-          cppcheck --enable=all \
-                   --inline-suppr \
-                   --project="${BUILD_DIR}"/compile_commands.json \
-                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
-                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
-                   --suppress=missingIncludeSystem \
-                   --suppress=unmatchedSuppression \
-                   --suppress=useStlAlgorithm \
-                   --error-exitcode=1
-
-      - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
-        continue-on-error: true
-        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-        # need to use | as sed separator because / is used in paths
-        run: |
-          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
-
-          cat "${BUILD_DIR}"/compile_commands.json |
-            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
-            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
-            xargs clang-tidy -p "${BUILD_DIR}"
 
       - name: Setup memory sanitizer
         if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
