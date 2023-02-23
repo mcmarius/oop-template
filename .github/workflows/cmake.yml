@@ -71,14 +71,17 @@ jobs:
   clang-tidy:
     name: "Clang-Tidy"
     runs-on: ubuntu-22.04
+    env:
+      CC: clang-14
+      CXX: clang++-14
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install clang-tidy and libc++ (Linux Clang 14)
+      - name: Install clang-tidy
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev libunwind-14-dev
+          sudo apt-get install --no-install-recommends clang-tidy
 
       - name: Configure CMake
         run: |
@@ -91,9 +94,6 @@ jobs:
 
       - name: Clang-Tidy
         continue-on-error: true
-        env:
-          CC: clang-14
-          CXX: clang++-14
         # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
         # need to use | as sed separator because / is used in paths
         run: |
