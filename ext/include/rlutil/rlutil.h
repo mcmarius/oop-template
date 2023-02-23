@@ -40,6 +40,7 @@
 
 #ifdef __cplusplus
 	/// Common C++ headers
+	#include <ctime>  // for nanosleep
 	#include <iostream>
 	#include <string>
 	#include <cstdio> // for getch()
@@ -49,13 +50,15 @@
 		RLUTIL_INLINE void locate(int x, int y);
 	}
 #else
+	#define _POSIX_C_SOURCE 199309L
+	#include <time.h>  // for nanosleep
 	#include <stdio.h> // for getch() / printf()
 	#include <stdlib.h> // for getenv()
 	#include <string.h> // for strlen()
 	RLUTIL_INLINE void locate(int x, int y); // Forward declare for C to avoid warnings
 #endif // __cplusplus
 
-int runs_on_ci() {
+RLUTIL_INLINE int runs_on_ci() {
 	return
 	#ifdef __cplusplus
 	std::getenv("GITHUB_ACTIONS") != nullptr;
@@ -676,9 +679,16 @@ RLUTIL_INLINE void msleep(unsigned int ms) {
 #ifdef _WIN32
 	Sleep(ms);
 #else
+	// https://stackoverflow.com/a/55860234
+	struct timespec ts;
+	ts.tv_sec = ms / 1000000000ul;               // whole seconds
+	ts.tv_nsec = (ms % 1000000000ul) * 1000000;  // remainder, in nanoseconds
+	nanosleep(&ts, NULL);
+
+	// usleep gives warnings in C code; seems to be deprecated/legacy
 	// usleep argument must be under 1 000 000
-	if (ms > 1000) sleep(ms/1000000);
-	usleep((ms % 1000000) * 1000);
+	// if (ms > 1000) sleep(ms/1000000);
+	// usleep((ms % 1000000) * 1000);
 #endif
 }
 
@@ -755,12 +765,12 @@ RLUTIL_INLINE void anykey(RLUTIL_STRING_T msg) {
 	getch();
 }
 
-RLUTIL_INLINE void setConsoleTitle(RLUTIL_STRING_T title) {
-	const char * true_title =
 #ifdef __cplusplus
-		title.c_str();
+RLUTIL_INLINE void setConsoleTitle(const RLUTIL_STRING_T & title) {
+	const char * true_title = title.c_str();
 #else // __cplusplus
-		title;
+RLUTIL_INLINE void setConsoleTitle(RLUTIL_STRING_T title) {
+	const char * true_title = title;
 #endif // __cplusplus
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
 	SetConsoleTitleA(true_title);
