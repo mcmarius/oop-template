@@ -57,7 +57,6 @@ jobs:
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Cppcheck
-        if: runner.os == 'Linux' && matrix.runs_cppcheck == true
         run: |
           cppcheck --enable=all \
                    --inline-suppr \
@@ -77,7 +76,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install clang-tidy and libc++ (Linux Clang 14)
-        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy libc++-14-dev libc++abi-14-dev libunwind-14-dev
@@ -92,7 +90,6 @@ jobs:
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Clang-Tidy
-        if: runner.os == 'Linux' && matrix.runs_clang_tidy == true
         continue-on-error: true
         env:
           CC: clang-14
