@@ -38,13 +38,15 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
             target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
         endif()
     elseif(UNIX)
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
             if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
                 # check leaks on Linux since macOS does not support the leaks sanitizer yet
                 # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
                 target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-            elseif("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
+            endif()
+        elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
                 # use semi-colons instead of spaces to separate arguments
                 # it is recommended to quote generator expressions in order to avoid unintentional splitting
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")

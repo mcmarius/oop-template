@@ -125,9 +125,9 @@ jobs:
             # This env runs memory sanitizers
 
           - os: ubuntu-22.04
-            c: clang-12
-            cxx: clang++-12
-            name: "ASan: Ubuntu 22.04 Clang 12"
+            c: gcc-12
+            cxx: g++-12
+            name: "ASan: Ubuntu 22.04 GCC 12"
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             runs_asan: true
             # This env runs address sanitizers
@@ -196,12 +196,6 @@ jobs:
       #   run: |
       #     sudo apt-get update
       #     sudo apt-get install ...
-
-      - name: Install libc++ (Linux Clang 12)
-        if: runner.os == 'Linux' && matrix.runs_asan == true
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-12-dev libc++abi-12-dev libunwind-12-dev
 
       - name: Install ninja and libc++ (Linux Clang 13)
         if: runner.os == 'Linux' && matrix.runs_msan == true
