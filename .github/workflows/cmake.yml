@@ -114,9 +114,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            c: clang-13
-            cxx: clang++-13
-            name: "MSan: Ubuntu 22.04 Clang 13"
+            c: clang-14
+            cxx: clang++-14
+            name: "MSan: Ubuntu 22.04 Clang 14"
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -156,7 +156,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.34"
+            name: "ASan: Windows 2022 MSVC 19.35"
             # cmake_flags:
             # runs_asan: true
             # cmake_generator: Ninja
@@ -197,11 +197,11 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install ninja and libc++ (Linux Clang 13)
+      - name: Install ninja and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-14-dev libc++abi-14-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
@@ -210,11 +210,11 @@ jobs:
           sudo apt-get install --no-install-recommends valgrind
 
       # temp workaround, there is a bug in xcode linker 14.0.1; as of now, 14.1 is in beta
-      - name: Setup Xcode version
-        if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '13.4.1'
+      # - name: Setup Xcode version
+      #   if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
+      #   uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: '13.4.1'
 
       - name: Cache tools
         uses: actions/cache@v3
@@ -224,34 +224,9 @@ jobs:
           path: tools
           key: tools-clang-stdlib-msan
 
-      # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v3
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       ${{ env.BUILD_DIR }}/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
-
-      # NOTE: GH Actions does not allow updating the cache yet
-      # Using the workaround found here: https://github.com/actions/cache/issues/171
-      # Since this cache is small, it should not fill the cache too much
-      - name: Cache Ninja deps
-        uses: actions/cache@v3
-        if: matrix.cmake_generator == 'Ninja'
-        id: cache-deps-ninja
-        with:
-          path: |
-            ${{ env.BUILD_DIR }}/.ninja_deps
-            ${{ env.BUILD_DIR}}/.ninja_log
-          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
-
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
-          cmake_generator: ${{ matrix.cmake_generator }}
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
 
@@ -319,7 +294,7 @@ jobs:
         run: |
           mkdir -p tools
           cd tools
-          git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
+          git clone --depth=1 --branch=llvmorg-14.0.6 https://github.com/llvm/llvm-project
           cd llvm-project
           mkdir build; cd build
           sudo ln -s -f /usr/bin/$CC /usr/bin/clang

@@ -10,6 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
+endif()
+
 # disable sanitizers when releasing executables without explicitly requested debug info
 # use generator expressions to set flags correctly in both single and multi config generators
 set(is_debug "$<CONFIG:Debug>")
@@ -48,7 +52,7 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
                 target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
             endif()
         elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "13.")
+            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
                 # use semi-colons instead of spaces to separate arguments
                 # it is recommended to quote generator expressions in order to avoid unintentional splitting
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
