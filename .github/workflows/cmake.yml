@@ -156,7 +156,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.34"
+            name: "ASan: Windows 2022 MSVC 19.35"
             # cmake_flags:
             # runs_asan: true
             # cmake_generator: Ninja
