@@ -10,6 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
+endif()
+
 # disable sanitizers when releasing executables without explicitly requested debug info
 # use generator expressions to set flags correctly in both single and multi config generators
 set(is_debug "$<CONFIG:Debug>")
