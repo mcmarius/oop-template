@@ -116,9 +116,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            c: clang-13
-            cxx: clang++-13
-            name: "MSan: Ubuntu 22.04 Clang 13"
+            c: clang-14
+            cxx: clang++-14
+            name: "MSan: Ubuntu 22.04 Clang 14"
             # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
             # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -199,11 +199,11 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install ...
 
-      - name: Install ninja and libc++ (Linux Clang 13)
+      - name: Install ninja and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends ninja-build libc++-13-dev libc++abi-13-dev
+          sudo apt-get install --no-install-recommends ninja-build libc++-14-dev libc++abi-14-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
@@ -298,7 +298,7 @@ jobs:
         run: |
           mkdir -p tools
           cd tools
-          git clone --depth=1 --branch=llvmorg-13.0.1 https://github.com/llvm/llvm-project
+          git clone --depth=1 --branch=llvmorg-14.0.6 https://github.com/llvm/llvm-project
           cd llvm-project
           mkdir build; cd build
           sudo ln -s -f /usr/bin/$CC /usr/bin/clang
