@@ -51,6 +51,7 @@ jobs:
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
+          os: ${{ matrix.os }}
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
 
       - name: Cppcheck
@@ -83,6 +84,7 @@ jobs:
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
+          os: ${{ matrix.os }}
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
 
       - name: Clang-Tidy
@@ -224,33 +226,10 @@ jobs:
           path: tools
           key: tools-clang-stdlib-msan
 
-      # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v3
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       ${{ env.BUILD_DIR }}/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ env.BUILD_TYPE }}
-
-      # NOTE: GH Actions does not allow updating the cache yet
-      # Using the workaround found here: https://github.com/actions/cache/issues/171
-      # Since this cache is small, it should not fill the cache too much
-      - name: Cache Ninja deps
-        uses: actions/cache@v3
-        if: matrix.cmake_generator == 'Ninja'
-        id: cache-deps-ninja
-        with:
-          path: |
-            ${{ env.BUILD_DIR }}/.ninja_deps
-            ${{ env.BUILD_DIR}}/.ninja_log
-          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
-
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
+          os: ${{ matrix.os }}
           cmake_generator: ${{ matrix.cmake_generator }}
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
