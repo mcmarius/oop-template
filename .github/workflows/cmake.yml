@@ -51,7 +51,6 @@ jobs:
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
-          os: ${{ matrix.os }}
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
 
       - name: Cppcheck
@@ -84,7 +83,6 @@ jobs:
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
-          os: ${{ matrix.os }}
           custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
 
       - name: Clang-Tidy
@@ -229,8 +227,6 @@ jobs:
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
-          os: ${{ matrix.os }}
-          cmake_generator: ${{ matrix.cmake_generator }}
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
 
