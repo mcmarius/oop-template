@@ -48,6 +48,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
+      # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
+      # which is used by cppcheck and clang-tidy
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
@@ -117,49 +119,53 @@ jobs:
             c: clang-14
             cxx: clang++-14
             name: "MSan: Ubuntu 22.04 Clang 14"
-            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-            # which is used by cppcheck and clang-tidy
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            # cmake_flags:
             cmake_generator: Ninja
-            runs_msan: true
             # This env runs memory sanitizers
+            runs_msan: true
 
           - os: ubuntu-22.04
             c: gcc-12
             cxx: g++-12
             name: "ASan: Ubuntu 22.04 GCC 12"
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            runs_asan: true
+            # cmake_flags:
+            cmake_generator: Ninja
             # This env runs address sanitizers
+            runs_asan: true
 
           - os: ubuntu-22.04
             c: gcc-11
             cxx: g++-11
             name: "Valgrind: Ubuntu 22.04 GCC 11"
             # cmake_flags:
-            runs_valgrind: true
+            cmake_generator: Ninja
             # This env runs valgrind
+            runs_valgrind: true
 
           - os: macos-12
             c: clang
             cxx: clang++
             name: "ASan: macOS 12 Apple Clang 14"
             # cmake_flags:
-            # runs_asan: true
+            # cmake_generator:
+            # This env runs address sanitizers
+            runs_asan: true
 
           - os: macos-12
             c: gcc-11
             cxx: g++-11
             name: "macOS 12 GCC 11"
             # cmake_flags:
+            # cmake_generator: Ninja
 
           - os: windows-2022
             c: cl
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.35"
             # cmake_flags:
-            # runs_asan: true
             # cmake_generator: Ninja
+            # This env runs address sanitizers
+            runs_asan: true
 
           - os: windows-2022
             c: gcc
@@ -167,8 +173,6 @@ jobs:
             name: "Windows 2022 MinGW GCC 11"
             # cmake_flags:
             cmake_generator: Ninja
-            # Ninja is faster
-            # other generator: "\"MinGW Makefiles\""
 
     steps:
       - name: Checkout repo
@@ -191,30 +195,23 @@ jobs:
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       # Common Linux dependencies
-      # - name: Install Linux Dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install ...
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install ninja-build
 
       - name: Install ninja and libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends ninja-build libc++-14-dev libc++abi-14-dev
+          # sudo apt-get update
+          sudo apt-get install --no-install-recommends libc++-14-dev libc++abi-14-dev
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
         run: |
-          sudo apt-get update
+          # sudo apt-get update
           sudo apt-get install --no-install-recommends valgrind
-
-      # temp workaround, there is a bug in xcode linker 14.0.1; as of now, 14.1 is in beta
-      # - name: Setup Xcode version
-      #   if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-      #   uses: maxim-lobanov/setup-xcode@v1
-      #   with:
-      #     xcode-version: '13.4.1'
 
       - name: Cache tools
         uses: actions/cache@v3
@@ -287,7 +284,7 @@ jobs:
         with:
           name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
           path: ${{ env.ZIP_NAME }}
-          retention-days: 20
+          retention-days: 30
 
       - name: Setup memory sanitizer
         if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
@@ -309,27 +306,20 @@ jobs:
           cmake --build . -j6 -- cxx cxxabi
 
       - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env;
-        # memory on Linux clang, address on macOS clang
-        if: startsWith(matrix.cxx, 'clang++')
+        # run one sanitizer for each env to avoid building extra binaries on one env
+        if: matrix.runs_asan == true || matrix.runs_msan == true
         # detect_leaks is not supported on macOS
         # env:
-        # ASAN_OPTIONS: detect_leaks=1
+        #   ASAN_OPTIONS: detect_leaks=1
         run: |
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
 
       - name: Sanitizers (Windows MSVC)
         # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl'
+        if: matrix.cxx == 'cl' && matrix.runs_asan == true
         continue-on-error: true
         run: |
           cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
-
-      # Application Verifier does not work with sanitizers, need separate executable
-      #- name: Application Verifier (Windows MSVC)
-      #  if: matrix.cxx == 'cl'
-      #  continue-on-error: true
-      #  run: cat "${INPUT_FILENAME}" | appverif //verify ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true

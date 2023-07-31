@@ -67,17 +67,19 @@ endfunction()
 ###############################################################################
 
 # external dependencies with FetchContent
-#include(FetchContent)
+# include(FetchContent)
 #
-# NOTE: Also update env vars used for caching in .github/workflows/cmake.yml
-#FetchContent_Declare(
-#        SomeLib
-#        GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#        GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#        GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-#)
+# NOTE: Also update env vars used for caching in
+#         - .github/actions/configure-cmake/action.yml
+#         - .github/workflows/cmake.yml
+# FetchContent_Declare(
+#         SomeLib
+#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
+#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
+#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+# )
 #
-#FetchContent_MakeAvailable(SomeLib)
+# FetchContent_MakeAvailable(SomeLib)
 
 ###############################################################################
 
@@ -120,11 +122,11 @@ set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 
 ###############################################################################
 
-# use SYSTEM so clang-tidy does not report warnings from these directories
-#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-#target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-#target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-#target_link_libraries(${PROJECT_NAME} <SomeLib>)
+# use SYSTEM so cppcheck/clang-tidy does not report warnings from these directories
+# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
+# target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
+# target_link_libraries(${PROJECT_NAME} <SomeLib>)
 
 ###############################################################################
 
