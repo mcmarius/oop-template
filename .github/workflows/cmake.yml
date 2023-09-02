@@ -152,16 +152,16 @@ jobs:
             runs_asan: true
 
           - os: macos-12
-            c: gcc-11
-            cxx: g++-11
-            name: "macOS 12 GCC 11"
+            c: gcc-12
+            cxx: g++-12
+            name: "macOS 12 GCC 12"
             # cmake_flags:
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.35"
+            name: "ASan: Windows 2022 MSVC 19.36"
             # cmake_flags:
             # cmake_generator: Ninja
             # This env runs address sanitizers
