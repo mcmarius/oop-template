@@ -261,6 +261,15 @@ jobs:
           ls -la ${{ env.ZIP_NAME }}
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
+      - name: Copy missing dylibs
+        if: runner.os == 'macOS'
+        run: |
+          otool -L ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          mkdir lib
+          # cp ../../libfreetype.6.dylib ../../libpng16.16.dylib lib
+          # install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/libfreetype.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          # install_name_tool -change @rpath/../Frameworks/libpng.framework/Versions/A/libpng @executable_path/lib/libpng16.16.dylib lib/libfreetype.6.dylib
+
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
