@@ -262,18 +262,14 @@ jobs:
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
       - name: Copy missing dylibs
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && matrix.cxx == 'clang++'
         run: |
           mkdir lib
-          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | \
-              xargs -I% cp artifacts/lib/%.framework/% lib && \
-                  install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
           cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
+          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
           mv lib ${{ env.ZIP_NAME }}/
-          ls -l ${{ env.ZIP_NAME }}
-          echo "--------------"
-          ls -l ${{ env.ZIP_NAME }}/lib
 
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
