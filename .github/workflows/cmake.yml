@@ -265,24 +265,12 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           mkdir lib
-          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework
-          echo "--------------"
-          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/
-          echo "--------------"
-          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/
-          echo "--------------"
-          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype
-          echo "--------------"
-          otool -L ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype
-          echo "--------------"
-          cp ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype lib/freetype
-          # cp ../../libfreetype.6.dylib ../../libpng16.16.dylib lib
+          cp artifacts/lib/freetype.framework/freetype lib
           install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/freetype ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          # install_name_tool -change @rpath/../Frameworks/libpng.framework/Versions/A/libpng @executable_path/lib/libpng16.16.dylib lib/freetype
           mv lib ${{ env.ZIP_NAME }}/
           ls -l ${{ env.ZIP_NAME }}
           echo "--------------"
-          ls -l ${{ env.ZIP_NAME }}
+          ls -l ${{ env.ZIP_NAME }}/lib
 
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
