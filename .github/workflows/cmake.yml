@@ -265,8 +265,9 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           mkdir lib
-          cp artifacts/lib/freetype.framework/freetype lib
-          install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/freetype ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | \
+              xargs -I% cp artifacts/lib/%.framework/% lib && \
+                  install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
           mv lib ${{ env.ZIP_NAME }}/
           ls -l ${{ env.ZIP_NAME }}
           echo "--------------"
