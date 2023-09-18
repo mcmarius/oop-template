@@ -264,14 +264,25 @@ jobs:
       - name: Copy missing dylibs
         if: runner.os == 'macOS'
         run: |
-          # otool -L ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks
-          echo "-----------------"
-          ls -l /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/
           mkdir lib
+          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework
+          echo "--------------"
+          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/
+          echo "--------------"
+          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/
+          echo "--------------"
+          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype
+          echo "--------------"
+          otool -L ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype
+          echo "--------------"
+          cp ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks/freetype.framework/Versions/A/freetype lib/freetype
           # cp ../../libfreetype.6.dylib ../../libpng16.16.dylib lib
-          # install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/libfreetype.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          # install_name_tool -change @rpath/../Frameworks/libpng.framework/Versions/A/libpng @executable_path/lib/libpng16.16.dylib lib/libfreetype.6.dylib
+          install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/freetype ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          # install_name_tool -change @rpath/../Frameworks/libpng.framework/Versions/A/libpng @executable_path/lib/libpng16.16.dylib lib/freetype
+          mv lib ${{ env.ZIP_NAME }}/
+          ls -l ${{ env.ZIP_NAME }}
+          echo "--------------"
+          ls -l ${{ env.ZIP_NAME }}
 
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
