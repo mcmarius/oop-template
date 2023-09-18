@@ -242,6 +242,14 @@ jobs:
           ls -la ${{ env.ZIP_NAME }}
           cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
+      - name: Copy missing dylibs
+        if: runner.os == 'macOS' && matrix.cxx == 'clang++'
+        run: |
+          mkdir lib
+          cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
+          install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          mv lib ${{ env.ZIP_NAME }}/
+
       - name: Copy missing dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
