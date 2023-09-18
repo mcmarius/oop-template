@@ -264,7 +264,10 @@ jobs:
       - name: Copy missing dylibs
         if: runner.os == 'macOS'
         run: |
-          otool -L ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          # otool -L ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          ls -l ${{ env.BUILD_DIR }}/_deps/sfml-src/extlibs/libs-osx/Frameworks
+          echo "-----------------"
+          ls -l /Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/
           mkdir lib
           # cp ../../libfreetype.6.dylib ../../libpng16.16.dylib lib
           # install_name_tool -change @rpath/../Frameworks/freetype.framework/Versions/A/freetype @executable_path/lib/libfreetype.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
