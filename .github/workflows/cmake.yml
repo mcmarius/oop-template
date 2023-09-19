@@ -324,7 +324,7 @@ jobs:
 
       - name: Sanitizers
         # run one sanitizer for each env to avoid building extra binaries on one env
-        if: matrix.runs_asan == true || matrix.runs_msan == true
+        if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os != 'Windows'
         # detect_leaks is not supported on macOS
         # env:
         #   ASAN_OPTIONS: detect_leaks=1
