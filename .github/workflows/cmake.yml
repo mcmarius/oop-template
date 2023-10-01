@@ -201,11 +201,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build
 
-      - name: Install ninja and libc++ (Linux Clang 14)
+      - name: Install libc++ (Linux Clang 14)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           # sudo apt-get update
           sudo apt-get install --no-install-recommends libc++-14-dev libc++abi-14-dev
+
+      - name: Install ninja (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install ninja
 
       - name: Install valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
