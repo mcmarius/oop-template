@@ -250,7 +250,7 @@ jobs:
       - name: Patch macOS launcher
         if: runner.os == 'macOS'
         run: |
-          sed -i s/oop/${EXECUTABLE_NAME}/ ${{ env.ZIP_NAME }}/launcher.command
+          sed -i "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
 
       - name: Copy missing dylibs
         if: runner.os == 'macOS' && matrix.cxx == 'clang++'
