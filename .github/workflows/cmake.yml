@@ -22,7 +22,7 @@ on:
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
   # NOTE: update executable name if it is changed in CMakeLists.txt
-  EXECUTABLE_NAME: "oop"
+  EXECUTABLE_NAME: "oop2"
   INPUT_FILENAME: "tastatura.txt"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
@@ -250,7 +250,7 @@ jobs:
       - name: Patch macOS launcher
         if: runner.os == 'macOS'
         run: |
-          sed -i "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
+          sed -i -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
 
       - name: Copy missing dylibs
         if: runner.os == 'macOS' && matrix.cxx == 'clang++'
