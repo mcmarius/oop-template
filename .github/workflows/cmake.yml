@@ -22,7 +22,7 @@ on:
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
   # NOTE: update executable name if it is changed in CMakeLists.txt
-  EXECUTABLE_NAME: "oop"
+  EXECUTABLE_NAME: "oop2"
   INPUT_FILENAME: "tastatura.txt"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
