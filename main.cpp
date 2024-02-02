@@ -1,6 +1,8 @@
 #include <iostream>
 #include <array>
 
+#include <Helper.h>
+
 int main() {
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
@@ -44,5 +46,12 @@ int main() {
     /// std::ifstream fis("date.txt");
     /// for(int i = 0; i < nr2; ++i)
     ///     fis >> v2[i];
+    ///
+    ///////////////////////////////////////////////////////////////////////////
+    ///                Exemplu de utilizare cod generat                     ///
+    ///////////////////////////////////////////////////////////////////////////
+    Helper helper;
+    helper.help();
+    ///////////////////////////////////////////////////////////////////////////
     return 0;
 }

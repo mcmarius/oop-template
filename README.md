@@ -1,5 +1,13 @@
 # Nu primesc notă pentru că nu am pus titlu și descriere
 
+### Important!
+Aveți voie cu cod generat de modele de limbaj doar în folder-ul `generated`.
+Codul generat se punctează doar pentru puncte bonus, doar în contextul
+în care oferă funcționalități ajutătoare și doar dacă are sens.
+
+O cerință nu se consideră îndeplinită dacă este realizată doar ca
+o serie de apeluri proxy către cod generat.
+
 ### Tema 0
 
 - [ ] Nume proiect (poate fi schimbat ulterior)

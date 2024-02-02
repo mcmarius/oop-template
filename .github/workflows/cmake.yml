@@ -27,6 +27,7 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   BIN_DIR: "bin"
+  GEN_DIR: "generated"
 
 defaults:
   run:
@@ -62,6 +63,7 @@ jobs:
                    --project="${BUILD_DIR}"/compile_commands.json \
                    -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
                    -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
+                   -i"${GEN_DIR}" --suppress='*:"${GEN_DIR}"/*' \
                    --suppress=missingIncludeSystem \
                    --suppress=unmatchedSuppression \
                    --suppress=useStlAlgorithm \
