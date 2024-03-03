@@ -1,12 +1,16 @@
 # Nu primesc notă pentru că nu am pus titlu și descriere
 
 ### Important!
-Aveți voie cu cod generat de modele de limbaj doar în folder-ul `generated`.
-Codul generat se punctează doar pentru puncte bonus, doar în contextul
+Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
+Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
 în care oferă funcționalități ajutătoare și doar dacă are sens.
 
-O cerință nu se consideră îndeplinită dacă este realizată doar ca
-o serie de apeluri proxy către cod generat.
+O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie de apeluri proxy către cod generat.
+
+### Cerințe modele de limbaj la nivel de semestru
+- [ ] minim o funcționalitate majoritar doar cu LLM
+- [ ] minim 2-3 funcționalități ~50% voi, ~50% LLM-ul
+- [ ] minim 2-3 funcționalități suficient de complicate pe care un LLM nu le poate implementa
 
 ### Tema 0
 
