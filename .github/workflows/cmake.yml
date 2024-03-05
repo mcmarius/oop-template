@@ -73,16 +73,23 @@ jobs:
     name: "Clang-Tidy"
     runs-on: ubuntu-22.04
     env:
-      CC: clang-14
-      CXX: clang++-14
+      CC: clang-17
+      CXX: clang++-17
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
+      - name: Install Clang 17
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 17
+
       - name: Install clang-tidy
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy
+          sudo apt-get install --no-install-recommends clang-tidy-17 libc++-17-dev libc++abi-17-dev
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
@@ -99,7 +106,7 @@ jobs:
           cat "${BUILD_DIR}"/compile_commands.json |
             jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
             grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
-            xargs clang-tidy -p "${BUILD_DIR}"
+            xargs clang-tidy-17 -p "${BUILD_DIR}"
 
 
   build:
@@ -118,9 +125,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            c: clang-14
-            cxx: clang++-14
-            name: "MSan: Ubuntu 22.04 Clang 14"
+            c: clang-17
+            cxx: clang++-17
+            name: "MSan: Ubuntu 22.04 Clang 17"
             # cmake_flags:
             cmake_generator: Ninja
             # This env runs memory sanitizers
@@ -203,11 +210,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install ninja-build
 
-      - name: Install libc++ (Linux Clang 14)
+      # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
+      - name: Install Clang 17
+        if: runner.os == 'Linux' && matrix.runs_msan == true
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 17
+
+      - name: Install libc++ (Linux Clang 17)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           # sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-14-dev libc++abi-14-dev
+          sudo apt-get install --no-install-recommends libc++-17-dev libc++abi-17-dev
 
       - name: Install ninja (Windows)
         if: runner.os == 'Windows'
@@ -321,19 +336,19 @@ jobs:
         run: |
           mkdir -p tools
           cd tools
-          git clone --depth=1 --branch=llvmorg-14.0.6 https://github.com/llvm/llvm-project
+          git clone --depth=1 --branch=llvmorg-17.0.6 https://github.com/llvm/llvm-project
           cd llvm-project
-          mkdir build; cd build
+          # mkdir build; cd build
           sudo ln -s -f /usr/bin/$CC /usr/bin/clang
           sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
-          cmake -GNinja ../llvm \
+          cmake -G Ninja -S runtimes -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
+            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DLLVM_USE_SANITIZER=MemoryWithOrigins \
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
-          cmake --build . -j6 -- cxx cxxabi
+          cmake --build build -j6 -- cxx cxxabi
 
       - name: Sanitizers
         # run one sanitizer for each env to avoid building extra binaries on one env
