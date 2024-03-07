@@ -28,7 +28,10 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
     if(MSVC)
         # see https://gitlab.kitware.com/cmake/cmake/-/issues/24922
         set_target_properties(${target} PROPERTIES VS_USER_PROPS "${CMAKE_SOURCE_DIR}/disable_modules.props")
-        target_compile_options(${target} PRIVATE "$<${debug_mode}:/fsanitize=address>" /experimental:module-)
+        target_compile_options(${target} PRIVATE /experimental:module-)
+        # if(GITHUB_ACTIONS)
+        target_compile_options(${target} PRIVATE "$<${debug_mode}:/fsanitize=address>")
+        # endif()
         return()
     endif()
 
