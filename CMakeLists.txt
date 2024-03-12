@@ -35,7 +35,8 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
         return()
     endif()
 
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND NOT WIN32)
+        # see also https://stackoverflow.com/a/70382484
         target_compile_options(${target} PRIVATE -stdlib=libc++)
         target_link_options(${target} PRIVATE -stdlib=libc++)
     endif()
