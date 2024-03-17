@@ -73,23 +73,23 @@ jobs:
     name: "Clang-Tidy"
     runs-on: ubuntu-22.04
     env:
-      CC: clang-18
-      CXX: clang++-18
+      CC: clang-17
+      CXX: clang++-17
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-      - name: Install Clang 18
+      - name: Install Clang 17
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
-          sudo ./llvm.sh 18
+          sudo ./llvm.sh 17
 
       - name: Install clang-tidy
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy-18 libc++-18-dev libc++abi-18-dev
+          sudo apt-get install --no-install-recommends clang-tidy-17 libc++-17-dev libc++abi-17-dev
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
@@ -106,7 +106,7 @@ jobs:
           cat "${BUILD_DIR}"/compile_commands.json |
             jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
             grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
-            xargs clang-tidy-18 -p "${BUILD_DIR}"
+            xargs clang-tidy-17 -p "${BUILD_DIR}"
 
 
   build:
@@ -125,9 +125,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            name: "MSan: Ubuntu 22.04 Clang 18"
+            c: clang-17
+            cxx: clang++-17
+            name: "MSan: Ubuntu 22.04 Clang 17"
             # cmake_flags:
             cmake_generator: Ninja
             # This env runs memory sanitizers
@@ -211,18 +211,18 @@ jobs:
           sudo apt-get install ninja-build
 
       # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-      - name: Install Clang 18
+      - name: Install Clang 17
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
-          sudo ./llvm.sh 18
+          sudo ./llvm.sh 17
 
-      - name: Install libc++ (Linux Clang 18)
+      - name: Install libc++ (Linux Clang 17)
         if: runner.os == 'Linux' && matrix.runs_msan == true
         run: |
           # sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-18-dev libc++abi-18-dev
+          sudo apt-get install --no-install-recommends libc++-17-dev libc++abi-17-dev
 
       - name: Install ninja (Windows)
         if: runner.os == 'Windows'
@@ -241,7 +241,7 @@ jobs:
         id: cache-tools
         with:
           path: tools
-          key: tools-clang-18-stdlib-msan
+          key: tools-clang-stdlib-msan
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
@@ -336,18 +336,16 @@ jobs:
         run: |
           mkdir -p tools
           cd tools
-          git clone --depth=1 --branch=llvmorg-18.1.1 https://github.com/llvm/llvm-project
+          git clone --depth=1 --branch=llvmorg-17.0.6 https://github.com/llvm/llvm-project
           cd llvm-project
           # mkdir build; cd build
           sudo ln -s -f /usr/bin/$CC /usr/bin/clang
           sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
-          # Fix for exceptions on Clang 18: https://github.com/llvm/llvm-project/issues/84348#issuecomment-2000430783
           cmake -G Ninja -S runtimes -B build \
             -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
-            -DLIBCXXABI_USE_LLVM_UNWINDER=FALSE \
-            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
             -DLLVM_USE_SANITIZER=MemoryWithOrigins \
             -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
           cmake --build build -j6 -- cxx cxxabi
