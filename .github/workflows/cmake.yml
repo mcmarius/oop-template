@@ -340,7 +340,9 @@ jobs:
           cd llvm-project
           # mkdir build; cd build
           sudo ln -s -f /usr/bin/$CC /usr/bin/clang
-          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
+          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++\
+          # https://github.com/llvm/llvm-project/issues/78354
+          sysctl vm.mmap_rnd_bits=28
           cmake -G Ninja -S runtimes -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
