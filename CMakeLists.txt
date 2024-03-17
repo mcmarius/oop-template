@@ -24,6 +24,19 @@ set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 
 # custom functions
 
+function(detect_libcpp)
+    set(OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(TEST_STDLIB_SRC [=[
+    #include <iostream>
+    int main() {}
+    ]=])
+    try_compile(HAS_LIBCPP SOURCE_FROM_CONTENT test_stdlib.cpp ${TEST_STDLIB_SRC})
+    set(CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
+    unset(OLD_CMAKE_CXX_FLAGS)
+endfunction()
+
+
 function(set_custom_stdlib_and_sanitizers target add_apple_asan)
     if(MSVC)
         # see https://gitlab.kitware.com/cmake/cmake/-/issues/24922
@@ -36,9 +49,16 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
     endif()
 
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND NOT WIN32)
-        # see also https://stackoverflow.com/a/70382484
-        target_compile_options(${target} PRIVATE -stdlib=libc++)
-        target_link_options(${target} PRIVATE -stdlib=libc++)
+        detect_libcpp()
+        if(HAS_LIBCPP)
+            # see also https://stackoverflow.com/a/70382484
+            target_compile_options(${target} PRIVATE -stdlib=libc++)
+            target_link_options(${target} PRIVATE -stdlib=libc++)
+        else()
+            # fall back to libstdc++
+            target_compile_options(${target} PRIVATE -stdlib=libstdc++)
+            target_link_options(${target} PRIVATE -stdlib=libstdc++)
+        endif()
     endif()
 
     if(APPLE)
