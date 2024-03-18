@@ -28,6 +28,7 @@ env:
   EXT_DIR: "ext"
   BIN_DIR: "bin"
   GEN_DIR: "generated"
+  APP_WINDOW: "My Window"
 
 defaults:
   run:
@@ -48,6 +49,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
+
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
 
       # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
       # which is used by cppcheck and clang-tidy
@@ -95,6 +100,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy-${{ env.CLANG_VER }} libc++-${{ env.CLANG_VER }}-dev libc++abi-${{ env.CLANG_VER }}-dev
 
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
+
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
@@ -124,26 +133,38 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
 
+      # NOTE: also update in CMakeLists FetchContent
+      SFML_VERSION: "2023-11-04-2.6.1"
+
+      # NOTE: replace with another version if this one does not work
+      # For more versions, see https://winlibs.com or
+      # https://github.com/brechtsanders/winlibs_mingw/releases/
+      MINGW_CACHE_KEY: "gcc-12.3-msvcrt-r1"
+      MINGW_VER: "12.3.0-16.0.4-11.0.0-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-12.3.0-mingw-w64msvcrt-11.0.0-r1.7z"
+      # Example:
+      # MINGW_CACHE_KEY: "gcc-13.2-msvcrt-r4"
+      # MINGW_VER: "13.2.0posix-17.0.6-11.0.1-msvcrt-r4/winlibs-x86_64-posix-seh-gcc-13.2.0-mingw-w64msvcrt-11.0.1-r4.7z"
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            c: clang-17
-            cxx: clang++-17
-            clang_ver: "17"
-            clang_ver_full: "17.0.6"
-            name: "MSan: Ubuntu 22.04 Clang 17"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
+          # - os: ubuntu-22.04
+          #   c: clang-17
+          #   cxx: clang++-17
+          #   clang_ver: "17"
+          #   clang_ver_full: "17.0.6"
+          #   name: "MSan: Ubuntu 22.04 Clang 17"
+          #   cmake_flags: "-DUSE_MSAN=ON -DBUILD_SHARED_LIBS=FALSE"
+          #   cmake_generator: Ninja
+          #   # This env runs memory sanitizers
+          #   runs_msan: true
 
           - os: ubuntu-22.04
             c: gcc-12
             cxx: g++-12
             name: "ASan: Ubuntu 22.04 GCC 12"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=FALSE"
             cmake_generator: Ninja
             # This env runs address sanitizers
             runs_asan: true
@@ -152,7 +173,7 @@ jobs:
             c: gcc-11
             cxx: g++-11
             name: "Valgrind: Ubuntu 22.04 GCC 11"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
@@ -161,32 +182,32 @@ jobs:
             c: clang
             cxx: clang++
             name: "ASan: macOS 12 Apple Clang 14"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DSFML_BUILD_FRAMEWORKS=FALSE -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=FALSE"
             # cmake_generator:
             # This env runs address sanitizers
-            runs_asan: true
+            # runs_asan: true
 
-          - os: macos-12
-            c: gcc-12
-            cxx: g++-12
-            name: "macOS 12 GCC 12"
-            # cmake_flags:
-            # cmake_generator: Ninja
+          # - os: macos-12
+          #   c: gcc-12
+          #   cxx: g++-12
+          #   name: "macOS 12 GCC 12"
+          #   cmake_flags:
+          #   cmake_generator: Ninja
 
           - os: windows-2022
             c: cl
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.38"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=TRUE"
             # cmake_generator: Ninja
             # This env runs address sanitizers
-            runs_asan: true
+            # runs_asan: true
 
           - os: windows-2022
             c: gcc
             cxx: g++
             name: "Windows 2022 MinGW GCC 12"
-            # cmake_flags:
+            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
             cmake_generator: Ninja
 
     steps:
@@ -210,27 +231,34 @@ jobs:
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
       # Common Linux dependencies
+      - name: Install common Linux Dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-linux-deps
+
       - name: Install Linux Dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build
+          # sudo apt-get update
           # https://github.com/llvm/llvm-project/issues/78354
           sudo sysctl vm.mmap_rnd_bits=28
+          sudo apt-get install --no-install-recommends ninja-build xdotool \
+          openbox \
+          libxkbcommon-x11-0 \
+          libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
 
       # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-      - name: Install Clang ${{ matrix.clang_ver }}
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x ./llvm.sh
-          sudo ./llvm.sh ${{ matrix.clang_ver }}
+      # - name: Install Clang ${{ matrix.clang_ver }}
+      #   if: runner.os == 'Linux' && matrix.runs_msan == true
+      #   run: |
+      #     wget https://apt.llvm.org/llvm.sh
+      #     chmod +x ./llvm.sh
+      #     sudo ./llvm.sh ${{ matrix.clang_ver }}
 
-      - name: Install libc++ (Linux Clang ${{ matrix.clang_ver }})
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        run: |
-          # sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-${{ matrix.clang_ver }}-dev libc++abi-${{ matrix.clang_ver }}-dev
+      # - name: Install ninja and libc++ (Linux Clang ${{ matrix.clang_ver }})
+      #   if: runner.os == 'Linux' && matrix.runs_msan == true
+      #   run: |
+      #     # sudo apt-get update
+      #     sudo apt-get install --no-install-recommends ninja-build libc++-${{ matrix.clang_ver }}-dev libc++abi-${{ matrix.clang_ver }}-dev
 
       - name: Install ninja (Windows)
         if: runner.os == 'Windows'
@@ -284,15 +312,8 @@ jobs:
           mkdir lib
           cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          mv lib ${{ env.ZIP_NAME }}/
-
-      - name: Copy missing dylibs (g++)
-        if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-        run: |
-          mkdir lib
-          cp /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib lib
-          install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
+          ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
           mv lib ${{ env.ZIP_NAME }}/
 
       - name: Copy missing dlls
@@ -339,51 +360,52 @@ jobs:
           path: ${{ env.ZIP_NAME }}
           retention-days: 30
 
-      - name: Setup memory sanitizer
-        if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
+      # - name: Setup memory sanitizer
+      #   if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
+      #   run: |
+      #     mkdir -p tools
+      #     cd tools
+      #     git clone --depth=1 --branch=llvmorg-${{ matrix.clang_ver_full }} https://github.com/llvm/llvm-project
+      #     cd llvm-project
+      #     # mkdir build; cd build
+      #     sudo ln -s -f /usr/bin/$CC /usr/bin/clang
+      #     sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
+      #     # https://github.com/llvm/llvm-project/issues/78354
+      #     # sudo sysctl vm.mmap_rnd_bits=28
+      #     cmake -G Ninja -S runtimes -B build \
+      #       -DCMAKE_BUILD_TYPE=Release \
+      #       -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+      #       -DCMAKE_C_COMPILER=clang \
+      #       -DCMAKE_CXX_COMPILER=clang++ \
+      #       -DLLVM_USE_SANITIZER=MemoryWithOrigins \
+      #       -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
+      #     cmake --build build -j6 -- cxx cxxabi
+
+      - name: Make scripts executable
+        if: runner.os == 'Linux'
         run: |
-          mkdir -p tools
-          cd tools
-          git clone --depth=1 --branch=llvmorg-${{ matrix.clang_ver_full }} https://github.com/llvm/llvm-project
-          cd llvm-project
-          # mkdir build; cd build
-          sudo ln -s -f /usr/bin/$CC /usr/bin/clang
-          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
-          # https://github.com/llvm/llvm-project/issues/78354
-          sudo sysctl vm.mmap_rnd_bits=28
-          cmake -G Ninja -S runtimes -B build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
-            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
-          cmake --build build -j6 -- cxx cxxabi
+          chmod +x scripts/*
+          # chmod +x scripts/run_sanitizers.sh scripts/run_valgrind.sh
 
       - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env
-        if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os != 'Windows'
-        # detect_leaks is not supported on macOS
-        # env:
-        #   ASAN_OPTIONS: detect_leaks=1
-        run: |
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
-
-      - name: Sanitizers (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl' && matrix.runs_asan == true
+        if: runner.os == 'Linux' && matrix.runs_asan == true
         continue-on-error: true
+        env:
+          ASAN_OPTIONS: halt_on_error=0
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         run: |
-          cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" ./scripts/run_sanitizers.sh || true
+        working-directory: ${{github.workspace}}
+
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.runs_valgrind == true
+        continue-on-error: true
+        env:
+          EXECUTABLE_NAME: ${{ env.EXECUTABLE_NAME }}
         run: |
-          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
-              --leak-check=full --show-leak-kinds=all --track-origins=yes \
-              --error-exitcode=1 \
-              ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" ./scripts/run_valgrind.sh || true
+        working-directory: ${{github.workspace}}
 
       - name: Set Tag Name
         if: startsWith(github.ref, 'refs/tags/')
