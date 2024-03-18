@@ -71,4 +71,9 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 
 ## Resurse
 
+- [digestpp](https://github.com/kerukuro/digestpp/tree/ebb699402c244e22c3aff61d2239bcb2e87b8ef8) (Unlicense)
+- [random](https://github.com/effolkronium/random/tree/b9e79f352278f48948689dca74fd27e6821d24e8) (MIT)
+- [rlutil](https://github.com/tapio/rlutil/tree/821fdca0191b314ee07b0fad2abe4ea973e45575) (WTFPL)
+- [csv-parser](https://github.com/vincentlaucsb/csv-parser/tree/9d5f796a32c6cdecd83a2f778ca6db0500948d27) (MIT)
+- [date](https://github.com/HowardHinnant/date/tree/88a3b1512661decb78c60841f819a14eb200423c) (MIT)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
