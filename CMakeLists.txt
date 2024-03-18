@@ -9,9 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(USE_ASAN "Use Address Sanitizer" OFF)
+option(USE_MSAN "Use Memory Sanitizer" OFF)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
+    set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
 endif()
 
 # disable sanitizers when releasing executables without explicitly requested debug info
@@ -69,14 +71,14 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
         endif()
     elseif(UNIX)
         if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
+            if(USE_ASAN)
                 # check leaks on Linux since macOS does not support the leaks sanitizer yet
                 # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
                 target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
             endif()
         elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "17.")
+            if(USE_MSAN)
                 # use semi-colons instead of spaces to separate arguments
                 # it is recommended to quote generator expressions in order to avoid unintentional splitting
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
@@ -122,8 +124,8 @@ add_executable(${PROJECT_NAME} main.cpp
 # target definitions
 
 if(GITHUB_ACTIONS)
-  message("NOTE: GITHUB_ACTIONS defined")
-  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+    message("NOTE: GITHUB_ACTIONS defined")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
 endif()
 
 ###############################################################################
