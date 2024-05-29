@@ -40,7 +40,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 #### Cerințe
 - [ ] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri:
-  - minim o clasă de bază și **3 clase derivate**
+  - minim o clasă de bază și **3 clase derivate** din aceeași ierarhie
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
   - [ ] clasă cu atribut de tip pointer la o clasă de bază cu derivate
   - [ ] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
@@ -56,7 +56,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 - [ ] funcții și atribute `static`
 - [ ] STL
 - [ ] cât mai multe `const`
-- [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate**
+- [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate** din aceeași ierarhie
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
 - [ ] tag de `git`: de exemplu `v0.2`
 
