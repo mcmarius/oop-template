@@ -40,14 +40,39 @@ jobs:
   cppcheck:
     name: "Cppcheck"
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    env:
+      # check https://github.com/danmar/cppcheck/releases for latest version
+      CPPCHECK_VER: "2.14.2"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache cppcheck
+        uses: actions/cache@v4
+        id: cache-cppcheck
+        with:
+          path: cppcheck
+          key: cppcheck-${{ env.CPPCHECK_VER }}
+
+      - name: Build cppcheck
+        if: steps.cache-cppcheck.outputs.cache-hit != 'true'
+        run: |
+          wget https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip
+          unzip ${CPPCHECK_VER}.zip
+          rm ${CPPCHECK_VER}.zip
+          mv cppcheck-${CPPCHECK_VER} cppcheck
+          cd cppcheck
+          cmake -S . -B build -DEXTERNALS_AS_SYSTEM=ON
+          cmake --build build -j6
 
       - name: Install cppcheck
+        # this step is fast, no need for caching
         run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends cppcheck
+          cd cppcheck
+          sudo cmake --install build
 
       # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
       # which is used by cppcheck and clang-tidy
@@ -72,11 +97,14 @@ jobs:
   clang-tidy:
     name: "Clang-Tidy"
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     env:
-      CLANG_VER: 17
+      CLANG_VER: 18
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup compiler env vars
         run: |
@@ -116,7 +144,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 8
     permissions:
       contents: write
 
@@ -124,16 +152,26 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
 
+      # NOTE: replace with another version if this one does not work
+      # For more versions, see https://winlibs.com or
+      # https://github.com/brechtsanders/winlibs_mingw/releases/
+      MINGW_VER: "13.3.0posix-11.0.1-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64msvcrt-11.0.1-r1.7z"
+      # Example:
+      # MINGW_VER: "13.3.0posix-11.0.1-ucrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64ucrt-11.0.1-r1.7z"
+      # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64ucrt-12.0.0-r2.7z"
+      # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64msvcrt-12.0.0-r2.7z"
+
+
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-22.04
-            c: clang-17
-            cxx: clang++-17
-            clang_ver: "17"
-            clang_ver_full: "17.0.6"
-            name: "MSan: Ubuntu 22.04 Clang 17"
+            c: clang-18
+            cxx: clang++-18
+            clang_ver: "18"
+            clang_ver_full: "18.1.8"
+            name: "MSan: Ubuntu 22.04 Clang 18"
             cmake_flags: "-DUSE_MSAN=ON"
             cmake_generator: Ninja
             # This env runs memory sanitizers
@@ -149,9 +187,9 @@ jobs:
             runs_asan: true
 
           - os: ubuntu-22.04
-            c: gcc-11
-            cxx: g++-11
-            name: "Valgrind: Ubuntu 22.04 GCC 11"
+            c: gcc-12
+            cxx: g++-12
+            name: "Valgrind: Ubuntu 22.04 GCC 12"
             # cmake_flags:
             cmake_generator: Ninja
             # This env runs valgrind
@@ -167,9 +205,9 @@ jobs:
             runs_asan: true
 
           - os: macos-12
-            c: gcc-12
-            cxx: g++-12
-            name: "macOS 12 GCC 12"
+            c: gcc-13
+            cxx: g++-13
+            name: "macOS 12 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
 
@@ -185,13 +223,15 @@ jobs:
           - os: windows-2022
             c: gcc
             cxx: g++
-            name: "Windows 2022 MinGW GCC 12"
+            name: "Windows 2022 MinGW GCC 13"
             # cmake_flags:
             cmake_generator: Ninja
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Prepare env
         run: |
@@ -281,10 +321,12 @@ jobs:
       - name: Copy missing dylibs
         if: runner.os == 'macOS' && matrix.cxx == 'clang++'
         run: |
-          mkdir lib
-          cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
-          install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          mv lib ${{ env.ZIP_NAME }}/
+          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
+            mkdir lib
+            cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
+            install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+            mv lib ${{ env.ZIP_NAME }}/
+          fi
 
       - name: Copy missing dylibs (g++)
         if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
@@ -327,9 +369,9 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         # static linking might not work with MinGW, might be easier this way
         run: |
-          cp $(which libstdc++-6.dll) \
-            $(which libgcc_s_seh-1.dll) \
-            $(which libwinpthread-1.dll) \
+          cp gcc/mingw64/bin/libstdc++-6.dll \
+            gcc/mingw64/bin/libgcc_s_seh-1.dll \
+            gcc/mingw64/bin/libwinpthread-1.dll \
             ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
 
       - name: Upload Artifacts

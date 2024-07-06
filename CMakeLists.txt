@@ -13,7 +13,7 @@ option(USE_ASAN "Use Address Sanitizer" OFF)
 option(USE_MSAN "Use Memory Sanitizer" OFF)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
+    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install_dir" CACHE PATH "..." FORCE)
 endif()
 
 # disable sanitizers when releasing executables without explicitly requested debug info
