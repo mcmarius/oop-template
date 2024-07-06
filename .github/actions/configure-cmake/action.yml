@@ -57,6 +57,7 @@ runs:
       if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
       run: |
         7z x compiler/${{ steps.download-mingw-gcc.outputs.filename }} -ogcc
+
     - name: Configure CMake (MinGW)
       shell: bash
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -74,12 +75,12 @@ runs:
       shell: bash
       if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
       run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
-            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
-            ${{ inputs.custom_flags }}
+        CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+          -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+          -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+          -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
+          ${{ inputs.custom_flags }}
 
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
 # https://github.com/GuillaumeFalourd/poc-github-actions/blob/main/.github/workflows/36-local-action.yml

@@ -30,12 +30,6 @@ runs:
         # sudo apt-get update
         sudo apt-get install --no-install-recommends libc++-${{ matrix.clang_ver }}-dev libc++abi-${{ matrix.clang_ver }}-dev
 
-    - name: Install ninja (Windows)
-      shell: bash
-      if: runner.os == 'Windows'
-      run: |
-        choco install ninja
-
     - name: Install valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
