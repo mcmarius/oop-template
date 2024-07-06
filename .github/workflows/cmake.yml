@@ -24,9 +24,9 @@ env:
   # NOTE: update executable name if it is changed in CMakeLists.txt
   EXECUTABLE_NAME: "oop"
   INPUT_FILENAME: "tastatura.txt"
+  BIN_DIR: "bin"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-  BIN_DIR: "bin"
   GEN_DIR: "generated"
 
 defaults:
@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 5
     env:
       # check https://github.com/danmar/cppcheck/releases for latest version
+      # NOTE: consider updating this value in scripts/build_cppcheck.sh:4 when changing this value
       CPPCHECK_VER: "2.14.2"
     steps:
       - name: Checkout repo
@@ -60,13 +61,7 @@ jobs:
       - name: Build cppcheck
         if: steps.cache-cppcheck.outputs.cache-hit != 'true'
         run: |
-          wget https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip
-          unzip ${CPPCHECK_VER}.zip
-          rm ${CPPCHECK_VER}.zip
-          mv cppcheck-${CPPCHECK_VER} cppcheck
-          cd cppcheck
-          cmake -S . -B build -DEXTERNALS_AS_SYSTEM=ON
-          cmake --build build -j6
+          bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
 
       - name: Install cppcheck
         # this step is fast, no need for caching
@@ -83,16 +78,7 @@ jobs:
 
       - name: Cppcheck
         run: |
-          cppcheck --enable=all \
-                   --inline-suppr \
-                   --project="${BUILD_DIR}"/compile_commands.json \
-                   -i"${BUILD_DIR}" --suppress='*:"${BUILD_DIR}"/*' \
-                   -i"${EXT_DIR}" --suppress='*:"${EXT_DIR}"/*' \
-                   -i"${GEN_DIR}" --suppress='*:"${GEN_DIR}"/*' \
-                   --suppress=missingIncludeSystem \
-                   --suppress=unmatchedSuppression \
-                   --suppress=useStlAlgorithm \
-                   --error-exitcode=1
+          bash ./scripts/run_cppcheck.sh
 
   clang-tidy:
     name: "Clang-Tidy"
@@ -186,7 +172,7 @@ jobs:
             # This env runs address sanitizers
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
-            asan_name: "asan"
+            asan_name: "-asan"
 
           - os: ubuntu-22.04
             c: gcc-12
