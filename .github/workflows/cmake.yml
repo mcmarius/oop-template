@@ -205,16 +205,16 @@ jobs:
             runs_asan: true
 
           - os: macos-12
-            c: gcc-13
-            cxx: g++-13
-            name: "macOS 12 GCC 13"
+            c: gcc-12
+            cxx: g++-12
+            name: "macOS 12 GCC 12"
             # cmake_flags:
             # cmake_generator: Ninja
 
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.38"
+            name: "ASan: Windows 2022 MSVC 19.40"
             cmake_flags: "-DUSE_ASAN=ON"
             # cmake_generator: Ninja
             # This env runs address sanitizers
@@ -395,7 +395,7 @@ jobs:
           sudo sysctl vm.mmap_rnd_bits=28
           cmake -G Ninja -S runtimes -B build \
             -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DLLVM_USE_SANITIZER=MemoryWithOrigins \
