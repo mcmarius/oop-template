@@ -160,11 +160,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Prepare env
-        run: |
-          echo ${GITHUB_WORKSPACE}
-          mkdir ${GITHUB_WORKSPACE}/artifacts
-
       - name: Set timestamp and zip name
         run: |
           echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
@@ -176,47 +171,8 @@ jobs:
           # the regex splits by / and keeps everything after / without the / character
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}${{ matrix.asan_name }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
 
-      # Common Linux dependencies
-      - name: Install Linux Dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build
-          # https://github.com/llvm/llvm-project/issues/78354
-          sudo sysctl vm.mmap_rnd_bits=28
-
-      # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-      - name: Install Clang ${{ matrix.clang_ver }}
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x ./llvm.sh
-          sudo ./llvm.sh ${{ matrix.clang_ver }}
-
-      - name: Install libc++ (Linux Clang ${{ matrix.clang_ver }})
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        run: |
-          # sudo apt-get update
-          sudo apt-get install --no-install-recommends libc++-${{ matrix.clang_ver }}-dev libc++abi-${{ matrix.clang_ver }}-dev
-
-      - name: Install ninja (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install ninja
-
-      - name: Install valgrind
-        if: runner.os == 'Linux' && matrix.runs_valgrind == true
-        run: |
-          # sudo apt-get update
-          sudo apt-get install --no-install-recommends valgrind
-
-      - name: Cache tools
-        uses: actions/cache@v4
-        if: runner.os == 'Linux' && matrix.runs_msan == true
-        id: cache-tools
-        with:
-          path: tools
-          key: tools-clang-${{ matrix.clang_ver }}-stdlib-msan
+      - name: Install packages
+        uses: ./.github/actions/install-packages
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
@@ -238,67 +194,8 @@ jobs:
           mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
 
-      - name: Patch macOS launcher
-        if: runner.os == 'macOS'
-        run: |
-          sed -i '' -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
-          chmod +x "${{ env.ZIP_NAME }}/launcher.command"
-
-      - name: Copy missing dylibs
-        if: runner.os == 'macOS' && matrix.cxx == 'clang++'
-        run: |
-          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-            mkdir lib
-            cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
-            install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-            mv lib ${{ env.ZIP_NAME }}/
-          fi
-
-      - name: Copy missing dylibs (g++)
-        if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-        run: |
-          mkdir lib
-          cp /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib lib
-          install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          mv lib ${{ env.ZIP_NAME }}/
-
-      - name: Copy missing dlls
-        if: runner.os == 'Windows' && matrix.cxx == 'cl'
-        run: |
-          if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-            # runtime debug DLLs
-            cp "$(which ucrtbased.dll)" \
-               "$(which VCRUNTIME140_1D.dll)" \
-               "$(which MSVCP140D.dll)" \
-               "$(which VCRUNTIME140D.dll)" \
-               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
-
-            # sanitizers DLLs
-            vcver=$(cat "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt")
-            vcbindir="C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/${vcver}/bin/Hostx64/x64/"
-            cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
-               "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
-               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
-          fi
-
-          # runtime release DLLs
-          if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
-            cp "$(which ucrtbase.dll)" \
-               "$(which VCRUNTIME140_1.dll)" \
-               "$(which MSVCP140.dll)" \
-               "$(which VCRUNTIME140.dll)" \
-               ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
-          fi
-
-      - name: Copy stdlib (MinGW)
-        if: runner.os == 'Windows' && matrix.cxx == 'g++'
-        # static linking might not work with MinGW, might be easier this way
-        run: |
-          cp gcc/mingw64/bin/libstdc++-6.dll \
-            gcc/mingw64/bin/libgcc_s_seh-1.dll \
-            gcc/mingw64/bin/libwinpthread-1.dll \
-            ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
+      - name: Process artifacts
+        uses: ./.github/actions/process-artifacts
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -307,79 +204,8 @@ jobs:
           path: ${{ env.ZIP_NAME }}
           retention-days: 30
 
-      - name: Setup memory sanitizer
-        if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p tools
-          cd tools
-          git clone --depth=1 --branch=llvmorg-${{ matrix.clang_ver_full }} https://github.com/llvm/llvm-project
-          cd llvm-project
-          # mkdir build; cd build
-          sudo ln -s -f /usr/bin/$CC /usr/bin/clang
-          sudo ln -s -f /usr/bin/$CXX /usr/bin/clang++
-          # https://github.com/llvm/llvm-project/issues/78354
-          sudo sysctl vm.mmap_rnd_bits=28
-          cmake -G Ninja -S runtimes -B build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
-            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
-          cmake --build build -j6 -- cxx cxxabi
+      - name: Runtime checks
+        uses: ./.github/actions/runtime-checks
 
-      - name: Sanitizers
-        # run one sanitizer for each env to avoid building extra binaries on one env
-        if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os != 'Windows'
-        # detect_leaks is not supported on macOS
-        # env:
-        #   ASAN_OPTIONS: detect_leaks=1
-        run: |
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
-
-      - name: Sanitizers (Windows MSVC)
-        # run one sanitizer for each OS to avoid building extra binaries
-        if: matrix.cxx == 'cl' && matrix.runs_asan == true
-        continue-on-error: true
-        run: |
-          cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
-
-      - name: Valgrind
-        if: runner.os == 'Linux' && matrix.runs_valgrind == true
-        run: |
-          # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-          cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
-              --leak-check=full --show-leak-kinds=all --track-origins=yes \
-              --error-exitcode=1 \
-              ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
-
-      - name: Set Tag Name
-        if: startsWith(github.ref, 'refs/tags/')
-        # trim prefix from ref to get tag name
-        run: echo "TAG_NAME=${GITHUB_REF#'refs/tags/'}" >> ${GITHUB_ENV}
-
-      - name: Add tag to folder name
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          mv ${{ env.ZIP_NAME }} ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
-
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          type: 'zip'
-          path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
-          filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          subject-path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
-
-      - name: Release
-        uses: softprops/action-gh-release@master
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+      - name: Create release
+        uses: ./.github/actions/create-release
