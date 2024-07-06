@@ -49,34 +49,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Cache cppcheck
-        uses: actions/cache@v4
-        id: cache-cppcheck
-        with:
-          path: cppcheck
-          key: cppcheck-${{ env.CPPCHECK_VER }}
-
-      - name: Build cppcheck
-        if: steps.cache-cppcheck.outputs.cache-hit != 'true'
-        run: |
-          bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
-
-      - name: Install cppcheck
-        # this step is fast, no need for caching
-        run: |
-          cd cppcheck
-          sudo cmake --install build
-
-      # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-      # which is used by cppcheck and clang-tidy
-      - name: Configure CMake
-        uses: ./.github/actions/configure-cmake
-        with:
-          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
-
-      - name: Cppcheck
-        run: |
-          bash ./scripts/run_cppcheck.sh
+      - name: Run cppcheck
+        uses: ./.github/actions/cppcheck
 
   clang-tidy:
     name: "Clang-Tidy"
@@ -88,39 +62,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup compiler env vars
-        run: |
-          echo "CC=clang-${CLANG_VER}" >> $GITHUB_ENV
-          echo "CXX=clang++-${CLANG_VER}" >> $GITHUB_ENV
-
-      # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-      - name: Install Clang ${{ env.CLANG_VER }}
-        run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x ./llvm.sh
-          sudo ./llvm.sh ${CLANG_VER}
-
-      - name: Install clang-tidy
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends clang-tidy-${{ env.CLANG_VER }} libc++-${{ env.CLANG_VER }}-dev libc++abi-${{ env.CLANG_VER }}-dev
-
-      - name: Configure CMake
-        uses: ./.github/actions/configure-cmake
-        with:
-          custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
-
-      - name: Clang-Tidy
-        continue-on-error: true
-        # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-        # need to use | as sed separator because / is used in paths
-        run: |
-          sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
-
-          cat "${BUILD_DIR}"/compile_commands.json |
-            jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
-            grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
-            xargs clang-tidy-${{ env.CLANG_VER }} -p "${BUILD_DIR}"
+      - name: Run clang-tidy
+        uses: ./.github/actions/clang-tidy
 
 
   build:
