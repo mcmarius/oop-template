@@ -48,8 +48,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Cache cppcheck
         uses: actions/cache@v4
@@ -89,8 +87,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup compiler env vars
         run: |
@@ -132,7 +128,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 8
     permissions:
+      attestations: write
       contents: write
+      id-token: write
 
     env:
       CC: ${{ matrix.c }}
@@ -218,8 +216,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Prepare env
         run: |
@@ -298,7 +294,6 @@ jobs:
           mkdir ${{ env.ZIP_NAME }}
           mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
-          cp "${INPUT_FILENAME}" ${{ env.ZIP_NAME }}
 
       - name: Patch macOS launcher
         if: runner.os == 'macOS'
@@ -432,6 +427,12 @@ jobs:
           type: 'zip'
           path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
           filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          subject-path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
       - name: Release
         uses: softprops/action-gh-release@master
