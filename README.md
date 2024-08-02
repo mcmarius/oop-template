@@ -72,6 +72,34 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
+## Instrucțiuni de compilare
+
+Proiectul este configurat cu CMake.
+
+Instrucțiuni pentru terminal:
+
+1. Pasul de configurare
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+```
+
+La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
+
+
+2. Pasul de compilare
+```sh
+cmake --build build --config Debug --parallel 6
+```
+
+Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
+
+3. Pasul de instalare (opțional)
+```sh
+cmake --install build --config Debug --prefix install_dir
+```
+
+Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
+
 ## Resurse
 
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit

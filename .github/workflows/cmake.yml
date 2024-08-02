@@ -182,11 +182,13 @@ jobs:
 
       - name: Build
         # Execute the build using N jobs (-jN)
-        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} -j6
+        run: bash ./scripts/cmake.sh build
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
-        run: cmake --install "${BUILD_DIR}" --config ${BUILD_TYPE} --prefix artifacts
+        run: |
+          export INSTALL_DIR=artifacts
+          bash ./scripts/cmake.sh install
 
       - name: Move artifacts
         run: |
