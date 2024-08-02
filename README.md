@@ -83,6 +83,11 @@ Instrucțiuni pentru terminal:
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 ```
 
+Sau pe Windows cu GCC:
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+```
+
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
 
 
