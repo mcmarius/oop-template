@@ -182,17 +182,8 @@ jobs:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
 
-       name: Build
-       # if: !(runner.os == 'Windows' && matrix.cxx == 'cl')
-       # Execute the build using N jobs (-jN)
-       run: bash ./scripts/cmake.sh build
-
-      #- name: Build (MSVC)
-      #  if: runner.os == 'Windows' && matrix.cxx == 'cl'
-      #  shell: cmd
-      #  run: |
-      #    call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
-      #    cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
+      - name: Build
+        run: bash ./scripts/cmake.sh build
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
