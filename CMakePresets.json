@@ -1,0 +1,15 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "generator": "Ninja"
+    }
+  ],
+  "cacheVariables": {
+    "CMAKE_BUILD_TYPE": "Debug",
+    "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+    "CMAKE_C_COMPILER": "cl",
+    "CMAKE_CXX_COMPILER": "cl"
+  },
+}

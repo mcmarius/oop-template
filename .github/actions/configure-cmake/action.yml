@@ -58,12 +58,24 @@ runs:
       run: |
         7z x compiler/${{ steps.download-mingw-gcc.outputs.filename }} -ogcc
 
+    - uses: seanmiddleditch/gha-setup-ninja@master
+      if: runner.os == 'Windows' && matrix.cxx == 'cl'
+
+    #- name: Configure CMake and build (MSVC)
+    #  shell: cmd
+    #  if: runner.os == 'Windows' && matrix.cxx == 'cl'
+    #  run: |
+    #    call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+    #    set CMAKE_GENERATOR=${{ matrix.cmake_generator }}
+    #    cmake -B ${{ env.BUILD_DIR }} -S %GITHUB_WORKSPACE% -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=artifacts -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} -DGITHUB_ACTIONS=%GITHUB_ACTIONS% ${{ inputs.custom_flags }}
+    #    cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
+
     - name: Configure CMake (MinGW)
       shell: bash
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
       run: |
         PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
-        # because GH Actions does not properly prepend to $PATH and still chooses older gcc
+        # because GH Actions does not properly prepend to $PATH and still chooses VM gcc
         export CMAKE_GENERATOR=${{ matrix.cmake_generator }}
         bash ./scripts/cmake.sh configure -s ${GITHUB_WORKSPACE} -b ${{ env.BUILD_DIR }} \
           -t ${{ env.BUILD_TYPE }} \
@@ -72,7 +84,7 @@ runs:
 
     - name: Configure CMake
       shell: bash
-      if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
+      if: ${{ !(runner.os == 'Windows') }} # && matrix.cxx == 'g++') }}
       run: |
         export CMAKE_GENERATOR=${{ matrix.cmake_generator }}
         bash ./scripts/cmake.sh configure -s ${GITHUB_WORKSPACE} -b ${{ env.BUILD_DIR }} \

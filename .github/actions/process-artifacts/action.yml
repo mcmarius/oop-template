@@ -17,7 +17,7 @@ runs:
       run: |
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
           mkdir lib
-          cp /Library/Developer/CommandLineTools/usr/lib/clang/14.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
+          cp /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
           mv lib ${{ env.ZIP_NAME }}/
         fi
@@ -27,9 +27,11 @@ runs:
       if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
       run: |
         mkdir lib
-        cp /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib lib
-        install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-        install_name_tool -change /usr/local/opt/gcc@12/lib/gcc/12/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+        ls -l /opt/homebrew/lib/gcc/13
+        echo "------"
+        cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib
+        install_name_tool -change /usr/local/opt/gcc@13/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
+        install_name_tool -change /usr/local/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
         mv lib ${{ env.ZIP_NAME }}/
 
     - name: Copy missing dlls

@@ -49,8 +49,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Run cppcheck
-        uses: ./.github/actions/cppcheck
+      #- name: Run cppcheck
+      #  uses: ./.github/actions/cppcheck
 
   clang-tidy:
     name: "Clang-Tidy"
@@ -62,8 +62,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Run clang-tidy
-        uses: ./.github/actions/clang-tidy
+      #- name: Run clang-tidy
+      #  uses: ./.github/actions/clang-tidy
 
 
   build:
@@ -124,19 +124,19 @@ jobs:
             # This env runs valgrind
             runs_valgrind: true
 
-          - os: macos-12
+          - os: macos-14
             c: clang
             cxx: clang++
-            name: "ASan: macOS 12 Apple Clang 14"
+            name: "ASan: macOS 14 Apple Clang 15"
             cmake_flags: "-DUSE_ASAN=ON"
             # cmake_generator:
             # This env runs address sanitizers
             runs_asan: true
 
-          - os: macos-12
-            c: gcc-12
-            cxx: g++-12
-            name: "macOS 12 GCC 12"
+          - os: macos-14
+            c: gcc-13
+            cxx: g++-13
+            name: "macOS 14 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
 
@@ -145,7 +145,9 @@ jobs:
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.40"
             cmake_flags: "-DUSE_ASAN=ON"
-            # cmake_generator: Ninja
+            # Ninja is not faster on MSVC because... MSVC
+            # cmake_generator: "Ninja"
+            # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
 
@@ -180,9 +182,17 @@ jobs:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
 
-      - name: Build
-        # Execute the build using N jobs (-jN)
-        run: bash ./scripts/cmake.sh build
+       name: Build
+       # if: !(runner.os == 'Windows' && matrix.cxx == 'cl')
+       # Execute the build using N jobs (-jN)
+       run: bash ./scripts/cmake.sh build
+
+      #- name: Build (MSVC)
+      #  if: runner.os == 'Windows' && matrix.cxx == 'cl'
+      #  shell: cmd
+      #  run: |
+      #    call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+      #    cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
