@@ -24,7 +24,7 @@ env:
   # NOTE: update executable name if it is changed in CMakeLists.txt
   EXECUTABLE_NAME: "oop"
   INPUT_FILENAME: "tastatura.txt"
-  BIN_DIR: "bin"
+  BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   GEN_DIR: "generated"
