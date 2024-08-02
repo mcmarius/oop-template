@@ -13,10 +13,10 @@ while getopts ":b:o:v:" opt; do
     ;;
     v) CPPCHECK_VER="${OPTARG}"
     ;;
-    *) printf "Unknown option; available options: \n\
+    *) printf "Unknown option %s; available options: \n\
         -b (build dir)\n\
         -o (cmake opts)\n\
-        -v (cppcheck version)\n"
+        -v (cppcheck version)\n" "${opt}"
       exit 1
     ;;
   esac

@@ -24,7 +24,7 @@ env:
   # NOTE: update executable name if it is changed in CMakeLists.txt
   EXECUTABLE_NAME: "oop"
   INPUT_FILENAME: "tastatura.txt"
-  BIN_DIR: "bin"
+  BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   GEN_DIR: "generated"
@@ -78,6 +78,7 @@ jobs:
     env:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
+      VSCMD_SKIP_SENDTELEMETRY: 1
 
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or
@@ -124,19 +125,19 @@ jobs:
             # This env runs valgrind
             runs_valgrind: true
 
-          - os: macos-12
+          - os: macos-14
             c: clang
             cxx: clang++
-            name: "ASan: macOS 12 Apple Clang 14"
+            name: "ASan: macOS 14 Apple Clang 15"
             cmake_flags: "-DUSE_ASAN=ON"
             # cmake_generator:
             # This env runs address sanitizers
             runs_asan: true
 
-          - os: macos-12
-            c: gcc-12
-            cxx: g++-12
-            name: "macOS 12 GCC 12"
+          - os: macos-14
+            c: gcc-13
+            cxx: g++-13
+            name: "macOS 14 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
 
@@ -145,7 +146,9 @@ jobs:
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.40"
             cmake_flags: "-DUSE_ASAN=ON"
-            # cmake_generator: Ninja
+            # Ninja is not faster on MSVC because... MSVC
+            # cmake_generator: "Ninja"
+            # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
 
@@ -181,12 +184,12 @@ jobs:
           warnings_as_errors: 'ON'
 
       - name: Build
-        # Execute the build using N jobs (-jN)
-        run: cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} -j6
+        run: bash ./scripts/cmake.sh build
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
-        run: cmake --install "${BUILD_DIR}" --config ${BUILD_TYPE} --prefix artifacts
+        run: |
+          bash ./scripts/cmake.sh install -i artifacts
 
       - name: Move artifacts
         run: |

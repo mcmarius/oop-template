@@ -58,6 +58,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 - [ ] funcții și atribute `static`
 - [ ] STL
 - [ ] cât mai multe `const`
+- [ ] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate** din aceeași ierarhie
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
 - [ ] tag de `git`: de exemplu `v0.2`
@@ -70,6 +71,34 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
   - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
+
+## Instrucțiuni de compilare
+
+Proiectul este configurat cu CMake.
+
+Instrucțiuni pentru terminal:
+
+1. Pasul de configurare
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+```
+
+La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
+
+
+2. Pasul de compilare
+```sh
+cmake --build build --config Debug --parallel 6
+```
+
+Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
+
+3. Pasul de instalare (opțional)
+```sh
+cmake --install build --config Debug --prefix install_dir
+```
+
+Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
