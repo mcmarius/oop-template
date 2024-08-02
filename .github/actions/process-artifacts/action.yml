@@ -27,8 +27,6 @@ runs:
       if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
       run: |
         mkdir lib
-        ls -l /opt/homebrew/lib/gcc/13
-        echo "------"
         cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib
         install_name_tool -change /usr/local/opt/gcc@13/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
         install_name_tool -change /usr/local/opt/gcc@13/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}

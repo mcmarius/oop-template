@@ -49,8 +49,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      #- name: Run cppcheck
-      #  uses: ./.github/actions/cppcheck
+      - name: Run cppcheck
+        uses: ./.github/actions/cppcheck
 
   clang-tidy:
     name: "Clang-Tidy"
@@ -62,8 +62,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      #- name: Run clang-tidy
-      #  uses: ./.github/actions/clang-tidy
+      - name: Run clang-tidy
+        uses: ./.github/actions/clang-tidy
 
 
   build:
