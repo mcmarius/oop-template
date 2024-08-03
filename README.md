@@ -107,4 +107,9 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
+- [digestpp](https://github.com/kerukuro/digestpp/tree/ebb699402c244e22c3aff61d2239bcb2e87b8ef8) (Unlicense)
+- [random](https://github.com/ilqvya/random/tree/1f8dc0b44dfea28ad048e133866a118ffd26d283) (MIT)
+- [rlutil](https://github.com/tapio/rlutil/tree/821fdca0191b314ee07b0fad2abe4ea973e45575) (WTFPL)
+- [csv-parser](https://github.com/vincentlaucsb/csv-parser/tree/9f8a7210c8a6c4bf1ec41543510ad20f55b7f288) (MIT)
+- [date](https://github.com/HowardHinnant/date/tree/1ead6715dec030d340a316c927c877a3c4e5a00c) (MIT)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
