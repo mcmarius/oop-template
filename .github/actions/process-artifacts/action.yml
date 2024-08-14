@@ -26,20 +26,21 @@ runs:
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
         fi
+        ls -1 ${{ env.ZIP_NAME }}/lib | grep framework | xargs -I% ls ${{ env.ZIP_NAME }}/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/%.framework/Versions/A/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
+        otool -L ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
         mv ${{ env.ZIP_NAME }}/lib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS
 
-    #- name: Copy missing dylibs (g++)
-    #  shell: bash
-    #  if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
-    #  run: |
-    #    mkdir -p ${{ env.ZIP_NAME }}/lib
-    #    cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/lib
-    #    install_name_tool -change /opt/homebrew/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
-    #    install_name_tool -change /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
+    # - name: Copy missing dylibs (g++)
+    #   shell: bash
+    #   if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
+    #   run: |
+    #     mkdir -p ${{ env.ZIP_NAME }}/lib
+    #     cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/lib
+    #     install_name_tool -change /opt/homebrew/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
+    #     install_name_tool -change /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
     #     # not sure about these - SFML might not support GCC on macOS
-    #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
-    #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
-    #    mv ${{ env.ZIP_NAME }}/lib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS
+    #     ls -1 ${{ env.ZIP_NAME }}/lib | grep framework | xargs -I% ls ${{ env.ZIP_NAME }}/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/%.framework/Versions/A/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
+    #     mv ${{ env.ZIP_NAME }}/lib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS
 
     - name: Copy missing dlls
       shell: bash

@@ -4,6 +4,7 @@
 #include <thread>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include <Helper.h>
 
@@ -31,9 +32,14 @@ SomeClass *getC() {
 int main() {
     ////////////////////////////////////////////////////////////////////////
     /// NOTE: this function call is needed for environment-specific fixes //
-    init_threads();                                                       //
+    utils::init_threads();                                                //
     ////////////////////////////////////////////////////////////////////////
     ///
+    sf::Music music;
+    if (!music.openFromFile(utils::file_path("music.ogg")))
+        std::cout << "error\n"; // error
+    else
+        music.play();
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
     int nr;
@@ -100,6 +106,17 @@ int main() {
     window.setVerticalSyncEnabled(true);                                    ///
     /// window.setFramerateLimit(60);                                       ///
     ///////////////////////////////////////////////////////////////////////////
+    //
+    // https://www.aloneguid.uk/posts/2021/11/cmake-app-icon/
+    // https://en.sfml-dev.org/forums/index.php?topic=9712.0
+    sf::Image appIcon;
+    if(!appIcon.loadFromFile(utils::file_path("sfml_icon.png"))) {
+        std::cout << "error loading icon\n";
+        sf::sleep(sf::seconds(2));
+        return 1;
+    }
+    auto [iconWidth, iconHeight] = appIcon.getSize();
+    window.setIcon(iconWidth, iconHeight, appIcon.getPixelsPtr());
 
     while(window.isOpen()) {
         bool shouldExit = false;

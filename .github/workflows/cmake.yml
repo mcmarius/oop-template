@@ -149,7 +149,7 @@ jobs:
             c: cl
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.40"
-            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=TRUE"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=FALSE"
             cpack_generator: NSIS64
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -161,7 +161,7 @@ jobs:
             c: gcc
             cxx: g++
             name: "Windows 2022 MinGW GCC 13"
-            cmake_flags: -DBUILD_SHARED_LIBS=TRUE
+            cmake_flags: -DBUILD_SHARED_LIBS=FALSE
             cmake_generator: Ninja
             cpack_generator: NSIS64
 
