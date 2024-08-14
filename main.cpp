@@ -4,6 +4,7 @@
 #include <thread>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include <Helper.h>
 
@@ -34,6 +35,11 @@ int main() {
     init_threads();                                                       //
     ////////////////////////////////////////////////////////////////////////
     ///
+    sf::Music music;
+    if (!music.openFromFile("music.ogg"))
+        std::cout << "error\n"; // error
+    else
+        music.play();
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
     int nr;

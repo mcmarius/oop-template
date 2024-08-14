@@ -9,7 +9,7 @@ elseif(UNIX)
     INSTALL(CODE
         "include(${CMAKE_CURRENT_LIST_DIR}/AppImage.cmake)
         make_appimage(
-            EXE \"${CMAKE_BINARY_DIR}/${PROJECT_NAME}\"
+            EXE \"${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}\"
             NAME \"${PROJECT_NAME}\"
             ICON \"${PROJECT_SOURCE_DIR}/cmake/cpack/icon.svg\"
             DIR_ICON \"${PROJECT_SOURCE_DIR}/cmake/cpack/diricon.png\"

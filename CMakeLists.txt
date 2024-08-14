@@ -61,7 +61,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
@@ -72,20 +72,30 @@ endif()
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
-install(TARGETS ${PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
-if(APPLE)
-    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
+if(WIN32)
+    install(
+        TARGETS ${PROJECT_NAME}
+        DESTINATION ${DESTINATION_DIR})
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            -t $<TARGET_FILE_DIR:${PROJECT_NAME}> $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS
+    )
+else()
+    install(
+        TARGETS ${PROJECT_NAME}
+        RUNTIME_DEPENDENCY_SET dep_set
+        DESTINATION ${DESTINATION_DIR})
+
+    install(RUNTIME_DEPENDENCY_SET dep_set
+        POST_EXCLUDE_REGEXES "libX.*" "libc.so*" "libm.so*" "libudev*" "libstdc*" "libgcc*" "ld-linux*"
+        # POST_INCLUDE_REGEXES "libopenal*" "libvorbis*" "libFLAC*" "libogg*" "libasound*" "libsndio*"
+        DESTINATION ${DESTINATION_DIR}/lib)
 endif()
 
-# copy dependent DLLs to build dir
-# see https://en.sfml-dev.org/forums/index.php?topic=28580.0
-# remove this if not using audio or if using SFML 3
-if (WIN32 AND SFML_BUILD_AUDIO)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-         ${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll
-         $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
+if(APPLE)
+    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
 

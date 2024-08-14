@@ -15,27 +15,27 @@ runs:
       shell: bash
       if: runner.os == 'macOS' && matrix.cxx == 'clang++'
       run: |
-        mkdir lib
+        mkdir -p lib2
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-          cp /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
+          cp /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib2
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
         fi
-        ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
+        ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib2
         ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-        mv lib ${{ env.ZIP_NAME }}/
+        mv lib2 ${{ env.ZIP_NAME }}/
 
     # - name: Copy missing dylibs (g++)
     #   shell: bash
     #   if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
     #   run: |
-    #     mkdir lib
-    #     cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib
+    #     mkdir -p lib2
+    #     cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib2
     #     install_name_tool -change /opt/homebrew/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
     #     install_name_tool -change /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
     #     # not sure about these - SFML might not support GCC on macOS
-    #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
+    #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib2
     #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-    #     mv lib ${{ env.ZIP_NAME }}/
+    #     mv lib2 ${{ env.ZIP_NAME }}/
 
     - name: Copy missing dlls
       shell: bash
@@ -75,3 +75,9 @@ runs:
           gcc/mingw64/bin/libgcc_s_seh-1.dll \
           gcc/mingw64/bin/libwinpthread-1.dll \
           ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
+
+    - name: Copy AppImage file
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
