@@ -22,6 +22,12 @@ runs:
       run: |
         cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.AppImage
 
+    - name: Add Windows installer
+      shell: bash
+      if: runner.os == 'Windows'
+      run: |
+          cp ${{ env.EXECUTABLE_NAME }}-*-win64.exe ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.exe
+
     - name: Archive Release
       uses: thedoctor0/zip-release@master
       if: startsWith(github.ref, 'refs/tags/')
@@ -49,3 +55,10 @@ runs:
       with:
         files: |
           ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.AppImage
+
+    - name: Release Windows installer
+      uses: softprops/action-gh-release@master
+      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows'
+      with:
+        files: |
+          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.exe
