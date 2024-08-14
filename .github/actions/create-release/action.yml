@@ -20,7 +20,13 @@ runs:
       shell: bash
       if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       run: |
-        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.AppImage
+        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}{{ matrix.asan_name }}.AppImage
+
+    - name: Add Windows installer
+      shell: bash
+      if: runner.os == 'Windows' && (matrix.cxx == 'g++' || contains(env.BUILD_TYPE, 'Rel'))
+      run: |
+          cp ${{ env.EXECUTABLE_NAME }}-*-win64.exe ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe
 
     - name: Archive Release
       uses: thedoctor0/zip-release@master
@@ -48,4 +54,11 @@ runs:
       if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       with:
         files: |
-          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}.AppImage
+          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}{{ matrix.asan_name }}.AppImage
+
+    - name: Release Windows installer
+      uses: softprops/action-gh-release@master
+      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows' && (matrix.cxx == 'g++' || contains(env.BUILD_TYPE, 'Rel'))
+      with:
+        files: |
+          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe

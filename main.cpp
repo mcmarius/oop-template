@@ -106,6 +106,17 @@ int main() {
     window.setVerticalSyncEnabled(true);                                    ///
     /// window.setFramerateLimit(60);                                       ///
     ///////////////////////////////////////////////////////////////////////////
+    //
+    // https://www.aloneguid.uk/posts/2021/11/cmake-app-icon/
+    // https://en.sfml-dev.org/forums/index.php?topic=9712.0
+    sf::Image appIcon;
+    if(!appIcon.loadFromFile("sfml_icon.png")) {
+        std::cout << "error loading icon\n";
+        sf::sleep(sf::seconds(2));
+        return 1;
+    }
+    auto [iconWidth, iconHeight] = appIcon.getSize();
+    window.setIcon(iconWidth, iconHeight, appIcon.getPixelsPtr());
 
     while(window.isOpen()) {
         bool shouldExit = false;
