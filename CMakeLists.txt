@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.26)
 # for now, the project name is used as the executable name
 project(oop)
 set(CMAKE_PROJECT_VERSION_MAJOR 0)
-set(CMAKE_PROJECT_VERSION_MINOR 0)
-set(CMAKE_PROJECT_VERSION_PATCH 1)
+set(CMAKE_PROJECT_VERSION_MINOR 2)
+set(CMAKE_PROJECT_VERSION_PATCH 8)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -66,7 +66,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-audio sfml-window sfml-system Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
@@ -105,22 +105,12 @@ elseif(WIN32)
     install(FILES launcher.bat DESTINATION ${DESTINATION_DIR})
 endif()
 
-# copy dependent DLLs to build dir
-# see https://en.sfml-dev.org/forums/index.php?topic=28580.0
-# remove this if not using audio or if using SFML 3
-if (WIN32 AND SFML_BUILD_AUDIO)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-         ${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll
-         $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-endif()
-
 
 include(cmake/CopyHelper.cmake)
 # favicon.ico is needed on windows to have an icon for the start menu shortcut
 set(assets_var
     tastatura.txt
+    cmake/cpack/sfml_icon.png
     cmake/cpack/favicon.ico
     # cmake/cpack/icon.svg
     )

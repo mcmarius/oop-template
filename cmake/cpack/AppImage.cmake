@@ -49,7 +49,7 @@ function(make_appimage)
     )
     # NOTE
     # if you also need a terminal
-    # use "x-terminal-emulator -e ./${EXE_NAME} $@ && sleep 1"
+    # use "x-terminal-emulator -e ./${EXE_NAME} $@ && sleep 10"
     # if you only want GUI, use "./${EXE_NAME} $@"
     #
     execute_process(COMMAND chmod +x "${APPDIR}/AppRun")
