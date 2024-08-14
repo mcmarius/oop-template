@@ -50,6 +50,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
     generated/src/Helper.cpp
     env_fixes.h
+    icon.rc
 )
 
 include(cmake/CompilerFlags.cmake)
@@ -100,7 +101,12 @@ endif()
 
 
 include(cmake/CopyHelper.cmake)
-copy_files(FILES tastatura.txt cmake/cpack/icon.svg cmake/cpack/diricon.png)
+set(assets_var
+    tastatura.txt
+    cmake/cpack/sfml_icon.png
+    # cmake/cpack/icon.svg cmake/cpack/favicon.ico
+    )
+copy_files(FILES ${assets_var})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
 # copy_files(DIRECTORY images sounds)
 
