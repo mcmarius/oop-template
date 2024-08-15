@@ -1,0 +1,22 @@
+name: 'Create release common logic'
+description: 'Create releases and attestations'
+inputs:
+  file:
+    description: 'File to attest and upload to release'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate artifact attestation for file
+      uses: actions/attest-build-provenance@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        subject-path: ${{ inputs.file }}
+
+    - name: Release file
+      uses: softprops/action-gh-release@master
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          ${{ inputs.file }}

@@ -16,6 +16,17 @@ runs:
       run: |
         mv ${{ env.ZIP_NAME }} ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
 
+    - name: Add AppImage
+      shell: bash
+      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
+      run: |
+        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
+    - name: Add Windows installer
+      shell: bash
+      if: runner.os == 'Windows' && (matrix.cxx == 'g++') # || contains(env.BUILD_TYPE, 'Rel'))
+      run: |
+          cp ${{ env.EXECUTABLE_NAME }}-*-win64.exe ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe
+
     - name: Archive Release
       uses: thedoctor0/zip-release@master
       if: startsWith(github.ref, 'refs/tags/')
@@ -24,15 +35,19 @@ runs:
         path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
         filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v1
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Generate artifact attestation and upload to release (zip)
+      uses: ./.github/actions/create-release-common
       with:
-        subject-path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+        file: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
-    - name: Release
-      uses: softprops/action-gh-release@master
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Generate artifact attestation and upload to release (AppImage)
+      uses: ./.github/actions/create-release-common
+      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       with:
-        files: |
-          ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+        file: ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
+
+    - name: Generate artifact attestation and upload to release (Windows installer)
+      uses: ./.github/actions/create-release-common
+      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows' && matrix.cxx == 'g++'
+      with:
+        file: ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe

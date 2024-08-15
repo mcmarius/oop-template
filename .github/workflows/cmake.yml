@@ -146,6 +146,7 @@ jobs:
             cxx: cl
             name: "ASan: Windows 2022 MSVC 19.40"
             cmake_flags: "-DUSE_ASAN=ON"
+            cpack_generator: NSIS64
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
@@ -158,6 +159,7 @@ jobs:
             name: "Windows 2022 MinGW GCC 13"
             # cmake_flags:
             cmake_generator: Ninja
+            cpack_generator: NSIS64
 
     steps:
       - name: Checkout repo
@@ -184,12 +186,18 @@ jobs:
           warnings_as_errors: 'ON'
 
       - name: Build
-        run: bash ./scripts/cmake.sh build
+        run: bash ./scripts/cmake.sh build -t ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: |
-          bash ./scripts/cmake.sh install -i artifacts
+          bash ./scripts/cmake.sh install -i artifacts -t ${{ env.BUILD_TYPE }}
+
+      - name: Package
+        if: runner.os == 'Windows' && (matrix.cxx == 'g++') # || contains(env.BUILD_TYPE, 'Rel'))
+        run: |
+          # bash ./scripts/cmake.sh pack -b ${{ env.BUILD_DIR }}
+          cpack -G ${{ matrix.cpack_generator }} --config ${{ env.BUILD_DIR }}/CPackConfig.cmake
 
       - name: Move artifacts
         run: |
