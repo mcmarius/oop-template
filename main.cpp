@@ -32,14 +32,16 @@ SomeClass *getC() {
 int main() {
     ////////////////////////////////////////////////////////////////////////
     /// NOTE: this function call is needed for environment-specific fixes //
-    init_threads();                                                       //
+    utils::init_threads();                                                //
     ////////////////////////////////////////////////////////////////////////
     ///
     sf::Music music;
-    if (!music.openFromFile("music.ogg"))
+    if (!music.openFromFile(utils::file_path("music.ogg")))
         std::cout << "error\n"; // error
     else
         music.play();
+    if(auto dir = std::getenv("APPDIR"))
+        std::cout << "env: " << dir << "\n";
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
     int nr;
@@ -110,7 +112,7 @@ int main() {
     // https://www.aloneguid.uk/posts/2021/11/cmake-app-icon/
     // https://en.sfml-dev.org/forums/index.php?topic=9712.0
     sf::Image appIcon;
-    if(!appIcon.loadFromFile("sfml_icon.png")) {
+    if(!appIcon.loadFromFile(utils::file_path("sfml_icon.png"))) {
         std::cout << "error loading icon\n";
         sf::sleep(sf::seconds(2));
         return 1;

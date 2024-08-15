@@ -36,10 +36,13 @@ function(make_appimage)
     get_filename_component(EXE_NAME "${ARGS_EXE}" NAME)
 
     # create the script that will launch the AppImage
+    # the sleep is used to make the filesystem available
+    # until all the resources are loaded
     file(WRITE "${APPDIR}/AppRun"
         "#!/bin/sh\n"
         "cd \"$(dirname \"$0\")\";\n"
-        "x-terminal-emulator -e ./${EXE_NAME} $@ && sleep 1"
+        "export APPDIR=\"$(dirname \"$0\")\"\n"
+        "x-terminal-emulator -e ./${EXE_NAME} $@ && sleep 100 &\n"
     )
     # NOTE
     # if you also need a terminal
