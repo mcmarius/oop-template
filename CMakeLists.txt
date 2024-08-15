@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.26)
 # for now, the project name is used as the executable name
 project(oop)
 set(CMAKE_PROJECT_VERSION_MAJOR 0)
-set(CMAKE_PROJECT_VERSION_MINOR 2)
-set(CMAKE_PROJECT_VERSION_PATCH 8)
+set(CMAKE_PROJECT_VERSION_MINOR 0)
+set(CMAKE_PROJECT_VERSION_PATCH 1)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
