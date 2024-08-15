@@ -10,7 +10,7 @@ runs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install ninja-build
+        sudo apt-get install ninja-build libfuse2
         # https://github.com/llvm/llvm-project/issues/78354
         sudo sysctl vm.mmap_rnd_bits=28
 

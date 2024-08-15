@@ -34,15 +34,22 @@ runs:
           -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
         cmake --build build -j6 -- cxx cxxabi
 
-    - name: Sanitizers
+    - name: Sanitizers (Linux)
       shell: bash
       # run one sanitizer for each env to avoid building extra binaries on one env
-      if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os != 'Windows'
+      if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os == 'Linux'
+      run: |
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+
+    - name: Sanitizers (macOS)
+      shell: bash
+      # run one sanitizer for each env to avoid building extra binaries on one env
+      if: (matrix.runs_asan == true || matrix.runs_msan == true) && runner.os == 'macOS'
       # detect_leaks is not supported on macOS
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}"
 
     - name: Sanitizers (Windows MSVC)
       shell: bash

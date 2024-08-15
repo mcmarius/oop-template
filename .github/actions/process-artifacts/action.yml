@@ -22,22 +22,21 @@ runs:
       shell: bash
       if: runner.os == 'macOS' && matrix.cxx == 'clang++'
       run: |
+        mkdir -p ${{ env.ZIP_NAME }}/lib
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-          mkdir lib2
-          cp /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib2
           install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
-          mv lib2 ${{ env.ZIP_NAME }}/
         fi
+        mv ${{ env.ZIP_NAME }}/lib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS
 
     - name: Copy missing dylibs (g++)
       shell: bash
       if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
       run: |
-        mkdir lib2
-        cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib2
+        mkdir -p ${{ env.ZIP_NAME }}/lib
+        cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/lib
         install_name_tool -change /opt/homebrew/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
         install_name_tool -change /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS/${{ env.EXECUTABLE_NAME }}
-        mv lib2 ${{ env.ZIP_NAME }}/
+        mv ${{ env.ZIP_NAME }}/lib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}.app/Contents/MacOS
 
     - name: Copy missing dlls
       shell: bash
