@@ -21,6 +21,7 @@ runs:
       if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       run: |
         cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
+
     - name: Add Windows installer
       shell: bash
       if: runner.os == 'Windows' && (matrix.cxx == 'g++') # || contains(env.BUILD_TYPE, 'Rel'))
