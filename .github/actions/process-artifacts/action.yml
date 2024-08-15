@@ -11,6 +11,13 @@ runs:
         sed -i '' -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
         chmod +x "${{ env.ZIP_NAME }}/launcher.command"
 
+    - name: Patch Windows launcher
+      shell: bash
+      if: runner.os == 'Windows'
+      run: |
+        sed -i '' -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.bat"
+        chmod +x "${{ env.ZIP_NAME }}/launcher.bat"
+
     - name: Copy missing dylibs
       shell: bash
       if: runner.os == 'macOS' && matrix.cxx == 'clang++'

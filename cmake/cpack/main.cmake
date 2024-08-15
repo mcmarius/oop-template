@@ -1,12 +1,19 @@
 # icon credits: https://www.veryicon.com/icons/food--drinks/fruit-library/coconut-15.html
 
-if(APPLE OR WIN32)
-    include(CPack)
-    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
-    set(CPACK_PACKAGE_VENDOR "FMI UniBuc")
-endif()
-
-if(APPLE)
+if(WIN32)
+       set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
+       set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+       set(CPACK_NSIS_MUI_FINISHPAGE_RUN "launcher.bat")
+       set(CPACK_NSIS_MANIFEST_DPI_AWARE ON)
+       set(CPACK_NSIS_CREATE_ICONS_EXTRA
+               "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk' '$INSTDIR\\\\bin\\\\launcher.bat' \'\' '$INSTDIR\\\\bin\\\\favicon.ico' 0"
+       )
+       # old alternative that uses double quotes, but very ugly
+       #   "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\bin\\\\launcher.bat\\\" \\\"\\\" \\\"$INSTDIR\\\\bin\\\\favicon.ico\\\" 0"
+       set(CPACK_NSIS_DELETE_ICONS_EXTRA
+               "Delete '$SMPROGRAMS\\\\$START_MENU\\\\${PROJECT_NAME}.lnk'"
+       )
+elseif(APPLE)
     # TODO https://discourse.cmake.org/t/how-to-add-resources-to-macos-bundle/9323
     # https://stackoverflow.com/questions/15120951/generating-a-bundle-file-with-cmake-on-mac-osx?rq=3
     # Bundling macOS application
@@ -35,4 +42,10 @@ elseif(UNIX)
         "
         COMPONENT Runtime
     )
+endif()
+
+if(APPLE OR WIN32)
+    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+    set(CPACK_PACKAGE_VENDOR "FMI UniBuc")
+    include(CPack)
 endif()

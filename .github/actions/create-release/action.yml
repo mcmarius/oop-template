@@ -36,29 +36,17 @@ runs:
         path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
         filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@v1
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Generate artifact attestation and upload to release (zip)
+      uses: ./.github/actions/create-release-common
       with:
-        subject-path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+        file: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
-    - name: Release
-      uses: softprops/action-gh-release@master
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Generate artifact attestation and upload to release (AppImage)
+      uses: ./.github/actions/create-release-common
       with:
-        files: |
-          ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
+        file: ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
 
-    - name: Release AppImage
-      uses: softprops/action-gh-release@master
-      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
+    - name: Generate artifact attestation and upload to release (Windows installer)
+      uses: ./.github/actions/create-release-common
       with:
-        files: |
-          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
-
-    - name: Release Windows installer
-      uses: softprops/action-gh-release@master
-      if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Windows' && (matrix.cxx == 'g++') # || contains(env.BUILD_TYPE, 'Rel'))
-      with:
-        files: |
-          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe
+        file: ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}_${{ matrix.cxx }}${{ matrix.asan_name }}.exe

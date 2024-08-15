@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.26)
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
+set(CMAKE_PROJECT_VERSION_MAJOR 0)
+set(CMAKE_PROJECT_VERSION_MINOR 2)
+set(CMAKE_PROJECT_VERSION_PATCH 8)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -97,14 +100,17 @@ endif()
 
 if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
+elseif(WIN32)
+    install(FILES launcher.bat DESTINATION ${DESTINATION_DIR})
 endif()
 
 
 include(cmake/CopyHelper.cmake)
+# favicon.ico is needed on windows to have an icon for the start menu shortcut
 set(assets_var
     tastatura.txt
-    cmake/cpack/sfml_icon.png
-    # cmake/cpack/icon.svg cmake/cpack/favicon.ico
+    cmake/cpack/sfml_icon.png cmake/cpack/favicon.ico
+    # cmake/cpack/icon.svg
     )
 copy_files(FILES ${assets_var})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
