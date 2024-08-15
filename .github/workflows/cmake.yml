@@ -198,7 +198,7 @@ jobs:
           bash ./scripts/cmake.sh install -i artifacts -t ${{ env.BUILD_TYPE }}
 
       - name: Package
-        if: runner.os == 'Windows' && (matrix.cxx == 'g++' || contains(env.BUILD_TYPE, 'Rel'))
+        if: runner.os == 'Windows' && (matrix.cxx == 'g++') # || contains(env.BUILD_TYPE, 'Rel'))
         run: |
           # bash ./scripts/cmake.sh pack -b ${{ env.BUILD_DIR }}
           cpack -G ${{ matrix.cpack_generator }} --config ${{ env.BUILD_DIR }}/CPackConfig.cmake
