@@ -20,7 +20,7 @@ runs:
       shell: bash
       if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       run: |
-        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}{{ matrix.asan_name }}.AppImage
+        cp ${{ env.BUILD_DIR }}/${{ env.EXECUTABLE_NAME }}.AppImage ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
 
     - name: Add Windows installer
       shell: bash
@@ -54,7 +54,7 @@ runs:
       if: startsWith(github.ref, 'refs/tags/') && runner.os == 'Linux'
       with:
         files: |
-          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}{{ matrix.asan_name }}.AppImage
+          ${{ env.EXECUTABLE_NAME }}_${{ env.TAG_NAME }}_${{ env.BUILD_TYPE }}${{ matrix.asan_name }}.AppImage
 
     - name: Release Windows installer
       uses: softprops/action-gh-release@master
