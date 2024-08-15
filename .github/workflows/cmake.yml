@@ -184,12 +184,12 @@ jobs:
           warnings_as_errors: 'ON'
 
       - name: Build
-        run: bash ./scripts/cmake.sh build
+        run: bash ./scripts/cmake.sh build -t ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: |
-          bash ./scripts/cmake.sh install -i artifacts
+          bash ./scripts/cmake.sh install -i artifacts -t ${{ env.BUILD_TYPE }}
 
       - name: Move artifacts
         run: |
