@@ -40,8 +40,6 @@ int main() {
         std::cout << "error\n"; // error
     else
         music.play();
-    if(auto dir = std::getenv("APPDIR"))
-        std::cout << "env: " << dir << "\n";
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
     int nr;
