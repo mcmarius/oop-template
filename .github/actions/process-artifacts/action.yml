@@ -15,7 +15,7 @@ runs:
       shell: bash
       if: runner.os == 'Windows'
       run: |
-        sed -i '' -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.bat"
+        sed -i -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.bat"
         chmod +x "${{ env.ZIP_NAME }}/launcher.bat"
 
     - name: Copy missing dylibs
