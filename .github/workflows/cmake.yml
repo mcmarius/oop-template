@@ -64,7 +64,6 @@ jobs:
     timeout-minutes: 5
     env:
       CLANG_VER: 18
-      BUILD_DIR: build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
