@@ -49,11 +49,6 @@ jobs:
       # NOTE: consider updating this value in scripts/build_cppcheck.sh:4 when changing this value
       CPPCHECK_VER: "2.14.2"
     steps:
-      # https://github.com/actions/checkout/issues/211
-      # - name: Chown user
-      #   run: |
-      #     sudo chown -R $USER:$USER $GITHUB_WORKSPACE
-
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -63,6 +58,9 @@ jobs:
   clang-tidy:
     name: "Clang-Tidy"
     runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/mcmarius/oop-template-admin-clang-tidy:main
+      options: --user root
     timeout-minutes: 5
     env:
       CLANG_VER: 18
