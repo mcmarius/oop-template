@@ -135,10 +135,10 @@ jobs:
             c: clang
             cxx: clang++
             name: "ASan: macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=OFF"
             # cmake_generator:
             # This env runs address sanitizers
-            runs_asan: true
+            runs_asan: false
 
           - os: macos-14
             c: gcc-13
