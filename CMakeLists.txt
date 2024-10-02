@@ -62,10 +62,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
-install(FILES
-    $<TARGET_FILE:${PROJECT_NAME}>
-    DESTINATION ${DESTINATION_DIR}
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+install(TARGETS ${PROJECT_NAME} ${DESTINATION_DIR})
 if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
