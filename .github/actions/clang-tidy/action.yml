@@ -27,7 +27,7 @@ runs:
     - name: Configure CMake
       uses: ./.github/actions/configure-cmake
       with:
-        custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+        custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON -G Ninja'
 
     - name: Clang-Tidy
       continue-on-error: true
