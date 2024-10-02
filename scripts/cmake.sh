@@ -97,7 +97,6 @@ install() {
           exit 1
         ;;
       esac
-      shift $((OPTIND-1))
     done
 
     cmake --install "${BUILD_DIR}" --config "${BUILD_TYPE}" --prefix "${INSTALL_DIR}"
