@@ -7,7 +7,7 @@ endif()
 
 ###############################################################################
 
-if(WARNINGS_AS_ERRORS)
+if(PROJECT_WARNINGS_AS_ERRORS)
     set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
 endif()
 

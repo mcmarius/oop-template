@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.26)
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
 # for now, the project name is used as the executable name
 project(oop)
+# set(CMAKE_PROJECT_VERSION_MAJOR 0)
+# set(CMAKE_PROJECT_VERSION_MINOR 0)
+# set(CMAKE_PROJECT_VERSION_PATCH 1)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,6 +17,9 @@ include(cmake/Options.cmake)
 
 # external dependencies with FetchContent
 # include(FetchContent)
+#
+# set(FETCHCONTENT_QUIET OFF)
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
@@ -36,8 +42,10 @@ include(cmake/Options.cmake)
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_executable(${PROJECT_NAME} main.cpp
-        generated/src/Helper.cpp)
+add_executable(${PROJECT_NAME}
+    main.cpp
+    generated/src/Helper.cpp
+)
 
 include(cmake/CompilerFlags.cmake)
 

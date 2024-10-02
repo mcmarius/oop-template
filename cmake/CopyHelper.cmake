@@ -7,12 +7,12 @@ function(copy_files)
 
     # copy files to build dir
     foreach(file ${ARG_FILES})
-    add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMENT "Copying ${file}..."
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/${file} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-        # ${CMAKE_CURRENT_BINARY_DIR})
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMENT "Copying ${file}..."
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/${file} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+            # ${CMAKE_CURRENT_BINARY_DIR})
     endforeach()
 
     # copy folders to build dir

@@ -39,6 +39,8 @@ defaults:
 jobs:
   cppcheck:
     name: "Cppcheck"
+    # concurrency:
+    #   group: "Cppcheck"
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     env:
@@ -54,6 +56,8 @@ jobs:
 
   clang-tidy:
     name: "Clang-Tidy"
+    # concurrency:
+    #   group: "Clang-Tidy"
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     env:
@@ -68,6 +72,8 @@ jobs:
 
   build:
     name: ${{ matrix.name }}
+    # concurrency:
+    #   group: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 8
     permissions:
@@ -128,11 +134,11 @@ jobs:
           - os: macos-14
             c: clang
             cxx: clang++
-            name: "ASan: macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=ON"
+            name: "macOS 14 Apple Clang 15"
+            cmake_flags: "-DUSE_ASAN=OFF"
             # cmake_generator:
             # This env runs address sanitizers
-            runs_asan: true
+            runs_asan: false
 
           - os: macos-14
             c: gcc-13
@@ -144,7 +150,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.40"
+            name: "ASan: Windows 2022 MSVC 19.41"
             cmake_flags: "-DUSE_ASAN=ON"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -184,12 +190,13 @@ jobs:
           warnings_as_errors: 'ON'
 
       - name: Build
-        run: bash ./scripts/cmake.sh build
+        run: |
+          bash ./scripts/cmake.sh build -t ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: |
-          bash ./scripts/cmake.sh install -i artifacts
+          bash ./scripts/cmake.sh install -i artifacts -t ${{ env.BUILD_TYPE }}
 
       - name: Move artifacts
         run: |

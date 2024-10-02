@@ -5,7 +5,7 @@ runs:
   using: "composite"
   steps:
     - name: Cache cppcheck
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       id: cache-cppcheck
       with:
         path: cppcheck
@@ -16,6 +16,13 @@ runs:
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
       run: |
         bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
+
+    - name: Save cppcheck cache
+      uses: actions/cache/save@v4
+      if: steps.cache-cppcheck.outputs.cache-hit != 'true'
+      with:
+        path: cppcheck
+        key: cppcheck-${{ env.CPPCHECK_VER }}
 
     - name: Install cppcheck
       shell: bash
