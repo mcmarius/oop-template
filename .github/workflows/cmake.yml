@@ -39,6 +39,8 @@ defaults:
 jobs:
   cppcheck:
     name: "Cppcheck"
+    # concurrency:
+    #   group: "Cppcheck"
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     env:
@@ -54,6 +56,8 @@ jobs:
 
   clang-tidy:
     name: "Clang-Tidy"
+    # concurrency:
+    #   group: "Clang-Tidy"
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     env:
@@ -68,6 +72,8 @@ jobs:
 
   build:
     name: ${{ matrix.name }}
+    # concurrency:
+    #   group: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 8
     permissions:
@@ -184,7 +190,8 @@ jobs:
           warnings_as_errors: 'ON'
 
       - name: Build
-        run: bash ./scripts/cmake.sh build -t ${{ env.BUILD_TYPE }}
+        run: |
+          bash ./scripts/cmake.sh build -t ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
