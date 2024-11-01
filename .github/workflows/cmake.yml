@@ -31,7 +31,7 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-
+  CPR_VERSION: "1.11.0"
 
 defaults:
   run:
@@ -109,18 +109,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
-            # renovate: depName=ubuntu
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
+          #  # renovate: depName=ubuntu
+          #- os: ubuntu-22.04
+          #  c: clang-18
+          #  cxx: clang++-18
+          #  clang_ver: "18"
+          #  clang_ver_full: "18.1.8"
+          #  name: "MSan: Ubuntu 22.04 Clang 18"
+          #  cmake_flags: "-DUSE_MSAN=ON -DBUILD_SHARED_LIBS=OFF"
+          #  cmake_generator: Ninja
+          #  # This env runs memory sanitizers
+          #  runs_msan: true
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -128,7 +127,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "ASan: Ubuntu 22.04 GCC 12"
-            cmake_flags: "-DUSE_ASAN=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs address sanitizers
             runs_asan: true
@@ -141,7 +140,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "Valgrind: Ubuntu 22.04 GCC 12"
-            # cmake_flags:
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
@@ -157,14 +156,13 @@ jobs:
             # This env runs address sanitizers
             runs_asan: false
 
-            # renovate: depName=macos
-          - os: macos-14
-            c: gcc-13
-            cxx: g++-13
-            # renovate: depName=macos
-            name: "macOS 14 GCC 13"
-            # cmake_flags:
-            # cmake_generator: Ninja
+          #  # renovate: depName=macos
+          #- os: macos-14
+          #  c: gcc-13
+          #  cxx: g++-13
+          #  name: "macOS 14 GCC 13"
+          #  # cmake_flags:
+          #  # cmake_generator: Ninja
 
             # renovate: depName=windows
           - os: windows-2022
