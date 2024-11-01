@@ -22,10 +22,10 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
+include(FetchContent)
 #
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
@@ -39,11 +39,20 @@ include(cmake/CopyHelper.cmake)
 #
 # FetchContent_MakeAvailable(SomeLib)
 
+FetchContent_Declare(
+        cpr
+        GIT_REPOSITORY https://github.com/libcpr/cpr.git
+        GIT_TAG 1.11.0
+)
+
+FetchContent_MakeAvailable(cpr)
+
+
 ###############################################################################
 
 # external dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 ###############################################################################
 
@@ -64,10 +73,20 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE generated/include)
+target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${cpr_SOURCE_DIR}/include)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+target_include_directories(
+    ${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
+    ext/include/digestpp
+    ext/include/rlutil
+    ext/include/random
+    ext/include/csv-parser
+    ext/include/date
+    ext/include/json
+)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE Threads::Threads cpr::cpr)
 
 ###############################################################################
 

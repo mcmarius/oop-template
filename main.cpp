@@ -1,57 +1,110 @@
 #include <iostream>
-#include <array>
+#include <string>
 
-#include <Helper.h>
+/////////////////////////////////////////////////////////////
+//// Vom folosi cpr pentru a descărca date dintr-un API /////
+#include <cpr/cpr.h>                                    /////
+/////////////////////////////////////////////////////////////
 
-int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+///////////////////////////////////////////////////////////////////////////////////
+/// Pentru a putea accesa datele din API este nevoie să parsăm datele primite /////
+#include <json.hpp>                                                           /////
+///////////////////////////////////////////////////////////////////////////////////
+
+
+std::string RandomFact()
+{
+    /*
+        API-ul   https://uselessfacts.jsph.pl/api/v2/facts/random   ne dă următorul JSON
+
+        {
+            id: "...",
+            text: "...",
+            source: "...",
+            source_url: "...",
+            language: "en",
+            permalink: "..."
+        }
+
+    */
+
+
+    cpr::Url api_link = "https://uselessfacts.jsph.pl/api/v2/facts/random"; // Link-ul către API
+    cpr::Response res = cpr::Get(api_link); // Facem o cerere la API
+
+    if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
+    {
+        return "A apărut o eroare!";
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
+
+
+    // res.text este doar un string cu datele descărcate din API, dar nu pot fi accesate sau folosite
+    nlohmann::json json = nlohmann::json::parse(res.text); // Parsăm res.text pentru a folosi datele din JSON
+
+    // Acum putem accesa datele folosind variabila 'json' cu json["nume_camp"]
+    std::string fact = json["text"].get<std::string>(); // accesăm câmpul "text" și îi facem convert la string
+
+    return fact;
+}
+
+
+int IsEven(int numar)
+{
+    /*
+        API-ul   https://api.isevenapi.xyz/api/iseven/{{numar}}   ne dă următorul JSON
+
+        {
+            ad: "...",
+            iseven: "true/false"
+        }
+
+        În caz de eroare are următoarea structură:
+        {
+            error: "..."
+        }
+
+    */
+
+
+    cpr::Url api_link = "https://api.isevenapi.xyz/api/iseven/" + std::to_string(numar); // Link-ul către API
+    cpr::Response res = cpr::Get(api_link); // Facem o cerere la API
+
+    nlohmann::json un_json = nlohmann::json::parse(res.text); // Parsăm res.text pentru a folosi datele din JSON
+
+    if(un_json.contains("error"))
+    {
+        std::string eroare = un_json["error"].get<std::string>();
+        throw std::runtime_error("Eroare!! API-ul a spus: " + eroare); // :)
     }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    ///                Exemplu de utilizare cod generat                     ///
-    ///////////////////////////////////////////////////////////////////////////
-    Helper helper;
-    helper.help();
-    ///////////////////////////////////////////////////////////////////////////
+
+    // Acum putem accesa datele folosind variabila 'un_json' cu un_json["nume_camp"]
+    bool isEven = un_json["iseven"].get<bool>(); // accesăm câmpul "iseven" și îi facem convert la bool
+
+    return isEven;
+}
+
+
+int main()
+{
+    std::cout << "Uite un random fact: " << RandomFact() << std::endl;
+
+    int numar;
+    std::cout << "Introdu un număr: "; std::cin >> numar;
+
+    try
+    {
+        if(IsEven(numar))
+        {
+            std::cout << numar << " este par!";
+        }
+        else
+        {
+            std::cout << numar << " nu este par!";
+        }
+    } catch (std::exception& exception)
+    {
+        std::cout << exception.what() << std::endl;
+    }
+
     return 0;
 }
