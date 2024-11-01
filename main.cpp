@@ -48,7 +48,7 @@ std::string RandomFact()
 }
 
 
-int IsEven(int numar)
+bool IsEven(int numar)
 {
     /*
         API-ul   https://api.isevenapi.xyz/api/iseven/{{numar}}   ne dă următorul JSON
