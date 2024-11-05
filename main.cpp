@@ -74,14 +74,13 @@ void RandomFact()
     std::string fact = json["text"].get<std::string>(); // accesăm câmpul "text" și îi facem convert la string
 
     std::cout << "Uite un random fact: " << fact;
-
-    return;
 }
 
 void Trivia(int numar_intrebari)
 {
     /*
         API-ul   https://opentdb.com/api.php?amount={{numar_intrebari}}   ne dă următorul JSON
+        Documentația API-ului se află aici: https://opentdb.com/api_config.php
 
         {
             "response_code": 0,
@@ -154,8 +153,12 @@ void Trivia(int numar_intrebari)
     nlohmann::json json = nlohmann::json::parse(res.text);
 
     int response_code = json["response_code"].get<int>();
-
-    std::cout << "API-ul a dat response code-ul: " << response_code << std::endl;
+    std::cout << response_code << std::endl;
+    if(response_code != 0)
+    {
+        std::cout << "Eroare. API-ul a dat response code " << response_code << std::endl;
+        std::cout << "Verifica documentatia pentru mai multe informatii" << std::endl;
+    }
 
     // Luăm fiecare întrebare din câmpul "results"
     for(const nlohmann::basic_json<>& result: json["results"]) {
@@ -171,7 +174,7 @@ void Trivia(int numar_intrebari)
         ======== VARIANTA 1 ======
         for(const nlohmann::basic_json<>& answer: json["results"]["incorrect_answers"])
         {
-            variante_raspuns.push_back(answer);
+            variante_raspuns.push_back(answer.get<std::string>());
         }
         variante_raspuns.push_back(json["results"]["incorrect_answers"]);
         ==========================
@@ -179,7 +182,7 @@ void Trivia(int numar_intrebari)
 
         ======== VARIANTA 2 =======
         for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
-            variante_raspuns.push_back(answer);
+            variante_raspuns.push_back(answer.get<std::string>());
         }
         variante_raspuns.push_back(result["correct_answer"]);
         ===========================
@@ -188,7 +191,7 @@ void Trivia(int numar_intrebari)
 
         // Vom folosi varianta 2, sintaxa acesteia fiind mai ușoară.
         for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
-            variante_raspuns.push_back(answer);
+            variante_raspuns.push_back(answer.get<std::string>());
         }
         variante_raspuns.push_back(result["correct_answer"]);
 
@@ -201,11 +204,11 @@ void Trivia(int numar_intrebari)
         std::string raspuns;
         std::cout << "Raspunsul tau este: "; std::cin >> raspuns;
 
-        if(raspuns == result["correct_answer"]) { // sau echivalent: raspuns == json["results"]["correct_answer"]
+        if(raspuns == result["correct_answer"].get<std::string>()) { // sau echivalent: raspuns == json["results"]["correct_answer"]
             std::cout << "Ai raspuns corect!" << std::endl;
         }
         else {
-            std::cout << "Ai raspuns gresit! Raspunsul corect era " << result["correct_answer"] << std::endl;
+            std::cout << "Ai raspuns gresit! Raspunsul corect era " << result["correct_answer"].get<std::string>() << std::endl;
         }
 
         std::cout << std::endl;
