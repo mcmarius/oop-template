@@ -11,8 +11,23 @@
 #include <json.hpp>                                                           /////
 ///////////////////////////////////////////////////////////////////////////////////
 
+/*
+    Ce este un JSON?
+    JSON = JavaScript Object Notation
+    
+    JSON este un format pentru schimbul de date între un server și o aplicație, fiind utilizat și pentru 
+    stocarea datelor într-un mod structurat și ușor de citit.
+    
+    Un exemplu simplu de JSON arată astfel:
+    {
+        "nume": "Ion",
+        "varsta": 20,
+        "hobby-uri": ["poo", "citit", "programare"],
+        "restant": false
+    }
+ */
 
-std::string RandomFact()
+void RandomFact()
 {
     /*
         API-ul   https://uselessfacts.jsph.pl/api/v2/facts/random   ne dă următorul JSON
@@ -30,81 +45,180 @@ std::string RandomFact()
 
 
     cpr::Url api_link = "https://uselessfacts.jsph.pl/api/v2/facts/random"; // Link-ul către API
-    cpr::Response res = cpr::Get(api_link); // Facem o cerere la API
+    // Înainte de a face un request la un API trebuie să specificăm în header cum vrem să primim răspunsul (Content-Type), deoarece
+    // pot exista API-uri care nu întorc neapărat un JSON (de exemplu, unele pot returna un XML).
+
+    cpr::Header header = {
+        {"Content-Type", "application/json"}
+    };
+
+    cpr::Response res = cpr::Get(api_link, header); // Facem o cerere la API
 
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
-        return "A apărut o eroare!";
+        std::cout << "Oops!!" << std::endl;
     }
 
 
-    // res.text este doar un string cu datele descărcate din API, dar nu pot fi accesate sau folosite
-    nlohmann::json json = nlohmann::json::parse(res.text); // Parsăm res.text pentru a folosi datele din JSON
+    // res.text este doar un string cu datele descărcate din API.
+
+    // Așa arată res.text (nu este parsat)
+    std::cout << std::endl << "======== res.text neparsat =========" << std::endl;
+    std::cout << res.text;
+    std::cout << "======================" << std::endl;
+
+    // Pentru a ne ușura munca cu JSON-ul primit de la API este recomandat să îl parsăm.
+    nlohmann::json json = nlohmann::json::parse(res.text);
 
     // Acum putem accesa datele folosind variabila 'json' cu json["nume_camp"]
     std::string fact = json["text"].get<std::string>(); // accesăm câmpul "text" și îi facem convert la string
 
-    return fact;
+    std::cout << "Uite un random fact: " << fact;
+    
+    return;
 }
 
-
-bool IsEven(int numar)
+void Trivia(int numar_intrebari)
 {
     /*
-        API-ul   https://api.isevenapi.xyz/api/iseven/{{numar}}   ne dă următorul JSON
+        API-ul   https://opentdb.com/api.php?amount={{numar_intrebari}}   ne dă următorul JSON
 
         {
-            ad: "...",
-            iseven: "true/false"
+            "response_code": 0,
+            "results": [
+                {
+                    "type": "...",
+                    "difficulty": "...",
+                    "category": "...",
+                    "question": "...",
+                    "correct_answer": "...",
+                    "incorrect_answers": [
+                        "...",
+                        "...",
+                        "..."
+                    ]
+                },
+            ]
         }
 
-        În caz de eroare are următoarea structură:
+        De exemplu, dacă numar_intrebari = 2, atunci API-ul returnează următorul JSON
+
         {
-            error: "..."
+            "response_code": 0,
+            "results": [
+                {
+                    "type": "multiple",
+                    "difficulty": "easy",
+                    "category": "Entertainment: Video Games",
+                    "question": "Rincewind from the 1995 Discworld game was voiced by which member of Monty Python?",
+                    "correct_answer": "Eric Idle",
+                    "incorrect_answers": [
+                        "John Cleese",
+                        "Terry Gilliam",
+                        "Michael Palin"
+                    ]
+                },
+                {
+                    "type": "boolean",
+                    "difficulty": "hard",
+                    "category": "Entertainment: Music",
+                    "question": "The singer Billie Holiday was also known as &quot;Lady Day&quot;.",
+                    "correct_answer": "True",
+                    "incorrect_answers": [
+                        "False"
+                    ]
+                }
+            ]
         }
 
     */
 
+    cpr::Url api_link = "https://opentdb.com/api.php?amount=" + std::to_string(numar_intrebari); // Link-ul către API
 
-    cpr::Url api_link = "https://api.isevenapi.xyz/api/iseven/" + std::to_string(numar); // Link-ul către API
+    // Înainte de a face un request la un API trebuie să specificăm în header cum vrem să primim răspunsul (Content-Type), deoarece
+    // pot exista API-uri care nu întorc neapărat un JSON (de exemplu, unele pot returna un XML).
+
+    cpr::Header header = {
+        {"Content-Type", "application/json"}
+    };
+
     cpr::Response res = cpr::Get(api_link); // Facem o cerere la API
 
-    nlohmann::json un_json = nlohmann::json::parse(res.text); // Parsăm res.text pentru a folosi datele din JSON
-
-    if(un_json.contains("error"))
+    if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
-        std::string eroare = un_json["error"].get<std::string>();
-        throw std::runtime_error("Eroare!! API-ul a spus: " + eroare); // :)
+        std::cout << "A aparut o eroare!";
+        return;
     }
 
-    // Acum putem accesa datele folosind variabila 'un_json' cu un_json["nume_camp"]
-    bool isEven = un_json["iseven"].get<bool>(); // accesăm câmpul "iseven" și îi facem convert la bool
+    // Parsăm răspunsul primit de la API
+    nlohmann::json json = nlohmann::json::parse(res.text); 
 
-    return isEven;
+    int response_code = json["response_code"].get<int>();
+
+    std::cout << "API-ul a dat response code-ul: " << response_code << std::endl;
+
+    // Luăm fiecare întrebare din câmpul "results"
+    for(const nlohmann::basic_json<>& result: json["results"]) {
+        std::cout << "Intrebarea este: " << result["question"] << std::endl;
+
+        std::cout << "Variante de raspuns: " << std::endl;
+
+        std::vector<std::string> variante_raspuns;
+
+        // Următoarele două variante sunt echivalente
+        /*
+        
+        ======== VARIANTA 1 ======
+        for(const nlohmann::basic_json<>& answer: json["results"]["incorrect_answers"])
+        {
+            variante_raspuns.push_back(answer);
+        }
+        variante_raspuns.push_back(json["results"]["incorrect_answers"]);
+        ==========================
+
+
+        ======== VARIANTA 2 =======
+        for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
+            variante_raspuns.push_back(answer);
+        }
+        variante_raspuns.push_back(result["correct_answer"]);
+        ===========================
+        
+        */
+
+        // Vom folosi varianta 2, sintaxa acesteia fiind mai ușoară.
+        for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
+            variante_raspuns.push_back(answer);
+        }
+        variante_raspuns.push_back(result["correct_answer"]);
+
+        // Ar trebui să amestecăm (shuffle) datele din variante_raspuns.
+
+        for(const std::string& raspuns: variante_raspuns) {
+            std::cout << raspuns << std::endl;
+        }
+
+        std::string raspuns;
+        std::cout << "Raspunsul tau este: "; std::cin >> raspuns;
+
+        if(raspuns == result["correct_answer"]) { // sau echivalent: raspuns == json["results"]["correct_answer"]
+            std::cout << "Ai raspuns corect!" << std::endl;
+        }
+        else {
+            std::cout << "Ai raspuns gresit! Raspunsul corect era " << result["correct_answer"] << std::endl;
+        }
+
+        std::cout << std::endl;   
+    }
 }
-
 
 int main()
 {
-    std::cout << "Uite un random fact: " << RandomFact() << std::endl;
+    RandomFact();
 
-    int numar;
-    std::cout << "Introdu un număr: "; std::cin >> numar;
+    std::cout << std::endl << "================= Trivia =================" << std::endl;
 
-    try
-    {
-        if(IsEven(numar))
-        {
-            std::cout << numar << " este par!";
-        }
-        else
-        {
-            std::cout << numar << " nu este par!";
-        }
-    } catch (std::exception& exception)
-    {
-        std::cout << exception.what() << std::endl;
-    }
+    Trivia(2);
 
     return 0;
 }

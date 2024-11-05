@@ -107,4 +107,6 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
+- [cpr](https://github.com/libcpr/cpr) (MIT)
+- [json](https://github.com/nlohmann/json) (MIT)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
