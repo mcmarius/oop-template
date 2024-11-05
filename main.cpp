@@ -59,7 +59,6 @@ void RandomFact()
         std::cout << "Oops!!" << std::endl;
     }
 
-
     // res.text este doar un string cu datele descărcate din API.
 
     // Așa arată res.text (nu este parsat)
@@ -70,158 +69,79 @@ void RandomFact()
     // Pentru a ne ușura munca cu JSON-ul primit de la API este recomandat să îl parsăm.
     nlohmann::json json = nlohmann::json::parse(res.text);
 
-    // Acum putem accesa datele folosind variabila 'json' cu json["nume_camp"]
+    // Acum putem folosi mult mai ușor datele primite folosind următoarea sintaxă: json["un_nume_de_câmp].get<tip_de_date>();
     std::string fact = json["text"].get<std::string>(); // accesăm câmpul "text" și îi facem convert la string
 
     std::cout << "Uite un random fact: " << fact;
 }
 
-void Trivia(int numar_intrebari)
+void GitHub(const std::string& user)
 {
     /*
-        API-ul   https://opentdb.com/api.php?amount={{numar_intrebari}}   ne dă următorul JSON
-        Documentația API-ului se află aici: https://opentdb.com/api_config.php
+        API-ul   https://api.github.com/users/{{username}}   ne dă informații legate de un utilizator al platformei GitHub
+        având username-ul 'user'.
+
+        Printre toate câmpurile returnat de API, cele de jos reprezintă doar câteva:
 
         {
-            "response_code": 0,
-            "results": [
-                {
-                    "type": "...",
-                    "difficulty": "...",
-                    "category": "...",
-                    "question": "...",
-                    "correct_answer": "...",
-                    "incorrect_answers": [
-                        "...",
-                        "...",
-                        "..."
-                    ]
-                },
-            ]
+            name: "...",
+            public_repos: ...,
+            followers: ...,
+            following: ...,
+            created_at: "...",
         }
-
-        De exemplu, dacă numar_intrebari = 2, atunci API-ul returnează următorul JSON
-
-        {
-            "response_code": 0,
-            "results": [
-                {
-                    "type": "multiple",
-                    "difficulty": "easy",
-                    "category": "Entertainment: Video Games",
-                    "question": "Rincewind from the 1995 Discworld game was voiced by which member of Monty Python?",
-                    "correct_answer": "Eric Idle",
-                    "incorrect_answers": [
-                        "John Cleese",
-                        "Terry Gilliam",
-                        "Michael Palin"
-                    ]
-                },
-                {
-                    "type": "boolean",
-                    "difficulty": "hard",
-                    "category": "Entertainment: Music",
-                    "question": "The singer Billie Holiday was also known as &quot;Lady Day&quot;.",
-                    "correct_answer": "True",
-                    "incorrect_answers": [
-                        "False"
-                    ]
-                }
-            ]
-        }
-
     */
 
-    cpr::Url api_link = "https://opentdb.com/api.php?amount=" + std::to_string(numar_intrebari); // Link-ul către API
+    cpr::Url api_link = "https://api.github.com/users/" + user; // Link-ul către API
 
-    // Înainte de a face un request la un API trebuie să specificăm în header cum vrem să primim răspunsul (Content-Type), deoarece
-    // pot exista API-uri care nu întorc neapărat un JSON (de exemplu, unele pot returna un XML).
-
+    // Setăm header-ul
     cpr::Header header = {
         {"Content-Type", "application/json"}
     };
 
-    cpr::Response res = cpr::Get(api_link); // Facem o cerere la API
+    cpr::Response res = cpr::Get(api_link, header); // Facem o cerere la API
 
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
-        std::cout << "A aparut o eroare!";
+        std::cout << "Oops!!" << std::endl;
+    }
+
+    nlohmann::json json = nlohmann::json::parse(res.text); // Parsăm răspunsul primit
+
+    if(json.contains("status")) // Dacă JSON-ul are câmpul 'status' înseamnă că a apărut o eroare
+    {
+        std::string status_code = json["status"].get<std::string>();
+        std::string message = json["message"].get<std::string>();
+
+        std::cout << "API-ul a returnat status code-ul " << status_code << " avand mesajul: " << message << std::endl;
         return;
     }
 
-    // Parsăm răspunsul primit de la API
-    nlohmann::json json = nlohmann::json::parse(res.text);
+    int public_repos = json["public_repos"].get<int>();
+    int followers = json["followers"].get<int>();
+    int following = json["following"].get<int>();
+    std::string created_at = json["created_at"].get<std::string>();
 
-    int response_code = json["response_code"].get<int>();
-    std::cout << response_code << std::endl;
-    if(response_code != 0)
-    {
-        std::cout << "Eroare. API-ul a dat response code " << response_code << std::endl;
-        std::cout << "Verifica documentatia pentru mai multe informatii" << std::endl;
-    }
-
-    // Luăm fiecare întrebare din câmpul "results"
-    for(const nlohmann::basic_json<>& result: json["results"]) {
-        std::cout << "Intrebarea este: " << result["question"] << std::endl;
-
-        std::cout << "Variante de raspuns: " << std::endl;
-
-        std::vector<std::string> variante_raspuns;
-
-        // Următoarele două variante sunt echivalente
-        /*
-
-        ======== VARIANTA 1 ======
-        for(const nlohmann::basic_json<>& answer: json["results"]["incorrect_answers"])
-        {
-            variante_raspuns.push_back(answer.get<std::string>());
-        }
-        variante_raspuns.push_back(json["results"]["incorrect_answers"]);
-        ==========================
-
-
-        ======== VARIANTA 2 =======
-        for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
-            variante_raspuns.push_back(answer.get<std::string>());
-        }
-        variante_raspuns.push_back(result["correct_answer"]);
-        ===========================
-
-        */
-
-        // Vom folosi varianta 2, sintaxa acesteia fiind mai ușoară.
-        for(const nlohmann::basic_json<>& answer: result["incorrect_answers"]) {
-            variante_raspuns.push_back(answer.get<std::string>());
-        }
-        variante_raspuns.push_back(result["correct_answer"]);
-
-        // Ar trebui să amestecăm (shuffle) datele din variante_raspuns.
-
-        for(const std::string& raspuns: variante_raspuns) {
-            std::cout << raspuns << std::endl;
-        }
-
-        std::string raspuns;
-        std::cout << "Raspunsul tau este: "; std::cin >> raspuns;
-
-        if(raspuns == result["correct_answer"].get<std::string>()) { // sau echivalent: raspuns == json["results"]["correct_answer"]
-            std::cout << "Ai raspuns corect!" << std::endl;
-        }
-        else {
-            std::cout << "Ai raspuns gresit! Raspunsul corect era " << result["correct_answer"].get<std::string>() << std::endl;
-        }
-
-        std::cout << std::endl;
-    }
+    std::cout << "Utilizatorul " << user << " are urmatoarele date:" << std::endl;
+    std::cout << "=> Are " << public_repos << " repository-uri publice." << std::endl;
+    std::cout << "=> Are " << followers << " urmaritori." << std::endl;
+    std::cout << "=> Urmareste " << following << " persoane." << std::endl;
+    std::cout << "=> Contul a fost creat la data " << created_at << '.' << std::endl;
 }
 
 int main()
 {
+    std::cout << std::endl << "================= Random Fact =================" << std::endl;
     RandomFact();
 
-    std::cout << std::endl << "================= Trivia =================" << std::endl;
+    std::cout << std::endl;
 
-    Trivia(2);
+    std::cout << std::endl << "================= Date GitHub =================" << std::endl;
+
+    std::string user;
+    std::cout << "Introdu un nume: "; std::cin >> user;
+
+    GitHub(user);
 
     return 0;
 }
