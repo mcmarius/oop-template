@@ -126,4 +126,6 @@ Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul 
 
 - [cpr](https://github.com/libcpr/cpr) (MIT)
 - [json](https://github.com/nlohmann/json) (MIT)
+- [Trivia API](https://opentdb.com)
+- [Random facts API](https://uselessfacts.jsph.pl/)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
