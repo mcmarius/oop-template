@@ -109,6 +109,6 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 - [cpr](https://github.com/libcpr/cpr) (MIT)
 - [json](https://github.com/nlohmann/json) (MIT)
-- [Trivia API](https://opentdb.com)
+- [GitHub API](https://docs.github.com/en/rest)
 - [Random facts API](https://uselessfacts.jsph.pl/)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
