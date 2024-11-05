@@ -75,11 +75,6 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${cpr_SOURCE_D
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(
     ${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
-    ext/include/digestpp
-    ext/include/rlutil
-    ext/include/random
-    ext/include/csv-parser
-    ext/include/date
     ext/include/json
 )
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
