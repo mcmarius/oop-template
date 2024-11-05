@@ -65,11 +65,6 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(
     ${PROJECT_NAME} SYSTEM PRIVATE
-    ext/include/digestpp
-    ext/include/rlutil
-    ext/include/random
-    ext/include/csv-parser
-    ext/include/date
     ext/include/json
 )
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
