@@ -137,6 +137,6 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 - [cpr](https://github.com/libcpr/cpr) (MIT)
 - [json](https://github.com/nlohmann/json) (MIT)
-- [Trivia API](https://opentdb.com)
+- [GitHub API](https://docs.github.com/en/rest)
 - [Random facts API](https://uselessfacts.jsph.pl/)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
