@@ -99,17 +99,18 @@ Instrucțiuni pentru terminal:
 
 1. Pasul de configurare
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRUN_TESTS=ON
 # sau ./scripts/cmake.sh configure
 ```
 
 Sau pe Windows cu GCC folosind Git Bash:
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja -DRUN_TESTS=ON
 # sau ./scripts/cmake.sh configure -g Ninja
 ```
 
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
+Folosim '-DRUN_TESTS=ON' pentru a specifica că vom compila și testele.
 
 
 2. Pasul de compilare
@@ -133,6 +134,17 @@ Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul 
 conțin fișiere generate și nu ne ajută să le versionăm.
 
 
+## Teste
+
+Acest branch utilizează GTest pentru a crea teste unitare. Pentru mai multe informații despre cum
+funcționează, consultați [README_Tests](./tests/README_Tests.md)
+
+
 ## Resurse
+
+- GTest
+  - Github: https://github.com/google/googletest
+  - Documentation: https://google.github.io/googletest/
+  - Versiunea folosită: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
 
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit

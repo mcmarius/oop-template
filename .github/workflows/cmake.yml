@@ -27,6 +27,7 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  GTEST_VERSION: "v1.15.2"
 
 
 defaults:
@@ -117,6 +118,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs memory sanitizers
             runs_msan: true
+            runs_tests: 'OFF'
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -130,6 +132,7 @@ jobs:
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
             asan_name: "-asan"
+            runs_tests: 'ON'
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -141,6 +144,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-14
@@ -152,6 +156,7 @@ jobs:
             # cmake_generator:
             # This env runs address sanitizers
             runs_asan: false
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-14
@@ -161,6 +166,7 @@ jobs:
             name: "macOS 14 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2022
@@ -174,6 +180,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
+            runs_tests: 'OFF'
 
             # renovate: depName=windows
           - os: windows-2022
@@ -183,6 +190,7 @@ jobs:
             name: "Windows 2022 MinGW GCC 13"
             # cmake_flags:
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
     steps:
       - name: Checkout repo
@@ -215,10 +223,16 @@ jobs:
         with:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
+          run_tests: ${{ matrix.runs_tests }}
 
       - name: Build
         run: |
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
+
+      - name: Run tests
+        if: ${{ matrix.runs_tests == 'ON' }}
+        run: |
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
