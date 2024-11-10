@@ -102,13 +102,13 @@ Instrucțiuni pentru terminal:
 
 1. Pasul de configurare
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRUN_TESTS=ON
 # sau ./scripts/cmake.sh configure
 ```
 
 Sau pe Windows cu GCC folosind Git Bash:
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja -DRUN_TESTS=ON
 # sau ./scripts/cmake.sh configure -g Ninja
 ```
 
@@ -120,6 +120,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
 
 
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
+Folosim '-DRUN_TESTS=ON' pentru a specifica că vom compila și testele.
 
 
 2. Pasul de compilare
@@ -179,6 +180,18 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 ./install_dir/bin/oop
 ```
 
+
+## Teste
+
+Acest branch utilizează GTest pentru a crea teste unitare. Pentru mai multe informații despre cum
+funcționează, consultați [README_Tests](./tests/README_Tests.md)
+
+
 ## Resurse
+
+- GTest
+  - Github: https://github.com/google/googletest
+  - Documentation: https://google.github.io/googletest/
+  - Versiunea folosită: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
 
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
