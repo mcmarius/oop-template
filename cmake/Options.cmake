@@ -4,6 +4,7 @@ option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
+option(RUN_TESTS "Builds and runs the test suites" OFF)
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")
