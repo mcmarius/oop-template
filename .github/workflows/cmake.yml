@@ -34,6 +34,8 @@ env:
   LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  # renovate: datasource=github-tags depName=google/googletest versioning=loose
+  GTEST_VERSION: "v1.18.0"
 
 
 defaults:
@@ -185,7 +187,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2025 MinGW GCC 16"
-            cmake_flags: "-DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             runs_tests: 'ON'
 
