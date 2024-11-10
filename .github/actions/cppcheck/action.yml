@@ -40,6 +40,7 @@ runs:
       with:
         custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
         cache_key: 'cache-cppcheck'
+        run_tests: 'ON'
 
     - name: Cppcheck
       shell: bash
