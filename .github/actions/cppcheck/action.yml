@@ -41,6 +41,7 @@ runs:
       with:
         custom_flags: '-GNinja'
         cache_key: 'cache-cppcheck'
+        run_tests: 'ON'
 
     - name: Cppcheck
       shell: bash

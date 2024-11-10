@@ -12,7 +12,7 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${{ env.EXECUTABLE_NAME }}"
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -20,7 +20,7 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${{ env.EXECUTABLE_NAME }}".exe
 
     - name: Valgrind
       shell: bash
