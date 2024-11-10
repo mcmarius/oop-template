@@ -11,7 +11,7 @@ function(copy_files)
             TARGET ${ARG_TARGET_NAME} POST_BUILD
             COMMENT "Copying ${file}..."
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/${file} $<TARGET_FILE_DIR:${ARG_TARGET_NAME}>)
+            ${PROJECT_ROOT}/${file} $<TARGET_FILE_DIR:${ARG_TARGET_NAME}>)
             # ${CMAKE_CURRENT_BINARY_DIR})
     endforeach()
 
@@ -21,13 +21,13 @@ function(copy_files)
             TARGET ${ARG_TARGET_NAME} POST_BUILD
             COMMENT "Copying directory ${dir}..."
             COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-            ${CMAKE_SOURCE_DIR}/${dir} $<TARGET_FILE_DIR:${ARG_TARGET_NAME}>/${dir})
+            ${PROJECT_ROOT}/${dir} $<TARGET_FILE_DIR:${ARG_TARGET_NAME}>/${dir})
             # ${CMAKE_CURRENT_BINARY_DIR}/${dir})
     endforeach()
 
     if(ARG_COPY_TO_DESTINATION)
         # copy files and folders to install dir
-        install(FILES ${ARG_FILES} DESTINATION ${DESTINATION_DIR})
-        install(DIRECTORY ${ARG_DIRECTORY} DESTINATION ${DESTINATION_DIR})
+        install(FILES ${PROJECT_ROOT/ARG_FILES} DESTINATION ${DESTINATION_DIR})
+        install(DIRECTORY ${PROJECT_ROOT/ARG_DIRECTORY} DESTINATION ${DESTINATION_DIR})
     endif()
 endfunction()
