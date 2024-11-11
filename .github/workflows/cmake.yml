@@ -213,6 +213,10 @@ jobs:
         run: |
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
 
+      - name: Run Tests
+        run: |
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }}
+
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: |
