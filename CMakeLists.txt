@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Options.cmake)
-
+include(CTest)
+enable_testing()
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -38,7 +39,6 @@ include(cmake/Options.cmake)
 # external dependencies with find_package
 
 # find_package(Threads REQUIRED)
-
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
@@ -46,6 +46,18 @@ add_executable(${PROJECT_NAME}
     main.cpp
     generated/src/Helper.cpp
 )
+
+###############################################################################
+set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
+file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
+set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost-ut")
+
+foreach(TEST_FILE ${TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    add_executable(${TEST_NAME}_test ${TEST_FILE})
+    target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
+endforeach()
 
 include(cmake/CompilerFlags.cmake)
 
