@@ -203,6 +203,7 @@ jobs:
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
 
       - name: Run tests
+        if: ${{ matrix.runs_tests == 'ON' }}
         run: |
           cd ${{ env.BUILD_DIR }}
           ctest --verbose --no-compress-output
