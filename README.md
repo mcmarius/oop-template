@@ -108,4 +108,8 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
+- GTest
+  - Github : https://github.com/google/googletest
+  - Documentation : https://google.github.io/googletest/
+
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
