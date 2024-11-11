@@ -50,11 +50,22 @@ enable_testing()
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-    generated/src/Helper.cpp
+add_library(${MAIN_PROJECT_NAME}_lib
+        generated/src/Helper.cpp
+        exemplu_test_oop/BankAccount.cpp
 )
 
+target_include_directories(${MAIN_PROJECT_NAME}_lib PUBLIC
+        generated/include
+        exemplu_test_oop/
+)
+
+
+add_executable(${MAIN_EXECUTABLE_NAME}
+    main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib)
 ###############################################################################
 set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
 file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
@@ -64,6 +75,7 @@ foreach(TEST_FILE ${TEST_FILES})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
     add_executable(${TEST_NAME}_test ${TEST_FILE})
     target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
+    target_link_libraries(${TEST_NAME}_test PRIVATE ${PROJECT_NAME}_lib)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
 endforeach()
 
