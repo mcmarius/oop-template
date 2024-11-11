@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 3.26)
 # for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
+set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
+set(MAIN_PROJECT_NO_SAN_LIB_NAME "${MAIN_PROJECT_NAME}_nslib")
+set(TESTS_PROJECT_NAME "${MAIN_PROJECT_NAME}_test")
+set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
 
 
 project(${MAIN_PROJECT_NAME})
@@ -19,6 +23,8 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
+include(CTest)
+enable_testing()
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -48,16 +54,53 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
+add_library(${MAIN_PROJECT_LIB_NAME}
+        exemplu_test_oop/BankAccount.cpp
+)
+
+target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
+        exemplu_test_oop/
+)
+
+add_library(${MAIN_PROJECT_NO_SAN_LIB_NAME}
+        exemplu_test_oop/BankAccount.cpp
+)
+
+target_include_directories(${MAIN_PROJECT_NO_SAN_LIB_NAME} PUBLIC
+        exemplu_test_oop/
+)
+
+
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
-# NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_PROJECT_LIB_NAME})
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${MAIN_PROJECT_NO_SAN_LIB_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
+
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
+
+###############################################################################
+
+set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
+set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
+
+add_executable(${TESTS_EXECUTABLE_NAME}
+        ${TEST_SOURCES_DIR}/main.cpp
+        ${TEST_SOURCES_DIR}/test_oop.cpp
+        ${TEST_SOURCES_DIR}/test_simplu.cpp
+)
+
+target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NO_SAN_LIB_NAME})
+target_include_directories(${TESTS_EXECUTABLE_NAME} SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
+
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
+
+add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
 
 ###############################################################################
 
