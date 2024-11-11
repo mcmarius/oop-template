@@ -179,6 +179,15 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 ./install_dir/bin/oop
 ```
 
-## Resurse
 
+## Teste
+
+Acest branch utilizează Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informații
+despre cum funcționează, consultați [README_Tests](./tests/README_Tests.md).
+
+
+## Resurse
+- Boost-ext/ut:
+  - Link documentație: https://github.com/boost-ext/ut
+  - Link versiune/tag folosit: https://github.com/boost-ext/ut/releases/tag/v1.1.9 (v1.1.9 -> următoarele versiuni nu puteau fi folosite cu Clang)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
