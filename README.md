@@ -107,5 +107,5 @@ cmake --install build --config Debug --prefix install_dir
 Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
-
+- Boost-ext/ut : https://github.com/boost-ext/ut
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
