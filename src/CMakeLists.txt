@@ -32,10 +32,13 @@ set(SRC_PROJECT ${PROJECT_NAME} PARENT_SCOPE)
 
 add_library(${PROJECT_NAME}_lib
             generated/src/Helper.cpp
+            exemplu_test_oop/BankAccount.cpp
+            exemplu_test_oop/BankAccount.h
 )
 
 target_include_directories(${PROJECT_NAME}_lib PUBLIC
             generated/include
+            exemplu_test_oop/
 )
 
 add_executable(${PROJECT_NAME}
