@@ -61,7 +61,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib)
 ###############################################################################
 set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
 file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
-set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost-ut")
+set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
 
 foreach(TEST_FILE ${TEST_FILES})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
