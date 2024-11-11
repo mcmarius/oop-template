@@ -86,7 +86,7 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
       VSCMD_SKIP_SENDTELEMETRY: 1
-      runs_tests: ON
+      runs_tests: "ON"
 
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or
@@ -190,6 +190,7 @@ jobs:
         with:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
+          build_tests: ${{ env.runs_tests }}
 
       - name: Build
         run: |
