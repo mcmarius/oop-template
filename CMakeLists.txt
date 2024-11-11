@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.28)
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_main")
 set(MAIN_LIBRARY_NAME "${MAIN_PROJECT_NAME}")
+set(MAIN_LIBRARY_NO_SAN_NAME "${MAIN_PROJECT_NAME}_nslib")
+set(TESTS_PROJECT_NAME "${MAIN_PROJECT_NAME}_test")
 set(TESTS_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_test")
 
 
@@ -21,9 +23,10 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
-
-include(CTest)
 include(cmake/RegisterTests.cmake)
+
+# include(CTest) declares BUILD_TESTING (default ON)
+include(CTest)
 
 ###############################################################################
 
@@ -59,17 +62,26 @@ include(cmake/RegisterTests.cmake)
 # Configure sources
 
 # always STATIC (simpler); TBD if we ever want dynamic for this; BUILD_SHARED_LIBS is for ext deps
+
+# common source list for both libraries
+set(MAIN_LIBRARY_SOURCES
+    src/Example.cpp
+    src/internal/Detail.cpp
+    src/exemplu_test_oop/BankAccount.cpp
+)
+
 add_library(${MAIN_LIBRARY_NAME} STATIC)
+target_sources(${MAIN_LIBRARY_NAME} PRIVATE ${MAIN_LIBRARY_SOURCES})
+
+add_library(${MAIN_LIBRARY_NO_SAN_NAME} STATIC)
+target_sources(${MAIN_LIBRARY_NO_SAN_NAME} PRIVATE ${MAIN_LIBRARY_SOURCES})
 
 # NOTE: update EXECUTABLE_NAME in .github/workflows/cmake.yml when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     app/main.cpp
 )
-target_sources(${MAIN_LIBRARY_NAME}
-    PRIVATE
-        src/Example.cpp
-        src/internal/Detail.cpp
-)
+
+###############################################################################
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
@@ -83,7 +95,13 @@ set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAM
 target_include_directories(${MAIN_LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+)
 target_include_directories(${MAIN_LIBRARY_NAME} PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 )
 
@@ -96,6 +114,14 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PUBLIC
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
     ${EXT_PRIVATE_DIR}
 )
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} SYSTEM PUBLIC
+    ${EXT_PUBLIC_DIR}
+)
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} SYSTEM PRIVATE
+    ${EXT_PRIVATE_DIR}
+)
+
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${MAIN_LIBRARY_NO_SAN_NAME})
 
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 
