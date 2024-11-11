@@ -1,5 +1,5 @@
 // test_bank_account.cpp
-#define BOOST_UT_DISABLE_MODULES
+#define BOOST_UT_DISABLE_MODULES ON
 #include "BankAccount.h"
 #include <ut.hpp>
 #include <stdexcept>
