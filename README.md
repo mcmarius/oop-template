@@ -198,12 +198,22 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 ./install_dir/bin/oop_test
 ```
 
+
+## Teste
+
+Acest branch utilizează Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informații
+despre cum funcționează, consultați [README_Tests](./tests/README_Tests.md).
+
+
 ## License
 
 The project is licensed under [AGPLv3](LICENSE).
 
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
-## Resurse
 
+## Resurse
+- Boost-ext/ut:
+  - Link documentație: https://github.com/boost-ext/ut
+  - Link versiune folosită: https://github.com/boost-ext/ut/tree/59a9beba0763dbb45b3cc68e4cf484c659319a97 (v2.3.1 este ultimul tag din 2 aprilie 2025; acest commit este din 14 februarie 2026, ultimul pe care sunt toate bifele)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
