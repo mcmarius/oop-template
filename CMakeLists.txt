@@ -30,9 +30,9 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
-option(BUILD_TESTS "Build the test suites" OFF)
-
 add_subdirectory(src)
 if(BUILD_TESTS)
+    include(CTest)
+    enable_testing()
     add_subdirectory(tests)
 endif ()
