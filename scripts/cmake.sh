@@ -3,7 +3,7 @@
 DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
 DEFAULT_INSTALL_DIR="install_dir"
-
+DEFAULT_BUILD_TESTS="OFF"
 configure() {
     # cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
     #
@@ -44,6 +44,7 @@ configure() {
           -S "${SOURCE_DIR}" \
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
           -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+          -DBUILD_TESTS="${BUILD_TESTS}" \
           "${CMAKE_OPTS[@]}"
 }
 
