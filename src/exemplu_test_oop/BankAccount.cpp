@@ -1,3 +1,4 @@
+// cppcheck-suppress unusedFunction
 #include "BankAccount.h"
 
 #include <stdexcept>
