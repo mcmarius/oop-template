@@ -86,7 +86,6 @@ jobs:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
       VSCMD_SKIP_SENDTELEMETRY: 1
-      runs_tests: "ON"
 
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or
@@ -112,6 +111,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs memory sanitizers
             runs_msan: true
+            runs_tests: false
 
           - os: ubuntu-22.04
             c: gcc-12
@@ -123,6 +123,7 @@ jobs:
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
             asan_name: "-asan"
+            runs_tests: true
 
           - os: ubuntu-22.04
             c: gcc-12
@@ -132,6 +133,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
+            runs_tests: true
 
           - os: macos-14
             c: clang
@@ -141,6 +143,7 @@ jobs:
             # cmake_generator:
             # This env runs address sanitizers
             runs_asan: false
+            runs_tests: true
 
           - os: macos-14
             c: gcc-13
@@ -148,6 +151,7 @@ jobs:
             name: "macOS 14 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
+            runs_tests: true
 
           - os: windows-2022
             c: cl
@@ -159,6 +163,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
+            runs_tests: false
 
           - os: windows-2022
             c: gcc
@@ -166,6 +171,7 @@ jobs:
             name: "Windows 2022 MinGW GCC 13"
             # cmake_flags:
             cmake_generator: Ninja
+            runs_tests: true
 
     steps:
       - name: Checkout repo
@@ -190,7 +196,7 @@ jobs:
         with:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
-          build_tests: ${{ env.runs_tests }}
+          build_tests: ${{ matrix.runs_tests }}
 
       - name: Build
         run: |
