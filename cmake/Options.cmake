@@ -36,3 +36,5 @@ endif()
 set(is_debug "$<CONFIG:Debug>")
 set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
 set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+
+add_definitions(-DBOOST_UT_DISABLE_MODULE)
