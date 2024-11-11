@@ -12,6 +12,10 @@ inputs:
     description: 'Deps cache key'
     required: false
     default: 'cache-deps'
+  build_tests:
+    description: 'Enable or disable tests'
+    required: false
+    default: 'OFF'
 
 runs:
   using: "composite"
