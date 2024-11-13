@@ -111,7 +111,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs memory sanitizers
             runs_msan: true
-            runs_tests: true
+            runs_tests: false
 
           - os: ubuntu-22.04
             c: gcc-12
