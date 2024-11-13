@@ -106,6 +106,10 @@ cmake --install build --config Debug --prefix install_dir
 
 Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
+## Teste
+Acest branch foloseste Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informatii despre cum
+functioneaza cititi [README_Teste](./tests/README_Tests.md) 
+
 ## Resurse
 - Boost-ext/ut : 
   - Link documentatie : https://github.com/boost-ext/ut
