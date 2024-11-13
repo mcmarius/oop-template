@@ -13,7 +13,7 @@ configure() {
     SOURCE_DIR="."
     CMAKE_OPTS=()
 
-    while getopts ":b:c:e:g:i:s:" opt; do
+    while getopts ":b:c:e:g:i:s:t" opt; do
       case "${opt}" in
         b) BUILD_DIR="${OPTARG}"
         ;;
@@ -82,6 +82,29 @@ build() {
           "${CMAKE_OPTS[@]}"
 }
 
+test() {
+    BUILD_DIR="${DEFAULT_BUILD_DIR}"
+    BUILD_TYPE="${DCMAKE_BUILD_TYPE}"
+
+    while getopts ":b:c:" opt; do
+        case "${opt}" in
+          b) BUILD_DIR="${OPTARG}"
+          ;;
+          c) BUILD_TYPE="${OPTARG}"
+          ;;
+          *) printf "Unknown option %s; available options: \n\
+              -b (build dir)\n\
+              -c (CMake config build type)\n"\
+              "${opt}"
+              exit 1
+          ;;
+        esac
+        shift $((OPTIND-1))
+      done
+
+    ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
+}
+
 install() {
     # cmake --install build --config Debug --prefix install_dir
     #
@@ -121,6 +144,10 @@ case "$1" in
     shift
     build "$@"
     ;;
+    test)
+    shift
+    test "$@"
+    ;;
     install)
     shift
     install "$@"
@@ -128,6 +155,7 @@ case "$1" in
     *) printf "Unknown option %s; available options: \n\
         configure\n\
         build\n\
+        test\n\
         install\n" "${opt}"
       exit 1
 esac
