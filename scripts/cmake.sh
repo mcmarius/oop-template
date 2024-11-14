@@ -13,11 +13,13 @@ configure() {
     SOURCE_DIR="."
     CMAKE_OPTS=()
 
-    while getopts ":b:c:g:i:s:t:" opt; do
+    while getopts ":b:c:e:g:i:s:" opt; do
       case "${opt}" in
         b) BUILD_DIR="${OPTARG}"
         ;;
-        c) IFS=" " read -r -a CMAKE_OPTS <<< "${OPTARG}"
+        c) BUILD_TYPE="${OPTARG}"
+        ;;
+        e) IFS=" " read -r -a CMAKE_OPTS <<< "${OPTARG}"
         ;;
         g) export CMAKE_GENERATOR="${OPTARG}"
         ;;
@@ -25,15 +27,14 @@ configure() {
         ;;
         s) SOURCE_DIR="${OPTARG}"
         ;;
-        t) BUILD_TYPE="${OPTARG}"
-        ;;
         *) printf "Unknown option %s; available options: \n\
             -b (build dir)\n\
-            -c (custom CMake options)\n\
+            -c (CMake config build type)\n\n\
+            -e (extra CMake options)\n\
             -g (generator)\n\
             -i (install dir prefix)\n\
-            -s (source dir)\n\
-            -t (build type)\n" "${opt}"
+            -s (source dir)\n"\
+            "${opt}"
           exit 1
         ;;
       esac
@@ -53,18 +54,19 @@ build() {
     BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
     NPROC=6
 
-    while getopts ":b:h:j:t:" opt; do
+    while getopts ":b:c:h:j:" opt; do
       case "${opt}" in
         b) BUILD_DIR="${OPTARG}"
         ;;
-        j) NPROC="${OPTARG}"
+        c) BUILD_TYPE="${OPTARG}"
         ;;
-        t) BUILD_TYPE="${OPTARG}"
+        j) NPROC="${OPTARG}"
         ;;
         h) printf "Unknown option %s; available options: \n\
             -b (build dir)\n\
-            -j (number of jobs for parallel build)\n\
-            -t (build type)\n" "${opt}"
+            -c (CMake config build type)\n\
+            -j (number of jobs for parallel build)\n"\
+            "${opt}"
           exit 1
         ;;
         *)
@@ -82,18 +84,19 @@ install() {
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
     INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
-    while getopts ":b:i:t:" opt; do
+    while getopts ":b:c:i:" opt; do
       case "${opt}" in
         b) BUILD_DIR="${OPTARG}"
         ;;
         i) INSTALL_DIR="${OPTARG}"
         ;;
-        t) BUILD_TYPE="${OPTARG}"
+        c) BUILD_TYPE="${OPTARG}"
         ;;
         *) printf "Unknown option %s; available options: \n\
             -b (build dir)\n\
-            -i (install dir prefix)\n\
-            -t (build type)\n" "${opt}"
+            -c (CMake config build type)\n\
+            -i (install dir prefix)\n"\
+            "${opt}"
           exit 1
         ;;
       esac
