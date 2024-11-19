@@ -27,7 +27,7 @@
     }
  */
 
-void RandomFact()
+void ShowRandomFact()
 {
     /*
         API-ul   https://uselessfacts.jsph.pl/api/v2/facts/random   ne dă următorul JSON
@@ -75,7 +75,7 @@ void RandomFact()
     std::cout << "Uite un random fact: " << fact;
 }
 
-void GitHub(const std::string& user)
+void ShowGithubAccountData(const std::string& user)
 {
     /*
         API-ul   https://api.github.com/users/{{username}}   ne dă informații legate de un utilizator al platformei GitHub
@@ -132,7 +132,7 @@ void GitHub(const std::string& user)
 int main()
 {
     std::cout << std::endl << "================= Random Fact =================" << std::endl;
-    RandomFact();
+    ShowRandomFact();
 
     std::cout << std::endl;
 
@@ -141,7 +141,7 @@ int main()
     std::string user;
     std::cout << "Introdu un nume: "; std::cin >> user;
 
-    GitHub(user);
+    ShowGithubAccountData(user);
 
     return 0;
 }
