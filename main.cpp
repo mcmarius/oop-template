@@ -52,10 +52,11 @@ void ShowRandomFact()
         {"Content-Type", "application/json"}
     };
 
+    // Adăugăm timeout la request, deoarece pot exista situații când durează foarte mult.
     const int miliseconds = 2000;
     cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
 
-    if(res.elapsed * 1000 >= miliseconds)
+    if(res.elapsed * 1000 > miliseconds)
     {
         std::cout << "Request timeout" << std::endl;
         return;
@@ -124,8 +125,8 @@ void ShowGithubAccountData(const std::string& user)
     };
 
 
+    // Adăugăm timeout la request, deoarece pot exista situații când durează foarte mult.
     const int miliseconds = 2000;
-
     cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
 
     if(res.elapsed * 1000 > miliseconds)
