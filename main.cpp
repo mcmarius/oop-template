@@ -57,6 +57,12 @@ void ShowRandomFact()
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
         std::cout << "Oops!!" << std::endl;
+        return;
+    }
+    if(res.text.empty())
+    {
+        std::cout << "Empty response" << std::endl;
+        return;
     }
 
     // res.text este doar un string cu datele descărcate din API.
@@ -75,6 +81,18 @@ void ShowRandomFact()
     std::cout << "Uite un random fact: " << fact;
 }
 
+
+
+
+/*
+    << OBSERVAȚIE >>
+        Modul în care sunt făcute request-urile la API-ul din funcția ShowGithubAccountData() este supus unui rate
+    limit deoarece facem request-uri fără să folosim un key/token. Pentru a mări acest rate limit este necesar să
+    facem request-urile folosind un token.
+
+        Mai multe detalii despre creșterea rate limit-ului se pot găsi în documentația oficială a API-ului.
+    https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#getting-a-higher-rate-limit
+*/
 void ShowGithubAccountData(const std::string& user)
 {
     /*
@@ -104,6 +122,12 @@ void ShowGithubAccountData(const std::string& user)
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
         std::cout << "Oops!!" << std::endl;
+        return;
+    }
+    if(res.text.empty())
+    {
+        std::cout << "Empty response" << std::endl;
+        return;
     }
 
     nlohmann::json json = nlohmann::json::parse(res.text); // Parsăm răspunsul primit
