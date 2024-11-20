@@ -52,8 +52,14 @@ void ShowRandomFact()
         {"Content-Type", "application/json"}
     };
 
-    cpr::Response res = cpr::Get(api_link, header); // Facem o cerere la API
+    const int miliseconds = 2000;
+    cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
 
+    if(res.elapsed * 1000 >= miliseconds)
+    {
+        std::cout << "Request timeout" << std::endl;
+        return;
+    }
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
         std::cout << "Oops!!" << std::endl;
@@ -117,8 +123,16 @@ void ShowGithubAccountData(const std::string& user)
         {"Content-Type", "application/json"}
     };
 
-    cpr::Response res = cpr::Get(api_link, header); // Facem o cerere la API
 
+    const int miliseconds = 2000;
+
+    cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
+
+    if(res.elapsed * 1000 > miliseconds)
+    {
+        std::cout << "Request timeout" << std::endl;
+        return;
+    }
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
         std::cout << "Oops!!" << std::endl;
