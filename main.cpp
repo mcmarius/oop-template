@@ -99,6 +99,9 @@ void ShowRandomFact()
 
         Mai multe detalii despre creșterea rate limit-ului se pot găsi în documentația oficială a API-ului.
     https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#getting-a-higher-rate-limit
+
+        Pentru testare mai avansată, am putea să facem mocking, adică să simulăm cererile către API cu ajutorul unor fișiere locale.
+        Exemplu: https://github.com/Bogdanctx/Radar-Contact
 */
 void ShowGithubAccountData(const std::string& user)
 {
