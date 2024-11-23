@@ -97,7 +97,7 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+0.1. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -111,6 +111,10 @@ sudo apt-get update && \
     libdrm-dev \
     libgbm-dev \
     libfreetype6-dev
+```
+0.2. Biblioteci necesare pe macOS
+```sh
+brew install libidn2
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
@@ -154,4 +158,8 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 ## Resurse
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
 - [SFML](https://github.com/SFML/SFML/tree/3.0.1) (Zlib)
+- [Cat API](https://cataas.com/)
+- [cpr](https://github.com/libcpr/cpr)
+  <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
+  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
