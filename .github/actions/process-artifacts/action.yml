@@ -23,7 +23,6 @@ runs:
         # fi
         ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
         ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-        cp /opt/homebrew/lib/libidn2.dylib lib
         mv lib ${{ env.ZIP_NAME }}/
 
     # - name: Copy missing dylibs (g++)

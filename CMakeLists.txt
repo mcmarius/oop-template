@@ -18,6 +18,8 @@ if(APPLE)
     if(NOT LIBIDN2_LIBRARY)
         message(FATAL_ERROR "libidn2 not found")
     endif()
+
+    set(APPLE_LIBIDN2_LIBRARY ${LIBIDN2_LIBRARY})
 endif()
 
 ###############################################################################
@@ -83,11 +85,8 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/inc
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
 
-if(APPLE)
-    target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr ${LIBIDN2_LIBRARY} sfml-graphics sfml-window sfml-system Threads::Threads)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr sfml-graphics sfml-window sfml-system Threads::Threads)
-endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr ${APPLE_LIBIDN2_LIBRARY} sfml-graphics sfml-window sfml-system Threads::Threads)
+
 
 if(APPLE)
 elseif(UNIX)
