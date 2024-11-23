@@ -144,5 +144,5 @@ Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul 
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
-- [Cat API](https://cataas.com/)
+- [Cataas (Cats API)](https://cataas.com/)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
