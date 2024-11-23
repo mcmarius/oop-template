@@ -100,9 +100,13 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (ar trebui să meargă pe sisteme bazate pe Debian/Arch/Fedora/OpenSUSE, necesită `sudo`)
+0.1 Biblioteci necesare pe Linux (ar trebui să meargă pe sisteme bazate pe Debian/Arch/Fedora/OpenSUSE, necesită `sudo`)
 ```sh
 bash ./scripts/install-sfml-deps.sh
+```
+0.2. Biblioteci necesare pe macOS
+```sh
+brew install libidn2
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
@@ -195,4 +199,8 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 ## Resurse
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
 - [SFML](https://github.com/SFML/SFML/tree/3.0.2) (Zlib)
+- [Cat API](https://cataas.com/)
+- [cpr](https://github.com/libcpr/cpr)
+  <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
+  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
