@@ -13,7 +13,7 @@ configure() {
     SOURCE_DIR="."
     CMAKE_OPTS=()
 
-    while getopts ":b:c:e:g:i:s:t" opt; do
+    while getopts ":b:c:e:g:i:s:" opt; do
       case "${opt}" in
         b) BUILD_DIR="${OPTARG}"
         ;;
