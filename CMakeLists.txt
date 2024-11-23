@@ -37,6 +37,15 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SFML)
 
+
+FetchContent_Declare(
+        cpr
+        GIT_REPOSITORY https://github.com/libcpr/cpr.git
+        GIT_TAG 1.11.0
+)
+
+FetchContent_MakeAvailable(cpr)
+
 ###############################################################################
 
 # external dependencies with find_package
@@ -64,8 +73,9 @@ include(cmake/CompilerFlags.cmake)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
+
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr sfml-graphics sfml-window sfml-system Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
