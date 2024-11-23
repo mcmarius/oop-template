@@ -19,6 +19,13 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
+if(APPLE)
+    find_library(LIBIDN2_LIBRARY idn2 HINTS /opt/homebrew/lib)
+    if(NOT LIBIDN2_LIBRARY)
+        message(FATAL_ERROR "libidn2 not found")
+    endif()
+endif()
+
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -43,6 +50,18 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(SFML)
+
+
+FetchContent_Declare(
+    cpr
+    GIT_REPOSITORY https://github.com/libcpr/cpr.git
+    # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
+    GIT_TAG 1.11.0
+    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS ON
+)
+
+FetchContent_MakeAvailable(cpr)
 
 ###############################################################################
 
@@ -82,10 +101,11 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
 )
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
-    SFML::Graphics SFML::Window SFML::System Threads::Threads
+    cpr::cpr SFML::Graphics SFML::Window SFML::System Threads::Threads
 )
 
 if(APPLE)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${LIBIDN2_LIBRARY})
 elseif(UNIX)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
 endif()
