@@ -100,7 +100,7 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+0.1. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -114,6 +114,10 @@ sudo apt-get update && \
     libdrm-dev \
     libgbm-dev \
     libfreetype6-dev
+```
+0.2. Biblioteci necesare pe macOS
+```sh
+brew install libidn2
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
@@ -201,4 +205,5 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.2) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
+- [Cataas (Cats API)](https://cataas.com/)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
