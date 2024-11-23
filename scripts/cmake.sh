@@ -3,7 +3,7 @@
 DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
 DEFAULT_INSTALL_DIR="install_dir"
-DEFAULT_RUN_TESTS="OFF"
+DEFAULT_RUN_TESTS='OFF'
 
 configure() {
     # cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -30,7 +30,7 @@ configure() {
         s) SOURCE_DIR="${OPTARG}"
         ;;
         t) RUN_TESTS="${OPTARG}"
-           if [[ "${RUN_TESTS}" != "ON" && "${RUN_TESTS}" != "OFF" ]]; then
+           if [[ "${RUN_TESTS}" != 'ON' && "${RUN_TESTS}" != 'OFF' ]]; then
             echo "Invalid value for -t: $RUN_TESTS. Use ON or OFF."
             exit 1
            fi
@@ -104,8 +104,7 @@ test() {
           ;;
           *) printf "Unknown option %s; available options: \n\
               -b (build dir)\n\
-              -c (CMake config build type)\n\
-              -j (number of jobs for parallel build)\n"\
+              -c (CMake config build type)\n"\
               "${opt}"
               exit 1
           ;;
