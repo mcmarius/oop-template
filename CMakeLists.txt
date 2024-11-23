@@ -13,6 +13,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Options.cmake)
 
+if(APPLE)
+    find_library(LIBIDN2_LIBRARY idn2 HINTS /opt/homebrew/lib)
+    if(NOT LIBIDN2_LIBRARY)
+        message(FATAL_ERROR "libidn2 not found")
+    endif()
+endif()
+
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -75,7 +82,12 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr sfml-graphics sfml-window sfml-system Threads::Threads)
+
+if(APPLE)
+    target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr ${LIBIDN2_LIBRARY} sfml-graphics sfml-window sfml-system Threads::Threads)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE cpr::cpr sfml-graphics sfml-window sfml-system Threads::Threads)
+endif()
 
 if(APPLE)
 elseif(UNIX)
