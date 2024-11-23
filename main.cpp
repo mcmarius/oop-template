@@ -1,9 +1,11 @@
 #include <iostream>
-#include <array>
-#include <chrono>
-#include <thread>
 
 #include <SFML/Graphics.hpp>
+
+/////////////////////////////////////////////////////////////
+//// Vom folosi cpr pentru a descărca date dintr-un API /////
+#include <cpr/cpr.h>                                    /////
+/////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
@@ -19,55 +21,68 @@ SomeClass *getC() {
 
 
 int main() {
-    ///
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
     ///////////////////////////////////////////////////////////////////////////
 
     SomeClass *c = getC();
     std::cout << c << "\n";
     delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
+
+    /*
+        Vom folosi un API care ne furnizează poze cu pisici.
+
+        Link API >> https://cataas.com
+        Link documentație API >> https://cataas.com/doc.html
+    */
+
+    cpr::Url api_link = "https://cataas.com/cat?height=800"; // Link-ul către API
+    // Când facem o cerere către acest API vom primi o imagine cu o pisică având height-ul de 800px.
+    // Documentație >> https://cataas.com/
+    // << OBSERVAȚIE >> Dacă imaginea este foarte mare programul poate să crape.
+
+    //    Efectuăm o cerere GET la API pentru a primi imaginea și setăm un timeout de 2 secunde request-ului în cazul în care durează
+    // foarte mult să primim răspunsul din varii motive (API-ul este picat, probleme de rețea, etc.)
+    constexpr int timeout_ms = 8000;
+    cpr::Response res = cpr::Get(
+        api_link,
+        cpr::Header{{"Content-Type", "image/*"}}, // Setăm `image/*` la Content-Type pentru a primi imagini
+        cpr::Timeout{timeout_ms}
+    );
+
+    if(res.elapsed * 1000 > timeout_ms) // Răspunsul a sosit mai târziu de 2 secunde (`timeout_ms = 2000ms`)
+    {
+        std::cout << "Request timeout" << std::endl;
+        return 1;
+    }
+
+    ///     După ce am primit răspunsul, accesăm șirul de bytes al imaginii folosind
+    /// `res.text.data()` și dimensiunea sa cu `res.text.size()`.
+    char* buffer = res.text.data(); // Buffer pentru șirul de bytes al imaginii
+    size_t buffer_size = res.text.size(); // Dimensiunea șirului de bytes al imaginii
+
+
+    /// Creăm un obiect de tip sf::Texture pentru a stoca imaginea
+    sf::Texture cat_texture;
+
+    /*
+        În SFML putem încărca texturi dintr-un buffer apelând funcția `.loadFromMemory()`.
+        Antetul funcției loadFromMemory():
+            bool loadFromMemory(const void *data, std::size_t size, const IntRect & area = IntRect())
+
+        Dacă nu s-a putut încărca textura din buffer, atunci funcția întoarce `false` și înseamnă că avem o eroare.
+
+        Mai multe informații despre această funcție se află pot găsi în link-ul de jos:
+        >>> https://www.sfml-dev.org/documentation/2.6.1/classsf_1_1Texture.php#a2c4adb19dd4cbee0a588eeb85e52a249
+    */
+    if (!cat_texture.loadFromMemory(buffer, buffer_size)) { // Avem eroare
+        std::cout << "Eroare: Poza nu a putut fi incarcata!" << std::endl;
+        return 1;
+    }
+    // Textura a fost încărcată cu succes
+    std::cout << "Textura a fost încărcată\n";
+
+    //     Acum vrem să asociem textura cu un sprite. Pentru a realiza acest lucru creăm un obiect de tip sf::Sprite
+    // și trimitem `cat_texture` în constructor.
+    sf::Sprite cat(cat_texture);
 
     sf::RenderWindow window;
     ///////////////////////////////////////////////////////////////////////////
@@ -82,36 +97,31 @@ int main() {
     /// window.setFramerateLimit(60);                                       ///
     ///////////////////////////////////////////////////////////////////////////
 
-    while(window.isOpen()) {
-        bool shouldExit = false;
-        sf::Event e{};
-        while(window.pollEvent(e)) {
-            switch(e.type) {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::Resized:
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-                break;
-            case sf::Event::KeyPressed:
-                std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
-                if(e.key.code == sf::Keyboard::Escape)
-                    shouldExit = true;
-                break;
-            default:
-                break;
+    // Bucla principală a aplicației.
+    while (window.isOpen())
+    {
+        sf::Event event{};
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+                case sf::Event::Closed:
+                {
+                    window.close();
+                    break;
+                }
+                default:
+                    break;
             }
         }
-        if(shouldExit) {
-            window.close();
-            break;
-        }
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(300ms);
 
         window.clear();
+
+        // Afișăm poza cu pisica pe ecran
+        window.draw(cat);
+
         window.display();
     }
+
     return 0;
 }
