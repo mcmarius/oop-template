@@ -4,6 +4,12 @@ description: 'Install required packages'
 runs:
   using: "composite"
   steps:
+    # libidn2 for macos
+    - name: Install macos-14 Dependencies
+      shell: bash
+      if: runner.os == 'macOS'
+      run: brew install libidn2
+
     # Common Linux dependencies
     - name: Install common Linux Dependencies
       if: runner.os == 'Linux'
