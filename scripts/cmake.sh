@@ -44,7 +44,6 @@ configure() {
           -S "${SOURCE_DIR}" \
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
           -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
-          -DCMAKE_PREFIX_PATH=/opt/homebrew \
           "${CMAKE_OPTS[@]}"
 }
 
