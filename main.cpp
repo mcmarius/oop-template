@@ -42,11 +42,11 @@ int main() {
     constexpr int timeout_ms = 2000;
     cpr::Response res = cpr::Get(
         api_link,
-        cpr::Header{{"Content-Type", "image/*"}}, // Setăm `image/*` pentru Content-Type ca să primim imagini
+        cpr::Header{{"Content-Type", "image/*"}}, // Setăm `image/*` la Content-Type pentru a primi imagini
         cpr::Timeout{timeout_ms}
     );
 
-    if(res.elapsed * 1000 > timeout_ms)
+    if(res.elapsed * 1000 > timeout_ms) // Răspunsul a sosit mai târziu de 2 secunde (`timeout_ms = 2000ms`)
     {
         std::cout << "Request timeout" << std::endl;
         return 0;
