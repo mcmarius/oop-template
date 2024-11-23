@@ -195,8 +195,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          cd ${{ env.BUILD_DIR }}
-          ctest --verbose --no-compress-output -C ${{ env.BUILD_TYPE }}
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }}
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
