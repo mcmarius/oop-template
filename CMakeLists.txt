@@ -43,6 +43,15 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SFML)
 
+
+FetchContent_Declare(
+        cpr
+        GIT_REPOSITORY https://github.com/libcpr/cpr.git
+        GIT_TAG 1.11.0
+)
+
+FetchContent_MakeAvailable(cpr)
+
 ###############################################################################
 
 # external dependencies with find_package
