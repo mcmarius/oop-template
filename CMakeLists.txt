@@ -29,6 +29,16 @@ include(cmake/RegisterTests.cmake)
 
 ###############################################################################
 
+if(APPLE)
+    find_library(LIBIDN2_LIBRARY idn2 HINTS /opt/homebrew/lib)
+    if(NOT LIBIDN2_LIBRARY)
+        message(FATAL_ERROR "libidn2 not found")
+    endif()
+endif()
+
+
+###############################################################################
+
 # External dependencies with FetchContent
 
 include(FetchContent)
@@ -52,7 +62,17 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 
-FetchContent_MakeAvailable(SFML)
+FetchContent_Declare(
+    cpr
+    SYSTEM
+    GIT_REPOSITORY https://github.com/libcpr/cpr.git
+    # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
+    GIT_TAG        1.11.0
+    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS   ON
+)
+
+FetchContent_MakeAvailable(SFML cpr)
 
 ###############################################################################
 
@@ -113,12 +133,13 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} SFML::Graphics SFML::Window SFML::System Threads::Threads)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} cpr::cpr SFML::Graphics SFML::Window SFML::System Threads::Threads)
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
 
 if(APPLE)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${LIBIDN2_LIBRARY})
 elseif(UNIX)
     target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
 endif()
