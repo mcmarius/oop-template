@@ -31,7 +31,7 @@ set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
 add_subdirectory(src)
-if(BUILD_TESTS)
+if(RUN_TESTS)
     include(CTest)
     enable_testing()
     add_subdirectory(tests)
