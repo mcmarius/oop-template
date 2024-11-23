@@ -193,11 +193,6 @@ jobs:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
 
-      - name: find libidn2
-        shell: bash
-        if: runner.os == 'macOS'
-        run: find / -name libidn2
-
       - name: Build
         run: |
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
