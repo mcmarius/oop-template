@@ -19,6 +19,13 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
+if(APPLE)
+    find_library(LIBIDN2_LIBRARY idn2 HINTS /opt/homebrew/lib)
+    if(NOT LIBIDN2_LIBRARY)
+        message(FATAL_ERROR "libidn2 not found")
+    endif()
+endif()
+
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -81,8 +88,15 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
+
 target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+
+if(APPLE)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE cpr::cpr ${LIBIDN2_LIBRARY} sfml-graphics sfml-window sfml-system Threads::Threads)
+else()
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE cpr::cpr sfml-graphics sfml-window sfml-system Threads::Threads)
+endif()
 
 if(APPLE)
 elseif(UNIX)
