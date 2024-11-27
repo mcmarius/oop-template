@@ -94,6 +94,10 @@ sudo apt-get update && \
     libgbm-dev \
     libfreetype6-dev
 ```
+0,5. Biblioteci necesare pe macOS
+```sh
+brew install libidn2
+```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
 
