@@ -41,8 +41,10 @@ int main() {
         Link documentație API >> https://cataas.com/doc.html
     */
 
-    cpr::Url api_link = "https://cataas.com/cat"; // Link-ul către API
-    // Când facem o cerere către acest API vom primi o imagine cu o pisică.
+    cpr::Url api_link = "https://cataas.com/cat?height=800"; // Link-ul către API
+    // Când facem o cerere către acest API vom primi o imagine cu o pisică având height-ul de 800px.
+    // Documentație >> https://cataas.com/
+    // << OBSERVAȚIE >> Dacă imaginea este foarte mare programul poate să crape.
 
     //    Efectuăm o cerere GET la API pentru a primi imaginea și setăm un timeout de 2 secunde request-ului în cazul în care durează
     // foarte mult să primim răspunsul din varii motive (API-ul este picat, probleme de rețea, etc.)
