@@ -37,6 +37,7 @@ runs:
       uses: ./.github/actions/configure-cmake
       with:
         custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+        cache_key: 'cache-cppcheck'
 
     - name: Cppcheck
       shell: bash

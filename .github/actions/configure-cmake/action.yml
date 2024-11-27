@@ -8,6 +8,10 @@ inputs:
   custom_flags:
     description: 'Custom CMake configuration flags'
     required: false
+  cache_key:
+    description: 'Deps cache key'
+    required: false
+    default: 'cache-deps'
 
 runs:
   using: "composite"
@@ -20,7 +24,7 @@ runs:
     #   with:
     #     path: |
     #       ${{ env.BUILD_DIR }}/_deps
-    #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}
+    #     key: ${{ inputs.cache_key }}-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}
 
     # NOTE: GH Actions does not allow updating the cache yet
     # Using the workaround found here: https://github.com/actions/cache/issues/171
