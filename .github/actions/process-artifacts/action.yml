@@ -54,13 +54,13 @@ runs:
         fi
 
         # runtime release DLLs
-        if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
-          cp "$(which ucrtbase.dll)" \
+        # if [[ "${BUILD_TYPE}" =~ "Rel" ]]; then
+        cp "$(which ucrtbase.dll)" \
              "$(which VCRUNTIME140_1.dll)" \
              "$(which MSVCP140.dll)" \
              "$(which VCRUNTIME140.dll)" \
              ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
-        fi
+        # fi
 
     - name: Copy stdlib (MinGW)
       shell: bash
