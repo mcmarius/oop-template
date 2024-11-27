@@ -46,7 +46,7 @@ int main() {
 
     //    Efectuăm o cerere GET la API pentru a primi imaginea și setăm un timeout de 2 secunde request-ului în cazul în care durează
     // foarte mult să primim răspunsul din varii motive (API-ul este picat, probleme de rețea, etc.)
-    constexpr int timeout_ms = 2000;
+    constexpr int timeout_ms = 8000;
     cpr::Response res = cpr::Get(
         api_link,
         cpr::Header{{"Content-Type", "image/*"}}, // Setăm `image/*` la Content-Type pentru a primi imagini
@@ -56,7 +56,7 @@ int main() {
     if(res.elapsed * 1000 > timeout_ms) // Răspunsul a sosit mai târziu de 2 secunde (`timeout_ms = 2000ms`)
     {
         std::cout << "Request timeout" << std::endl;
-        return 0;
+        return 1;
     }
 
     ///     După ce am primit răspunsul, accesăm șirul de bytes al imaginii folosind
@@ -80,7 +80,7 @@ int main() {
     */
     if (!cat_texture.loadFromMemory(buffer, buffer_size)) { // Avem eroare
         std::cout << "Eroare: Poza nu a putut fi incarcata!" << std::endl;
-        return 0;
+        return 1;
     }
 
     // Textura a fost încărcată cu succes
@@ -89,8 +89,18 @@ int main() {
     // și trimitem `cat_texture` în constructor.
     sf::Sprite cat(cat_texture);
 
-    // Creăm o fereastră de dimensiunea 800x600 pixeli cu titlul "Pisica".
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Pisica");
+    sf::RenderWindow window;
+    ///////////////////////////////////////////////////////////////////////////
+    /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
+    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
+    /// This is needed so we do not burn the GPU                            ///
+    window.setVerticalSyncEnabled(true);                                    ///
+    /// window.setFramerateLimit(60);                                       ///
+    ///////////////////////////////////////////////////////////////////////////
 
     // Bucla principală a aplicației.
     while (window.isOpen())
