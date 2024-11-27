@@ -97,7 +97,7 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+0.1. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
 ```sh
 sudo apt-get update && \
   sudo apt-get install libxrandr-dev \
@@ -112,7 +112,7 @@ sudo apt-get update && \
     libgbm-dev \
     libfreetype6-dev
 ```
-0,5. Biblioteci necesare pe macOS
+0.2. Biblioteci necesare pe macOS
 ```sh
 brew install libidn2
 ```
