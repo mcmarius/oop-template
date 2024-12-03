@@ -4,6 +4,6 @@ Boost-ext/ut oferă un API intuitiv, bazat pe expresii, ceea ce îl face ușor d
 Fiecare fisier din `./tests`reprezinta o suita noua de teste care este adaugata cu `add_tests`.
 Acest lucru este facut automat in CMakeLists.
 
-Pentru a reduce timpul de build trebuie sa se adauge tot codul scris de voi(in afara de `main.cpp`) intr-o librarie
-asa cum este exemplificat in CMakeLists.txt. Fisierele pe care le creati ar trebui sa fie puse in directoare
-pentru a fi mai usor de adaugat in aceasta librarie.
+Pentru a mări modularitatea soluției vom pune toate fișierele scrise de noi într-o bibliotecă. Acest lucru ne permite
+să refolosim codul deja construit în alte componente/ aplicații. În cazul de față, construim fișierele sursă atunci
+când rulăm aplicația, iar acestea vor putea fi folosite direct atunci când rulăm testele.
