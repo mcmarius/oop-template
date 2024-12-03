@@ -11,7 +11,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(gtest)
 
 add_executable(${PROJECT_NAME}
-                main.cpp
+        main.cpp
         exemplu_test_oop.cpp
         exemplu_test_simplu.cpp
 )
