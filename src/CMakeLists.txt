@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.26)
-
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
-# for now, the project name is used as the executable name
-project(oop-src)
-set(SRC_PROJECT ${PROJECT_NAME} PARENT_SCOPE)
-# set(CMAKE_PROJECT_VERSION_MAJOR 0)
-# set(CMAKE_PROJECT_VERSION_MINOR 0)
-# set(CMAKE_PROJECT_VERSION_PATCH 1)
-
 ###############################################################################
 
 # NOTE: Also update env vars used for caching in
@@ -30,41 +20,40 @@ set(SRC_PROJECT ${PROJECT_NAME} PARENT_SCOPE)
 
 ###############################################################################
 
-add_library(${PROJECT_NAME}_lib
+add_library(${MAIN_PROJECT_NAME}_lib
             exemplu_test_oop/BankAccount.cpp
             exemplu_test_oop/BankAccount.h
 )
 
-target_include_directories(${PROJECT_NAME}_lib PUBLIC
+target_include_directories(${MAIN_PROJECT_NAME}_lib PUBLIC
             exemplu_test_oop/
 )
 
-add_executable(${PROJECT_NAME}
+add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib)
-
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib)
 include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
-
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-# target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${PROJECT_NAME} <SomeLib>)
+# target_include_directories(${MAIN_PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+# target_include_directories(${MAIN_PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
+# target_link_directories(${MAIN_PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
+# target_link_libraries(${MAIN_PROJECT_NAME} <SomeLib>)
 
 ###############################################################################
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
-install(TARGETS ${PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
+
+install(TARGETS ${MAIN_PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
     install(FILES ${PROJECT_ROOT}/launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
-
 copy_files(FILES tastatura.txt)
+
 # copy_files copiaza fisiere din radacina proiectului
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds)
 # copy_files(DIRECTORY images sounds)
