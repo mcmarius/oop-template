@@ -3,8 +3,9 @@
 #include <stdexcept>
 #include <utility>
 
-BankAccount::BankAccount(std::string  owner, const double initialBalance)
-    : owner(std::move(owner)), balance(initialBalance) {}
+BankAccount::BankAccount(std::string owner, const double initialBalance)
+    : owner(std::move(owner)), balance(initialBalance) {
+}
 
 void BankAccount::Deposit(const double amount) {
     if (amount < 0) {
