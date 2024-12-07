@@ -8,20 +8,20 @@ function(copy_files)
     # copy files to build dir
     foreach(file ${ARG_FILES})
         add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
+            TARGET ${MAIN_EXECUTABLE_NAME} POST_BUILD
             COMMENT "Copying ${file}..."
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/${file} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+            ${CMAKE_SOURCE_DIR}/${file} $<TARGET_FILE_DIR:${MAIN_EXECUTABLE_NAME}>)
             # ${CMAKE_CURRENT_BINARY_DIR})
     endforeach()
 
     # copy folders to build dir
     foreach(dir ${ARG_DIRECTORY})
         add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
+            TARGET ${MAIN_EXECUTABLE_NAME} POST_BUILD
             COMMENT "Copying directory ${dir}..."
             COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-            ${CMAKE_SOURCE_DIR}/${dir} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${dir})
+            ${CMAKE_SOURCE_DIR}/${dir} $<TARGET_FILE_DIR:${MAIN_EXECUTABLE_NAME}>/${dir})
             # ${CMAKE_CURRENT_BINARY_DIR}/${dir})
     endforeach()
 
