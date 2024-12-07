@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.26)
 
-project(oop-src)
+project(oop)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,7 +11,6 @@ set(CMAKE_HELPER_DIR "${PROJECT_ROOT}/cmake")
 
 include(${CMAKE_HELPER_DIR}/Options.cmake)
 include(${CMAKE_HELPER_DIR}/CopyHelper.cmake)
-
 # external dependencies with FetchContent
 include(FetchContent)
 
