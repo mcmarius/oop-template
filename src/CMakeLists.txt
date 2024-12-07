@@ -1,4 +1,3 @@
-project(source)
 ###############################################################################
 
 # NOTE: Also update env vars used for caching in
@@ -36,7 +35,7 @@ add_executable(${PROJECT_NAME}
         main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE source_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib)
 include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
 ###############################################################################
 

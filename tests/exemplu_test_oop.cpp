@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 #include "BankAccount.h"
 
-/// Acest fixture initializeaza o instanta a clasei
-/// BankAccount care va fi folosita in toate testele din aceasta suita
+/// Acest fixture inițializează o instanță a clasei
+/// BankAccount ce va fi folosită in toate testele din această suită
+
 class BankAccountTest : public ::testing::Test {
 protected:
     BankAccountTest() : account("John Doe", 100.0) {}
