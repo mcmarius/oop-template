@@ -81,15 +81,16 @@ Instrucțiuni pentru terminal:
 
 1. Pasul de configurare
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRUN_TESTS=ON
 ```
 
 Sau pe Windows cu GCC:
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja -DRUN_TESTS=ON
 ```
 
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
+Folosim '-DRUN_TESTS=ON' pentru a specifica că vom compila și testele.
 
 
 2. Pasul de compilare
@@ -105,6 +106,10 @@ cmake --install build --config Debug --prefix install_dir
 ```
 
 Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
+
+## Teste
+Acest branch utilizează GTest pentru a crea teste unitare. Pentru mai multe informații despre cum
+funcționează, consultați [README_Tests](./tests/README_Tests.md)
 
 ## Resurse
 

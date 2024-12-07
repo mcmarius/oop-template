@@ -49,7 +49,7 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${{ env.SRC_EXECUTABLE_NAME }}"
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${{ env.EXECUTABLE_NAME }}"
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -57,7 +57,7 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${{ env.SRC_EXECUTABLE_NAME }}".exe
+        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${{ env.EXECUTABLE_NAME }}".exe
 
     - name: Valgrind
       shell: bash
@@ -67,4 +67,4 @@ runs:
         cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
             --leak-check=full --show-leak-kinds=all --track-origins=yes \
             --error-exitcode=1 \
-            ./${{ env.ZIP_NAME }}/"${{ env.SRC_EXECUTABLE_NAME }}"
+            ./${{ env.ZIP_NAME }}/"${{ env.EXECUTABLE_NAME }}"
