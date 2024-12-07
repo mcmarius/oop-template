@@ -135,8 +135,8 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 ## Teste
 
-Acest branch folosește Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informații
-despre cum funcționează, cititi [README_Teste](./tests/README_Tests.md).
+Acest branch utilizează Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informații
+despre cum funcționează, consultați [README_Tests](./tests/README_Tests.md).
 
 
 ## Resurse
