@@ -11,7 +11,7 @@ add_executable(${PROJECT_NAME}
         exemplu_test_oop.cpp
         exemplu_test_simplu.cpp
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE source_lib gtest gtest_main)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${TOP_LEVEL_PROJECT_NAME}_lib gtest gtest_main)
 include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 

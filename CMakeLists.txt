@@ -19,6 +19,7 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 set(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
+set(TOP_LEVEL_PROJECT_NAME "${PROJECT_NAME}")
 set(CMAKE_HELPER_DIR "${PROJECT_ROOT}/cmake")
 
 include(${CMAKE_HELPER_DIR}/Options.cmake)
