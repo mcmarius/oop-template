@@ -93,6 +93,8 @@ build() {
 }
 
 test() {
+    # ctest --test-dir build -C Debug --verbose --no-compress-output
+    #
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DCMAKE_BUILD_TYPE}"
 
@@ -106,14 +108,14 @@ test() {
               -b (build dir)\n\
               -c (CMake config build type)\n"\
               "${opt}"
-              exit 1
+            exit 1
           ;;
         esac
-        shift $((OPTIND-1))
       done
 
     ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
 }
+
 install() {
     # cmake --install build --config Debug --prefix install_dir
     #
@@ -142,7 +144,6 @@ install() {
           --config "${BUILD_TYPE}" \
           --prefix "${INSTALL_DIR}"
 }
-
 
 case "$1" in
     configure)

@@ -22,8 +22,7 @@ on:
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
   # NOTE: update executable name if it is changed in CMakeLists.txt
-  SRC_EXECUTABLE_NAME: "oop-src"
-  TEST_EXECUTABLE_NAME: "oop-Test-Runner"
+  EXECUTABLE_NAME: "oop"
   INPUT_FILENAME: "tastatura.txt"
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
