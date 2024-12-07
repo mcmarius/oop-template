@@ -1,7 +1,7 @@
 #include <ut.hpp>
 
 int sum(const int a, const int b) {
-    return a+b;
+    return a + b;
 }
 
 int main() {
