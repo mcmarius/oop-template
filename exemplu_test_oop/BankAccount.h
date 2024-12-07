@@ -6,13 +6,16 @@
 class BankAccount {
     std::string owner;
     double balance;
+
 public:
     BankAccount(std::string owner, double initialBalance);
 
     void Deposit(double amount);
+
     void Withdraw(double amount);
 
     [[nodiscard]] double GetBalance() const;
+
     [[nodiscard]] std::string GetOwner() const;
 };
 
