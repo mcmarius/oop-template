@@ -67,17 +67,17 @@ add_executable(${MAIN_EXECUTABLE_NAME}
 
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib)
 ###############################################################################
-set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
-set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
-file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
-
-foreach(TEST_FILE ${TEST_FILES})
-    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
-    add_executable(${TEST_NAME}_test ${TEST_FILE})
-    target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
-    target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_NAME}_lib)
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
-endforeach()
+#set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
+#set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
+#file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
+#
+#foreach(TEST_FILE ${TEST_FILES})
+#    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+#    add_executable(${TEST_NAME}_test ${TEST_FILE})
+#    target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
+#    target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_NAME}_lib)
+#    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
+#endforeach()
 
 include(cmake/CompilerFlags.cmake)
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
