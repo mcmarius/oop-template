@@ -20,37 +20,37 @@
 
 ###############################################################################
 
-add_library(${PROJECT_NAME}_lib
+add_library(${MAIN_PROJECT_NAME}_lib
             generated/src/Helper.cpp
             exemplu_test_oop/BankAccount.cpp
             exemplu_test_oop/BankAccount.h
 )
 
-target_include_directories(${PROJECT_NAME}_lib PUBLIC
+target_include_directories(${MAIN_PROJECT_NAME}_lib PUBLIC
             generated/include
             exemplu_test_oop/
 )
 
-add_executable(${PROJECT_NAME}
+add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_lib)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib)
 include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-# target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${PROJECT_NAME} <SomeLib>)
+# target_include_directories(${MAIN_PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
+# target_include_directories(${MAIN_PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
+# target_link_directories(${MAIN_PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
+# target_link_libraries(${MAIN_PROJECT_NAME} <SomeLib>)
 
 ###############################################################################
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
+install(TARGETS ${MAIN_PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
     install(FILES ${PROJECT_ROOT}/launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
