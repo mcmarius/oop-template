@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 3.26)
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 
+set(TESTS_PROJECT_NAME "tests")
+set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
+
+message(STATUS "${TESTS_EXECUTABLE_NAME}")
 
 project(${MAIN_PROJECT_NAME})
 # set(CMAKE_PROJECT_VERSION_MAJOR 0)
@@ -19,7 +23,6 @@ include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 set(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
-set(TOP_LEVEL_PROJECT_NAME "${PROJECT_NAME}")
 set(CMAKE_HELPER_DIR "${PROJECT_ROOT}/cmake")
 
 include(${CMAKE_HELPER_DIR}/Options.cmake)
