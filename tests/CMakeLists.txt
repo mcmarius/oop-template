@@ -1,4 +1,4 @@
-project(tests)
+project(${TESTS_PROJECT_NAME})
 FetchContent_Declare(
         gtest
         GIT_REPOSITORY https://github.com/google/googletest.git
@@ -6,16 +6,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(gtest)
 
-add_executable(${PROJECT_NAME}
+add_executable(${TESTS_EXECUTABLE_NAME}
         main.cpp
         exemplu_test_oop.cpp
         exemplu_test_simplu.cpp
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE ${TOP_LEVEL_PROJECT_NAME}_lib gtest gtest_main)
+target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib gtest gtest_main)
 include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
+install(TARGETS ${TESTS_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
     install(FILES ${PROJECT_ROOT}/launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
