@@ -101,7 +101,7 @@ test() {
             exit 1
           ;;
         esac
-      done
+    done
 
     ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
 }
@@ -158,6 +158,6 @@ case "$1" in
         build\n\
         test\n\
         install\n" "${opt}"
-      exit 1
+       exit 1
 esac
 
