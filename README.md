@@ -114,7 +114,8 @@ funcționează, consultați [README_Tests](./tests/README_Tests.md)
 ## Resurse
 
 - GTest
-  - Github : https://github.com/google/googletest
-  - Documentation : https://google.github.io/googletest/
+  - Github: https://github.com/google/googletest
+  - Documentation: https://google.github.io/googletest/
+  - Versiunea folosită: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
 
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit

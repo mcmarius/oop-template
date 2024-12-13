@@ -111,7 +111,7 @@ test() {
             exit 1
           ;;
         esac
-      done
+    done
 
     ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
 }
