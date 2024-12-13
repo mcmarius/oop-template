@@ -2,7 +2,6 @@ option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(USE_MSAN "Use Memory Sanitizer" OFF)
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
-option(RUN_TESTS "Builds and runs the test suites" OFF)
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")
