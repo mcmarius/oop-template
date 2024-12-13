@@ -112,6 +112,6 @@ funcționează, consultați [README_Tests](./tests/README_Tests.md)
 
 ## Resurse
 - Boost-ext/ut : 
-  - Link documentatie : https://github.com/boost-ext/ut
-  - Link versiune/tag folosit : https://github.com/boost-ext/ut/releases/tag/v1.1.9 ( v1.1.9  -> urmatoarele versiuni nu pot fi folosite cu Clang)
+  - Link documentație: https://github.com/boost-ext/ut
+  - Link versiune/tag folosit: https://github.com/boost-ext/ut/releases/tag/v1.1.9 (v1.1.9  -> următoarele versiuni nu pot fi folosite cu Clang)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
