@@ -77,6 +77,8 @@ target_sources(${MAIN_LIBRARY_NAME}
     PRIVATE
         src/Example.cpp
         src/internal/Detail.cpp
+        src/ResourceManager.cpp
+        include/ResourceManager.hpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -111,7 +113,8 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} SFML::Graphics SFML::Window SFML::System Threads::Threads)
+target_link_libraries(${MAIN_LIBRARY_NAME} PUBLIC SFML::Graphics SFML::Window SFML::System Threads::Threads)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
@@ -137,9 +140,32 @@ if(APPLE)
     install(FILES ${CMAKE_SOURCE_DIR}/launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
+
 copy_files(FILES tastatura.txt DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+
+# Implicit, aveți configurat directorul assets.
+
+# Pentru a putea folosi imagini, sunete, font-uri custom în cadrul programului avem nevoie de funcția `copy_files()`
+# Dacă avem mai multe foldere de resurse locale le adăugăm și pe acelea după ce am specificat DIRECTORY în funcția `copy_files()`.
+# Exemplu general: copy_files(DIRECTORY folder1 folder2 folder3 COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# Exemplu 1: Avem un folder cu imagini numit `images` și un folder cu sunete numit `sounds`
+#       => copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# Exemplu 2: Avem un folder cu font-uri numit `fonts`, un folder cu imagini numit `images` și un folder cu sunete numit `sounds`
+#       => copy_files(DIRECTORY fonts images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# Pentru exemplul din main.cpp avem nevoie de folder-ul `images` și de folder-ul `fonts`.
+
+#copy_files(DIRECTORY images fonts COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+
+# Dacă avem nevoie de fișiere care nu sunt organizate într-un folder folosim tot funcția `copy_files()`
+# Exemplu general: copy_files(FILES fisier1.json fisier2.txt fisier3.in COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# Exemplu: Avem un fișier JSON care nu se află în nici un folder
+# copy_files(FILES un_fisier.json COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+
+# Dacă avem nevoie de fișiere care nu sunt organizate într-un folder și de fișiere organizate în foldere folosim funcția `copy_files()`
+# Exemplu general: copy_files(FILES fisier1.json fisier2.txt fisier3.in DIRECTORY un_folder un_alt_folder alt_folder COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+# Exemplu: copy_files(FILES config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 
 ###############################################################################
 
