@@ -22,22 +22,31 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-#
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
 #         - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#         SomeLib
-#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-# )
-#
-# FetchContent_MakeAvailable(SomeLib)
+#FetchContent_Declare(
+#     SomeLib
+#     GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
+#     GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
+#     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+#)
+
+#FetchContent_MakeAvailable(SomeLib)
+
+# NOTE: Also update PQXX_VERSION env var in .github/workflows/cmake.yml:31
+FetchContent_Declare(
+        pqxx
+        GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+        GIT_TAG 7.9.2
+)
+
+FetchContent_MakeAvailable(pqxx)
 
 ###############################################################################
 
@@ -45,16 +54,19 @@ include(cmake/CopyHelper.cmake)
 
 # find_package(Threads REQUIRED)
 
+find_package(PostgreSQL)
+
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
+    database/Database.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES pqxx ${MAIN_EXECUTABLE_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
@@ -62,6 +74,9 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
+target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/include/laserpants/dotenv)
+target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE database)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE pqxx)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
@@ -76,6 +91,6 @@ if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
-copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(FILES tastatura.txt .env COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
