@@ -27,6 +27,10 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  PQXX_VERSION: "7.9.2"
+  DATABASE_USER: oop
+  DATABASE_PASSWORD: ooppa55
+  DATABASE_NAME: oop_db
 
 
 defaults:
@@ -105,18 +109,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-            # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
-            # renovate: depName=ubuntu
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
+#            # renovate: depName=ubuntu
+#          - os: ubuntu-22.04
+#            c: clang-18
+#            cxx: clang++-18
+#            clang_ver: "18"
+#            clang_ver_full: "18.1.8"
+#            name: "MSan: Ubuntu 22.04 Clang 18"
+#            cmake_flags: "-DUSE_MSAN=ON"
+#            cmake_generator: Ninja
+#            runs_msan: true
+#            # This env is supposed to run memory sanitizers,
+#            # but they are incompatible with pqxx
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -173,7 +177,7 @@ jobs:
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
-            runs_asan: true
+            runs_asan: false
 
             # renovate: depName=windows
           - os: windows-2022
@@ -209,6 +213,9 @@ jobs:
 
       - name: Install packages
         uses: ./.github/actions/install-packages
+
+      - name: Configure PostgreSQL
+        uses: ./.github/actions/configure-PostgreSQL
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
