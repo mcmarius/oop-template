@@ -4,14 +4,31 @@ description: 'Common logic for PostgreSQL configuration'
 runs:
   using: "composite"
   steps:
-    - name: Start PostgreSQL service
-      id: start-PostgreSQL-service
+    - name: Start Linux PostgreSQL service
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+          sudo service postgresql start
+
+    - name: Start MacOS PostgreSQL service
+      shell: bash
+      if: runner.os == 'macOS'
+      run: |
+        brew install postgresql
+        brew services start postgresql
+        sudo pg_ctl -D /usr/local/var/postgres start
+
+    - name: Start Windows PostgreSQL service
+      shell: bash
+      if: runner.os == 'windows'
+      run: |
+        net start postgresql-x64-14
+
+    - name: Initialize database
       shell: bash
       run: |
-        if [ "$RUNNER_OS" == "Ubuntu-22.04" ]; then
-          sudo service postgresql start
-        elif [ "$RUNNER_OS" == "windows" ]; then
-          net start postgresql-x64-14
-        else [ "$Runner_OS" == "macos" ]; then
-          sudo pg_ctl -D /usr/local/var/postgres start
-        fi
+        PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "CREATE DATABASE oop;"
+      env:
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: root
