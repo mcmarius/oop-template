@@ -1,6 +1,8 @@
 #include <iostream>
 #include <array>
 
+#include <Database.h>
+
 int main() {
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
@@ -46,5 +48,9 @@ int main() {
     ///     fis >> v2[i];
     ///
     ///////////////////////////////////////////////////////////////////////////
+    ///                Exemplu de utilizare cod pqxx                        ///
+    ///////////////////////////////////////////////////////////////////////////
+    auto &database = Database::getDatabaseInstance(true);
+
     return 0;
 }
