@@ -50,7 +50,7 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     ///                Exemplu de utilizare cod pqxx                        ///
     ///////////////////////////////////////////////////////////////////////////
-    auto &database = Database::getDatabaseInstance(true);
+    [[maybe_unused]] Database &database = Database::getDatabaseInstance(true);
 
     return 0;
 }
