@@ -1,7 +1,7 @@
 #include "Database.h"
 
 Database::Database(const bool& with_create_tables, const bool& with_delete_tables) {
-    connString = "Host=localhost;Username=postgres;Password=root;Database=oop"
+    connString = "Host=localhost;Username=postgres;Password=root;Database=oop";
     connection = std::make_unique<pqxx::connection>(connString);
     if (!connection->is_open())
         throw std::runtime_error("Database exists but a connection couldn't be established");
