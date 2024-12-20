@@ -1,12 +1,12 @@
 #include "Database.h"
 
-Database::Database(const bool& with_create_tables, const bool& with_delete_tables) {
-    connString = "Host=localhost;Username=postgres;Password=root;Database=oop";
+Database::Database(const bool& with_delete_tables) {
+    connString = "Host=localhost;Username=oop;Password=ooppa55;Database=oop";
     connection = std::make_unique<pqxx::connection>(connString);
     if (!connection->is_open())
         throw std::runtime_error("Database exists but a connection couldn't be established");
-    if (with_create_tables == true) { createTables(); return; }
-    if (with_delete_tables == true) { dropTables(); createTables(); return; }
+    if (with_delete_tables) { dropTables(); createTables(); }
+    else createTables();
 }
 
 Database::~Database() {
@@ -16,8 +16,8 @@ Database::~Database() {
     connection = nullptr;
 }
 
-Database &Database::getDatabaseInstance(const bool& with_create_tables, const bool& with_delete_tables) {
-    static Database databaseInstance(with_create_tables, with_delete_tables);
+Database &Database::getDatabaseInstance(const bool& with_delete_tables) {
+    static Database databaseInstance(with_delete_tables);
     return databaseInstance;
 }
 

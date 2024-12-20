@@ -7,7 +7,7 @@ class Database {
     std::unique_ptr<pqxx::connection> connection;
     std::string connString;
 
-    Database (const bool&, const bool&);
+    Database (const bool&);
     ~Database ();
 public:
     Database(const Database &) = delete;
@@ -18,7 +18,7 @@ public:
 
     Database &operator=(Database &&) = delete;
 
-    static Database &getDatabaseInstance(const bool& with_create_tables = false, const bool& with_delete_tables = false);
+    static Database &getDatabaseInstance(const bool& with_delete_tables = false);
 
     void createTables();
 
