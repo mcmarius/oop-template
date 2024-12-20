@@ -2,6 +2,7 @@
 #include <array>
 
 #include <Helper.h>
+#include <Database.h>
 
 int main() {
     std::cout << "Hello, world!\n";
@@ -53,5 +54,9 @@ int main() {
     Helper helper;
     helper.help();
     ///////////////////////////////////////////////////////////////////////////
+    ///                Exemplu de utilizare cod pqxx                        ///
+    ///////////////////////////////////////////////////////////////////////////
+    auto &database = Database::getDatabaseInstance(true);
+
     return 0;
 }
