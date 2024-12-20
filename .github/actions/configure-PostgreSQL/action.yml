@@ -7,28 +7,28 @@ runs:
     - name: Start Linux PostgreSQL service
       shell: bash
       if: runner.os == 'Linux'
-      run: |
-          sudo service postgresql start
+      run: |        
+        sudo systemctl start postgresql.service
+        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
+        sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start MacOS PostgreSQL service
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        brew install postgresql
-        brew services start postgresql
-        sudo pg_ctl -D /usr/local/var/postgres start
+        brew install postgresql && \
+        brew services start postgresql@14 && \
+        sleep 3 && \
+        psql postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
+        psql postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start Windows PostgreSQL service
-      shell: bash
+      shell: powershell
       if: runner.os == 'windows'
       run: |
+        $serviceName = 'postgresql-x64-14'
+        Set-Service -Name $serviceName -StartupType Manual
         net start postgresql-x64-14
-
-    - name: Initialize database
-      shell: bash
-      run: |
-        PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "CREATE DATABASE oop;"
-      env:
-        POSTGRES_HOST: localhost
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: root
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD;"
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c ALTER USER $DATABASE_USER CREATEDB;"
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
