@@ -183,13 +183,8 @@ jobs:
       - name: Install packages
         uses: ./.github/actions/install-packages
 
-      - name: Configure Postgres
-        run: |
-          PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "CREATE DATABASE oop;"
-        env:
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
+      - name: Configure PostgreSQL
+        uses: ./.github/actions/configure-PostgreSQL
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
