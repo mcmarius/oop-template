@@ -1,0 +1,17 @@
+name: 'Configure PostgreSQL'
+description: 'Common logic for PostgreSQL configuration'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Start PostgreSQL service
+      id: start-PostgreSQL-service
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Ubuntu-22.04" ]; then
+          sudo service postgresql start
+        elif [ "$RUNNER_OS" == "windows" ]; then
+          net start postgresql-x64-14
+        else [ "$Runner_OS" == "macos" ]; then
+          sudo pg_ctl -D /usr/local/var/postgres start
+        fi
