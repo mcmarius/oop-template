@@ -43,7 +43,8 @@ configure() {
     cmake -B "${BUILD_DIR}" \
           -S "${SOURCE_DIR}" \
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-          -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+          -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+          - \
           "${CMAKE_OPTS[@]}"
 }
 
