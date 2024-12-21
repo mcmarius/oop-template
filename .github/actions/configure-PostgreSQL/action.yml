@@ -10,7 +10,7 @@ runs:
       run: |
         sudo systemctl start postgresql.service
         echo "started"
-        curl localhost:5432
+        curl localhost:5432 || true
         echo "curl"
         sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
         sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
