@@ -56,7 +56,7 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     ///                Exemplu de utilizare cod pqxx                        ///
     ///////////////////////////////////////////////////////////////////////////
-    [[maybe_unused]] Database &database = Database::getDatabaseInstance();
-
+    Database &database = Database::getDatabaseInstance();
+    database.createTables();
     return 0;
 }
