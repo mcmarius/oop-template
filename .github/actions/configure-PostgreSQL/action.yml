@@ -10,7 +10,8 @@ runs:
       run: |        
         sudo systemctl start postgresql.service
         sleep 3
-        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
+        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}';"
+        sudo -u postgres psql -c "ALTER USER $DATABASE_USER CREATEDB;"
         sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start MacOS PostgreSQL service
