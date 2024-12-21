@@ -20,8 +20,8 @@ runs:
         brew install postgresql && \
         brew services start postgresql@14 && \
         sleep 3 && \
-        psql -U postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD; ALTER USER $DATABASE_USER CREATEDB;"
-        psql -U postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        psql postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD; ALTER USER $DATABASE_USER CREATEDB;"
+        psql postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
 
     - name: Start Windows PostgreSQL service
