@@ -27,3 +27,4 @@ endif()
 include(cmake/CustomStdlibAndSanitizers.cmake)
 
 set_custom_stdlib_and_sanitizers(${MAIN_EXECUTABLE_NAME} true)
+set_custom_stdlib_and_sanitizers(pqxx true)
