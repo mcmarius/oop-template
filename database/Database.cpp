@@ -1,7 +1,7 @@
 #include "Database.h"
 
 Database::Database(const bool& with_delete_tables) {
-    connString = "Host=localhost;Username=oop;Password=ooppa55;Database=oop";
+    connString = "dbname=oop_db user=oop password=ooppa55 host=127.0.0.1 port=5432";
     connection = std::make_unique<pqxx::connection>(connString);
     if (!connection->is_open())
         throw std::runtime_error("Database exists but a connection couldn't be established");
@@ -27,8 +27,8 @@ void Database::createTables(){
     std::string create_table_querry = R"(
         CREATE TABLE IF NOT EXISTS USERS (
                 id SERIAL PRIMARY KEY,
-                name VARCHAR2(20) NOT NULL,
-                password VARCHAR2(20) NOT NULL
+                name VARCHAR(20) NOT NULL,
+                password VARCHAR(20) NOT NULL
         )
     )";
 

@@ -9,8 +9,11 @@ runs:
       if: runner.os == 'Linux'
       run: |        
         sudo systemctl start postgresql.service
-        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
-        sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        sudo -i -u postgres
+        psql 
+        CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}';
+        ALTER USER $DATABASE_USER CREATEDB;
+        CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;
 
     - name: Start MacOS PostgreSQL service
       shell: bash
