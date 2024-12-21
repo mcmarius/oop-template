@@ -76,6 +76,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 ## Instrucțiuni de compilare
 
 Proiectul este configurat cu CMake.
+Pentru a compila proiectul este necesar să aveți instalată o versiune de PostgreSQL.
 
 Instrucțiuni pentru terminal:
 
@@ -106,6 +107,21 @@ cmake --install build --config Debug --prefix install_dir
 
 Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
+## Baza de date
+
+În acest proiect puteți folosi o bază de date PostgreSQL. Pentru a fi ușor de folosit am creat un [wrapper](./database/Database.cpp) 
+peste API-ul din biblioteca pqxx. Acest wrapper este, de fapt, un singleton prin care puteți să interacționați ușor cu baza de date.
+
+Pentru a instanția singleton-ul puteți folosi sintaxa `Database& db = Database::getInstance();`. 
+Dacă doriți să ștergeți mai întâi toate tabelele existente, folosiți `Database& db = Database::getInstance(true);`
+
 ## Resurse
 
+- PostgreSQL
+  - Documentation: https://www.postgresql.org/
+  - Versiune folosită pe pipeline: 14
+- PQXX
+  - Github: https://github.com/jtv/libpqxx
+  - Documentation: https://pqxx.org/development/libpqxx/
+  - Versiune folosită: tag 7.9.2
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
