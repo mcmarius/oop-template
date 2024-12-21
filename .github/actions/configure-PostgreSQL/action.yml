@@ -8,10 +8,12 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        sudo apt-get update && sudo apt-get install -y postgresql
-        sudo systemctl start postgresql
-        psql -U postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
-        psql -U postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        sudo systemctl start postgresql.service
+        echo "started"
+        curl localhost:5432
+        echo "curl"
+        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH PASSWORD '${DATABASE_PASSWORD}'; ALTER USER $DATABASE_USER CREATEDB;"
+        sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start MacOS PostgreSQL service
       shell: bash
