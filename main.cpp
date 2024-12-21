@@ -57,6 +57,5 @@ int main() {
     ///                Exemplu de utilizare cod pqxx                        ///
     ///////////////////////////////////////////////////////////////////////////
     Database &database = Database::getDatabaseInstance();
-    database.createTables();
     return 0;
 }
