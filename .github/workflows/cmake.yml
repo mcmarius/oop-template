@@ -28,6 +28,9 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   GEN_DIR: "generated"
+  DATABASE_USER: oop
+  DATABASE_PASSWORD: ooppa55
+  DATABASE_NAME: oop_db
 
 defaults:
   run:
@@ -100,17 +103,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            runs_msan: true
-            # This env is supposed to run memory sanitizers,
-            # but they are incompatible with pqxx
+#          - os: ubuntu-22.04
+#            c: clang-18
+#            cxx: clang++-18
+#            clang_ver: "18"
+#            clang_ver_full: "18.1.8"
+#            name: "MSan: Ubuntu 22.04 Clang 18"
+#            cmake_flags: "-DUSE_MSAN=ON"
+#            cmake_generator: Ninja
+#            runs_msan: true
+#            # This env is supposed to run memory sanitizers,
+#            # but they are incompatible with pqxx
 
           - os: ubuntu-22.04
             c: gcc-12

@@ -8,7 +8,10 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-
+        sudo apt-get update && sudo apt-get install -y postgresql
+        sudo systemctl start postgresql
+        psql -U postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD; ALTER USER $DATABASE_USER CREATEDB;"
+        psql -U postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start MacOS PostgreSQL service
       shell: bash
@@ -17,8 +20,8 @@ runs:
         brew install postgresql && \
         brew services start postgresql@14 && \
         sleep 3 && \
-        psql postgres -c "CREATE USER oop WITH PASSWORD 'ooppa55'; ALTER USER oop CREATEDB;" && \
-        psql postgres -c "CREATE DATABASE oop_db WITH OWNER oop;"
+        psql -U postgres -c "CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD; ALTER USER $DATABASE_USER CREATEDB;"
+        psql -U postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
 
     - name: Start Windows PostgreSQL service
@@ -28,6 +31,6 @@ runs:
         $serviceName = 'postgresql-x64-14'
         Set-Service -Name $serviceName -StartupType Manual
         net start postgresql-x64-14
-        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE USER oop WITH PASSWORD 'ooppa55';"
-        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c ALTER USER oop CREATEDB;"
-        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE DATABASE oop_db WITH OWNER oop;"
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE USER $DATABASE_USER WITH PASSWORD $DATABASE_PASSWORD;"
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c ALTER USER $DATABASE_USER CREATEDB;"
+        Start-Process "C:\Program Files\PostgreSQL\14\bin\psql.exe" -ArgumentList "-h localhost", "-U postgres", "-W root", "-c CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
