@@ -63,40 +63,28 @@ int main() {
     /// * poate fi Texture, Font, Sound sau orice alt tip de resursă de care avem nevoie.
     ////////////////////////////////////////////////////////
 
+    // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
+
     sf::Texture a380_texture;
+    sf::Text tip_avion;
+    // sf::Texture dummyTexture; // @
+
     try {
-        a380_texture = ResourceManager::Instance().getTexture("a380_emirates.png");
+        a380_texture = ResourceManager::Instance().getTexture("airplane.png");
+        tip_avion.setFont(ResourceManager::Instance().getFont("FiraSans-Regular.ttf"));
+        // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
+
     } catch(std::exception& exp) {
         std::cout << exp.what() << std::endl;
         return 0;
     }
-
-    // Decomentează exemplul de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
-    /*
-    sf::Texture dummyTexture;
-    try {
-        dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png");
-    } catch(std::exception& exp) {
-        std::cout << exp.what();
-        return 0;
-    }
-    */
 
     sf::Sprite a380;
     a380.setTexture(a380_texture);
 
     PersonalizeazaAvion(a380); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
 
-
-    sf::Text tip_avion;
-    try {
-        tip_avion.setFont(ResourceManager::Instance().getFont("FiraSans-Regular.ttf"));
-    } catch(std::exception& exp) {
-        std::cout << exp.what();
-        return 0;
-    }
-
-    tip_avion.setString("A380 Emirates");
+    tip_avion.setString("An airplane");
 
     while(window.isOpen()) {
         bool shouldExit = false;

@@ -150,6 +150,6 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
-- [Poza cu avionul](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.emiratesa380experience.com%2F&psig=AOvVaw2A3cPbzPx2IHFRxKC--uf6&ust=1734374550323000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLiotey2qooDFQAAAAAdAAAAABAE)
-- [Font](https://fonts.google.com/share?selection.family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900)
+- [Poza cu avionul](https://pixabay.com/vectors/travel-holiday-trip-flight-6913775/)
+- [Font](https://fonts.google.com/selection?selection.family=Fira+Sans)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
