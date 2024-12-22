@@ -1,7 +1,7 @@
 #include <iostream>
 #include <array>
 
-#include <Database.h>
+#include "Database.h"
 
 int main() {
     std::cout << "Hello, world!\n";
@@ -50,6 +50,9 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     ///                Exemplu de utilizare cod pqxx                        ///
     ///////////////////////////////////////////////////////////////////////////
+    std::cout<< std::flush;
+    std::cout << "Database";
     [[maybe_unused]] Database &database = Database::getDatabaseInstance();
+    std::cout << "Finish database";
     return 0;
 }
