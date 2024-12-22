@@ -8,7 +8,10 @@ class Database {
     std::string connString;
 
     Database (const bool&);
+
     ~Database ();
+
+    void setConnectionString();
 public:
     Database(const Database &) = delete;
 
@@ -18,15 +21,21 @@ public:
 
     Database &operator=(Database &&) = delete;
 
-    static Database &getDatabaseInstance(const bool& with_drop_tables = false);
+    static Database &getDatabaseInstance(const bool& withDropTables = false);
 
     void createTables();
 
     void dropTables();
 
-    void addUser();
+    void addUser(std::string, std::string);
 
-    std::vector<std::tuple<std::string,std::string>> showUsers();
+    std::vector<std::tuple<std::string,std::string>> showAllUsers();
+
+    std::tuple<std::string, std::string> showUser(std::string);
+
+    void deleteUser(std::string);
+
+    void updateUserPassword(std::string, std::string);
 };
 
 
