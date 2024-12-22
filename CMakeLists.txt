@@ -29,11 +29,11 @@ include(cmake/RegisterTests.cmake)
 
 # External dependencies with FetchContent
 
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-#
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
+
 # NOTE: Also update env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
@@ -48,6 +48,13 @@ include(cmake/RegisterTests.cmake)
 #
 # FetchContent_MakeAvailable(SomeLib)
 
+FetchContent_Declare(
+    sqlite3
+    URL      https://www.sqlite.org/2024/sqlite-autoconf-3470200.tar.gz
+    URL_HASH SHA256=f1b2ee412c28d7472bc95ba996368d6f0cdcf00362affdadb27ed286c179540b
+)
+
+FetchContent_MakeAvailable(sqlite3)
 ###############################################################################
 
 # External dependencies with find_package
@@ -60,6 +67,10 @@ include(cmake/RegisterTests.cmake)
 
 # always STATIC (simpler); TBD if we ever want dynamic for this; BUILD_SHARED_LIBS is for ext deps
 add_library(${MAIN_LIBRARY_NAME} STATIC)
+
+# sqlite has to be compiled and built into a library before it is used
+add_library(sqlite3 STATIC ${sqlite3_SOURCE_DIR}/sqlite3.c)
+target_include_directories(sqlite3 SYSTEM PUBLIC ${sqlite3_SOURCE_DIR})
 
 # NOTE: update EXECUTABLE_NAME in .github/workflows/cmake.yml when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
@@ -103,7 +114,7 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sqlite3 ${MAIN_LIBRARY_NAME})
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
