@@ -181,4 +181,8 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Resurse
 
+- SQLite
+  - Site: https://www.sqlite.org/index.html
+  - Github: https://github.com/sqlite/sqlite
+  - Versiune: version-3.47.2
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
