@@ -9,28 +9,26 @@ runs:
       if: runner.os == 'Linux'
       run: |        
         sudo systemctl start postgresql.service
-        sleep 3
-        sudo -u postgres psql -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
-        sudo -u postgres psql -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
 
     - name: Start MacOS PostgreSQL service
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        brew install postgresql && \
-        brew services start postgresql@14 && \
-        sleep 3 && \
-        psql postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';" && \
-        psql postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        brew install postgresql
+        brew services start postgresql@14
 
     - name: Start Windows PostgreSQL service
       shell: bash
       if: runner.os == 'windows'
       run: |
-       serviceName="postgresql-x64-14"
-       sc config $serviceName start= demand
-       net start $serviceName
-       export PGPASSWORD="root"
-       export PATH="$PATH:/c/Program Files/PostgreSQL/14/bin:/c/Program Files/PostgreSQL/14/lib"
-       psql -h 127.0.0.1 -U postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '$DATABASE_PASSWORD';"
-       psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        serviceName="postgresql-x64-14"
+        sc config $serviceName start= demand
+        net start $serviceName
+        export PGPASSWORD="root"
+        export PATH="$PATH:/c/Program Files/PostgreSQL/14/bin:/c/Program Files/PostgreSQL/14/lib"
+
+    - name: Create Database
+      shell: bash
+      run: |
+        psql postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
+        psql postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"

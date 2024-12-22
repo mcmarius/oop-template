@@ -56,14 +56,36 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     ///                Exemplu de utilizare pqxx                            ///
     ///////////////////////////////////////////////////////////////////////////
-    Database &database = Database::getDatabaseInstance();
-    std::cout<<"\nBaza de date a fost inițializată";
-    database.addUser();
-    std::cout<<"\nA fost adaugat un utilizator:";
-    auto result = database.showUsers();
+    Database &database = Database::getDatabaseInstance(true);
+
+    std::cout << "\nBaza de date a fost inițializată\n\n";
+
+    database.addUser("User1","Password1");
+    database.addUser("User2","Password2");
+    std::cout << "Au fost adăugați 2 utilizatori!\n";
+
+    std::cout << "Afișarea unui utilizator după nume:\n";
+    std::tuple<std::string,std::string> user = database.showUser("User1");
+    std::cout << std::get<0>(user) << " " << std::get<1>(user) << "\n\n";
+
+    std::cout << "Afișarea tuturor utilizatorilor:\n";
+    auto result = database.showAllUsers();
     for (const auto& row : result)
     {
-        std::cout<<std::get<0>(row)<<" "<<std::get<1>(row)<<'\n';
+        std::cout << std::get<0>(row) << " " << std::get<1>(row) << '\n';
     }
+
+    database.deleteUser("1");
+    std::cout << "\nUtilizatorul 1 a fost șters!\nUtilizatori finali:\n";
+    result = database.showAllUsers();
+    for (const auto& row : result)
+    {
+        std::cout << std::get<0>(row) << " " << std::get<1>(row) << '\n';
+    }
+
+    std::cout<< "\nSchimbarea parolei utilizatorului rămas!\n";
+    database.updateUserPassword("User2","NewUser2Password");
+    user = database.showUser("User2");
+    std::cout << std::get<0>(user) << " " << std::get<1>(user);
     return 0;
 }
