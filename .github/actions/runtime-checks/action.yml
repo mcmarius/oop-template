@@ -54,7 +54,7 @@ runs:
     - name: Sanitizers (Windows MSVC)
       shell: bash
       # run one sanitizer for each OS to avoid building extra binaries
-      if: matrix.cxx == 'cl' && matrix.runs_asan == true
+      if: matrix.cxx == 'cl' && matrix.runs_asan != true
       continue-on-error: true
       run: |
         cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
