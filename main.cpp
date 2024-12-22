@@ -57,8 +57,12 @@ int main() {
     ///                Exemplu de utilizare cod pqxx                        ///
     ///////////////////////////////////////////////////////////////////////////
     std::cout<< std::flush;
-    std::cout << "Database";
-    [[maybe_unused]] Database &database = Database::getDatabaseInstance();
-    std::cout << "Finish database";
+    Database &database = Database::getDatabaseInstance();
+    database.addUser();
+    auto result = database.showUsers();
+    for (const auto& row : result)
+    {
+        std::cout<<std::get<0>(row)<<" "<<std::get<1>(row)<<'\n';
+    }
     return 0;
 }

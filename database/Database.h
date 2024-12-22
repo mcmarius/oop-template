@@ -23,6 +23,10 @@ public:
     void createTables();
 
     void dropTables();
+
+    void addUser();
+
+    std::vector<std::tuple<std::string,std::string>> showUsers();
 };
 
 
