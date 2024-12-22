@@ -18,7 +18,7 @@ public:
 
     Database &operator=(Database &&) = delete;
 
-    static Database &getDatabaseInstance(const bool& with_delete_tables = false);
+    static Database &getDatabaseInstance(const bool& with_drop_tables = false);
 
     void createTables();
 
