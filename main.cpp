@@ -1,6 +1,8 @@
 #include <iostream>
 #include <array>
 
+#include <sqlite3.h>
+
 int main() {
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
@@ -46,5 +48,18 @@ int main() {
     ///     fis >> v2[i];
     ///
     ///////////////////////////////////////////////////////////////////////////
+    sqlite3* db;
+    int exit = 0;
+    exit = sqlite3_open("example.db", &db);
+
+    if (exit) {
+        std::cout << "DB Open Error: " << sqlite3_errmsg(db) << '\n';
+
+    } else {
+        std::cout << "Opened Database Successfully!" << '\n';
+    }
+
+    sqlite3_close(db);
+
     return 0;
 }
