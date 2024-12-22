@@ -108,4 +108,8 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 
 ## Resurse
 
+- SQLite
+  - Site: https://www.sqlite.org/index.html
+  - Github: https://github.com/sqlite/sqlite
+  - Versiune folosită: version-3.47.2
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit

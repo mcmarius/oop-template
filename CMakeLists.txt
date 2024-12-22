@@ -22,10 +22,10 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
@@ -39,6 +39,13 @@ include(cmake/CopyHelper.cmake)
 #
 # FetchContent_MakeAvailable(SomeLib)
 
+FetchContent_Declare(
+        sqlite3
+        URL https://www.sqlite.org/2024/sqlite-autoconf-3470200.tar.gz
+        URL_HASH SHA256=f1b2ee412c28d7472bc95ba996368d6f0cdcf00362affdadb27ed286c179540b
+)
+
+FetchContent_MakeAvailable(sqlite3)
 ###############################################################################
 
 # external dependencies with find_package
@@ -47,7 +54,10 @@ include(cmake/CopyHelper.cmake)
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
+# sqlite has to be compiled and built into a library before it is used
+add_library(sqlite3 STATIC ${sqlite3_SOURCE_DIR}/sqlite3.c)
+target_include_directories(sqlite3 PUBLIC ${sqlite3_SOURCE_DIR})
+
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
     generated/src/Helper.cpp
@@ -64,6 +74,7 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE generated/include)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sqlite3)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)

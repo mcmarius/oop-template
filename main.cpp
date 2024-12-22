@@ -2,6 +2,7 @@
 #include <array>
 
 #include <Helper.h>
+#include <sqlite3.h>
 
 int main() {
     std::cout << "Hello, world!\n";
@@ -53,5 +54,18 @@ int main() {
     Helper helper;
     helper.help();
     ///////////////////////////////////////////////////////////////////////////
+    sqlite3* db;
+    int exit = 0;
+    exit = sqlite3_open("example.db", &db);
+
+    if (exit) {
+        std::cout << "DB Open Error: " << sqlite3_errmsg(db) << '\n';
+
+    } else {
+        std::cout << "Opened Database Successfully!" << '\n';
+    }
+
+    sqlite3_close(db);
+
     return 0;
 }
