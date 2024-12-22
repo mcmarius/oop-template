@@ -12,7 +12,7 @@ ResourceManager& ResourceManager::Instance()
 
 ResourceManager::ResourceManager()
 {
-    loadTexture("images", "a380_emirates.png");
+    loadTexture("images", "airplane.png");
 
     loadFont("fonts", "FiraSans-Regular.ttf");
 }
