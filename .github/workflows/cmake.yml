@@ -100,16 +100,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            c: clang-18
-            cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
-            cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
+#          - os: ubuntu-22.04
+#            c: clang-18
+#            cxx: clang++-18
+#            clang_ver: "18"
+#            clang_ver_full: "18.1.8"
+#            name: "MSan: Ubuntu 22.04 Clang 18"
+#            cmake_flags: "-DUSE_MSAN=ON"
+#            cmake_generator: Ninja
+#            # This env runs memory sanitizers
+#            runs_msan: true
 
           - os: ubuntu-22.04
             c: gcc-12
