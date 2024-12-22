@@ -48,11 +48,12 @@ int main() {
     ///     fis >> v2[i];
     ///
     ///////////////////////////////////////////////////////////////////////////
-    ///                Exemplu de utilizare cod pqxx                        ///
+    ///                Exemplu de utilizare pqxx                            ///
     ///////////////////////////////////////////////////////////////////////////
-    std::cout<< std::flush;
     Database &database = Database::getDatabaseInstance();
+    std::cout<<"\nBaza de date a fost inițializată";
     database.addUser();
+    std::cout<<"\nA fost adaugat un utilizator:";
     auto result = database.showUsers();
     for (const auto& row : result)
     {
