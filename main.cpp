@@ -48,6 +48,8 @@ int main() {
     ///     fis >> v2[i];
     ///
     ///////////////////////////////////////////////////////////////////////////
+    ///                Exemplu de utilizare sqlite                          ///
+    ///////////////////////////////////////////////////////////////////////////
     sqlite3* db;
     int exit = 0;
     exit = sqlite3_open("example.db", &db);
@@ -60,6 +62,5 @@ int main() {
     }
 
     sqlite3_close(db);
-
     return 0;
 }
