@@ -1,4 +1,6 @@
 #include <iostream>
+#include "dotenv.h"
+
 #include "Database.h"
 
 Database::Database(const bool& withDropTables) {
@@ -95,10 +97,10 @@ void Database::updateUserPassword(std::string name, std::string newPassword) {
 }
 
 void Database::setConnectionString() {
-     connString = "dbname=" + std::string(std::getenv("DB_NAME")) +
-                             " user=" + std::string(std::getenv("DB_USER")) +
-                             " password=" + std::string(std::getenv("DB_PASSWORD")) +
-                             " hostaddr=" + std::string(std::getenv("DB_HOSTADDR")) +
-                             " port=" + std::string(std::getenv("DB_PORT")) +
-                             " connect_timeout=" + std::string(std::getenv("DB_CONNECT_TIMEOUT"));
+     connString = "dbname=" + std::string(dotenv::getenv("DATABASE_NAME", "''")) +
+                             " user=" + std::string(dotenv::getenv("DATABASE_USER", "''")) +
+                             " password=" + std::string(dotenv::getenv("DATABASE_PASSWORD", "''")) +
+                             " hostaddr=" + std::string(dotenv::getenv("DATABASE_HOSTADDR", "127.0.0.1")) +
+                             " port=" + std::string(dotenv::getenv("DATABASE_PORT","5432")) +
+                             " connect_timeout=" + std::string(dotenv::getenv("DATABASE_CONNECT_TIMEOUT", "10"));
 }
