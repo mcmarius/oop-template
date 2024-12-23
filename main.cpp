@@ -2,7 +2,7 @@
 #include <array>
 
 #include "Database.h"
-#include "dotenv.h"
+#include <dotenv.h>
 
 int main() {
     dotenv::init();
