@@ -27,15 +27,15 @@ public:
 
     void dropTables();
 
-    void addUser(std::string, std::string);
+    void addUser(const std::string&, const std::string&);
 
     std::vector<std::tuple<std::string,std::string>> showAllUsers();
 
-    std::tuple<std::string, std::string> showUser(std::string);
+    std::tuple<std::string, std::string> showUser(const std::string&);
 
-    void deleteUser(std::string);
+    void deleteUser(const std::string&);
 
-    void updateUserPassword(std::string, std::string);
+    void updateUserPassword(const std::string&, const std::string&);
 };
 
 
