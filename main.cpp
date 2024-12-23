@@ -75,7 +75,7 @@ int main() {
         std::cout << std::get<0>(row) << " " << std::get<1>(row) << '\n';
     }
 
-    database.deleteUser("1");
+    database.deleteUser("User1");
     std::cout << "\nUtilizatorul 1 a fost șters!\nUtilizatori finali:\n";
     result = database.showAllUsers();
     for (const auto& row : result)
