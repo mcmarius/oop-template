@@ -3,8 +3,10 @@
 
 #include <Helper.h>
 #include "Database.h"
+#include "dotenv.h"
 
 int main() {
+    dotenv::init();
     std::cout << "Hello, world!\n";
     std::array<int, 100> v{};
     int nr;
