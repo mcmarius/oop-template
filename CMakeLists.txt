@@ -47,6 +47,13 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(pqxx)
 
+FetchContent_Declare(
+        dotenv
+        GIT_REPOSITORY https://github.com/laserpants/dotenv-cpp
+)
+
+FetchContent_MakeAvailable(dotenv)
+
 ###############################################################################
 
 # external dependencies with find_package
@@ -76,7 +83,7 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE generated/include)
 target_include_directories(${MAIN_EXECUTABLE_NAME} PRIVATE database)
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE pqxx)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE pqxx dotenv)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
