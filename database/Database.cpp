@@ -3,7 +3,6 @@
 
 Database::Database(const bool& withDropTables) {
     setConnectionString();
-    connString = "dbname=oop_db user=oop password=ooppa55 hostaddr=127.0.0.1 port=5432 connect_timeout=10";
     connection = std::make_unique<pqxx::connection>(connString);
     if (!connection->is_open())
         throw std::runtime_error("Database exists but a connection couldn't be established");
@@ -30,7 +29,7 @@ void Database::createTables(){
         CREATE TABLE IF NOT EXISTS USERS (
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(20) NOT NULL,
-                password VARCHAR(20) NOT NULL
+                password VARCHAR(255) NOT NULL
         )
     )";
 
@@ -50,8 +49,11 @@ void Database::dropTables(){
 
 void Database::addUser(std::string name, std::string password) {
     pqxx::work transaction(*connection);
+    std::string hashQuery = "SELECT crypt($1, gen_salt('bf')) AS hashed_password;";
+    pqxx::result hashResult = transaction.exec_params(hashQuery,password);
+    std::string hashedPassword = hashResult[0]["hashed_password"].c_str();
     std::string insertUserQuery = "INSERT INTO USERS (name, password) VALUES ($1, $2);";
-    transaction.exec_params(insertUserQuery, name, password);
+    transaction.exec_params(insertUserQuery, name, hashedPassword);
     transaction.commit();
 }
 
