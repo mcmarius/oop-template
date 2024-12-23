@@ -9,6 +9,7 @@ runs:
       if: runner.os == 'Linux'
       run: |        
         sudo systemctl start postgresql.service
+        sudo -u postgres bash ./scripts/configure_postgres.sh
 
     - name: Start MacOS PostgreSQL service
       shell: bash
@@ -16,6 +17,7 @@ runs:
       run: |
         brew install postgresql
         brew services start postgresql@14
+        bash ./scripts/configure_postgres.sh
 
     - name: Start Windows PostgreSQL service
       shell: bash
@@ -26,9 +28,4 @@ runs:
         net start $serviceName
         export PGPASSWORD="root"
         export PATH="$PATH:/c/Program Files/PostgreSQL/14/bin:/c/Program Files/PostgreSQL/14/lib"
-
-    - name: Create Database
-      shell: bash
-      run: |
-        psql postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
-        psql postgres -c "CREATE DATABASE $DATABASE_NAME WITH OWNER $DATABASE_USER;"
+        bash ./scripts/configure_postgres.sh
