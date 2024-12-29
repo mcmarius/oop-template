@@ -51,13 +51,13 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
     /// This is needed so we do not burn the GPU                            ///
-    // window.setVerticalSyncEnabled(true);                                    ///
-    window.setFramerateLimit(60);                                       ///
+    // window.setVerticalSyncEnabled(true);                                 ///
+    window.setFramerateLimit(60);                                           ///
     ///////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////
     /// Pentru a putea folosi resurse locale în cadrul programului trebuie modificat `CMakeLists.txt`.
-    /// Deschide `CMakeLists.txt` la linia 101.
+    /// Deschide `CMakeLists.txt` și dă scroll la final, unde sunt apelurile la funcția `copy_files()`.
     ///
     /// După pasul anterior, putem folosi resursele locale folosind sintaxa `ResourceManager::Instance().get*`, unde
     /// * poate fi Texture, Font, Sound sau orice alt tip de resursă de care avem nevoie.
@@ -65,12 +65,12 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    sf::Texture a380_texture;
+    sf::Texture avion_texture;
     sf::Text tip_avion;
     // sf::Texture dummyTexture; // @
 
     try {
-        a380_texture = ResourceManager::Instance().getTexture("airplane.png");
+        avion_texture = ResourceManager::Instance().getTexture("airplane.png");
         tip_avion.setFont(ResourceManager::Instance().getFont("FiraSans-Regular.ttf"));
         // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
 
@@ -79,10 +79,10 @@ int main() {
         return 0;
     }
 
-    sf::Sprite a380;
-    a380.setTexture(a380_texture);
+    sf::Sprite avion;
+    avion.setTexture(avion_texture);
 
-    PersonalizeazaAvion(a380); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
+    PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
 
     tip_avion.setString("An airplane");
 
@@ -114,11 +114,11 @@ int main() {
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(150ms);
 
-        a380.setRotation(a380.getRotation() + 1);
+        avion.setRotation(avion.getRotation() + 1);
 
         window.clear();
 
-        window.draw(a380); // Afișăm avionul încărcat pe ecran
+        window.draw(avion); // Afișăm avionul încărcat pe ecran
         window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
