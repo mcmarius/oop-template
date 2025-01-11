@@ -57,8 +57,14 @@ int main() {
     ///                Exemplu de utilizare sqlite                          ///
     ///////////////////////////////////////////////////////////////////////////
     sqlite3* db;
+    char* errorMessage = nullptr;
     int exit = 0;
     exit = sqlite3_open("example.db", &db);
+    /// Deschide o conexiune către o bază de date SQLite persistentă numită "example.db".
+    /// Dacă baza de date nu există, aceasta va fi creată în același director cu executabilul.
+    // exit = sqlite3_open(":memory:", &db);
+    /// Deschide o conexiune către o bază de date SQLite stocată în memorie.
+    /// Această bază de date există doar pe durata execuției aplicației.
 
     if (exit) {
         std::cout << "DB Open Error: " << sqlite3_errmsg(db) << '\n';
@@ -67,6 +73,85 @@ int main() {
         std::cout << "Opened Database Successfully!" << '\n';
     }
 
+    const char* createTableSQL = R"(
+        CREATE TABLE IF NOT EXISTS Users (
+            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            Age INTEGER
+        );
+    )";
+    const char* insertSQL1 = "INSERT INTO Users (Name, Age) VALUES ('Alice', 25);";
+    const char* insertSQL2 = "INSERT INTO Users (Name, Age) VALUES ('Bob', 30);";
+    const char* updateSQL = "UPDATE Users SET Age = 26 WHERE Name = 'Alice';";
+    const char* deleteSQL = "DELETE FROM Users WHERE Name = 'Bob';";
+
+    /// OPERAȚIE CREATE TABLE
+    exit = sqlite3_exec(db, createTableSQL, nullptr, 0, &errorMessage);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error creating table: " << errorMessage << '\n';
+        sqlite3_free(errorMessage);
+    } else {
+        std::cout << "Table created successfully." << '\n';
+    }
+
+    ///OPERAȚII INSERT
+    exit = sqlite3_exec(db, insertSQL1, nullptr, 0, &errorMessage);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error inserting first record: " << errorMessage << '\n';
+        sqlite3_free(errorMessage);
+    } else {
+        std::cout << "First record inserted successfully." << '\n';
+    }
+
+    exit = sqlite3_exec(db, insertSQL2, nullptr, 0, &errorMessage);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error inserting second record: " << errorMessage << '\n';
+        sqlite3_free(errorMessage);
+    } else {
+        std::cout << "Second record inserted successfully." << '\n';
+    }
+
+    /// OPERAȚIE DE SELECT
+    const char* selectSQL = "SELECT ID, Name, Age FROM Users;";
+    sqlite3_stmt* stmt;
+
+    exit = sqlite3_prepare_v2(db, selectSQL, -1, &stmt, nullptr);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error preparing SELECT statement: " << sqlite3_errmsg(db) << '\n';
+    } else {
+        std::cout << "ID | Name | Age" << '\n';
+        std::cout << "----------------" << '\n';
+
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            int id = sqlite3_column_int(stmt, 0);
+            const unsigned char* name = sqlite3_column_text(stmt, 1);
+            int age = sqlite3_column_int(stmt, 2);
+
+            std::cout << id << " | " << name << " | " << age << '\n';
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    /// OPERAȚIE DE UPDATE
+    exit = sqlite3_exec(db, updateSQL, nullptr, 0, &errorMessage);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error updating record: " << errorMessage << '\n';
+        sqlite3_free(errorMessage);
+    } else {
+        std::cout << "Record updated successfully." << '\n';
+    }
+
+    /// OPERAȚIE DE DELETE
+    exit = sqlite3_exec(db, deleteSQL, nullptr, 0, &errorMessage);
+    if (exit != SQLITE_OK) {
+        std::cerr << "Error deleting record: " << errorMessage << '\n';
+        sqlite3_free(errorMessage);
+    } else {
+        std::cout << "Record deleted successfully." << '\n';
+    }
+
+    /// Închide conexiunea cu baza de date utilizând sqlite3_close.
+    /// În cazul unei baze de date în memorie, toate datele vor fi pierdute la închidere.
     sqlite3_close(db);
     return 0;
 }
