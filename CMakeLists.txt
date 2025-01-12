@@ -16,6 +16,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Options.cmake)
+include(cmake/CompilerFlags.cmake)
+include(cmake/CopyHelper.cmake)
 
 ###############################################################################
 
@@ -51,7 +53,11 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     generated/src/Helper.cpp
 )
 
-include(cmake/CompilerFlags.cmake)
+# NOTE: Add all defined targets (e.g. executables, libraries, etc. )
+set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+# set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
+# where ${FOO} and ${BAR} represent additional executables or libraries
+# you want to compile with the set compiler flags
 
 ###############################################################################
 
@@ -71,7 +77,6 @@ if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
-include(cmake/CopyHelper.cmake)
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
