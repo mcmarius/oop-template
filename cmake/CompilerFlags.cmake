@@ -29,9 +29,18 @@ function(set_compiler_flags)
         # custom compiler flags
         message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
         if(MSVC)
-            target_compile_options(${TARGET_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0 /utf-8 /MP)
+            if("${TARGET_NAME}" STREQUAL "pqxx")
+                target_compile_options(${TARGET_NAME} PRIVATE /W0)
+            else()
+                target_compile_options(${TARGET_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996
+                        /external:anglebrackets /external:W0 /utf-8 /MP)
+            endif ()
         else()
-            target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic)
+            if("${TARGET_NAME}" STREQUAL "pqxx")
+                target_compile_options(${TARGET_NAME} PRIVATE -w)
+            else()
+                target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic)
+            endif ()
         endif()
 
         ###############################################################################
