@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.26)
 # for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
+set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
 
 
 project(${MAIN_PROJECT_NAME})
@@ -50,12 +51,12 @@ enable_testing()
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_library(${MAIN_PROJECT_NAME}_lib
+add_library(${MAIN_PROJECT_LIB_NAME}
         generated/src/Helper.cpp
         exemplu_test_oop/BankAccount.cpp
 )
 
-target_include_directories(${MAIN_PROJECT_NAME}_lib PUBLIC
+target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
         generated/include
         exemplu_test_oop/
 )
@@ -65,27 +66,30 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
 )
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib)
+# NOTE: Add all defined targets (e.g. executables, libraries, etc. )
+set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_PROJECT_LIB_NAME})
+# set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
+# where ${FOO} and ${BAR} represent additional executables or libraries
+# you want to compile with the set compiler flags
+
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
+
 ###############################################################################
+
+# NOTE: Update the path below if the 'tests' directory is moved or renamed.
 set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
 set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
 file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
 
+# Iterate over all the tests, compile them and add them to CTest
 foreach(TEST_FILE ${TEST_FILES})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
     add_executable(${TEST_NAME}_test ${TEST_FILE})
     target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
-    target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_NAME}_lib)
+    target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_LIB_NAME})
+    set_compiler_flags(TARGET_NAMES ${TEST_NAME}_test)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
 endforeach()
-
-include(cmake/CompilerFlags.cmake)
-# NOTE: Add all defined targets (e.g. executables, libraries, etc. )
-# NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
-# set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
-# where ${FOO} and ${BAR} represent additional executables or libraries
-# you want to compile with the set compiler flags
 
 ###############################################################################
 
