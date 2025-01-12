@@ -20,13 +20,13 @@
 
 ###############################################################################
 
-add_library(${MAIN_PROJECT_NAME}_lib
+add_library(${MAIN_PROJECT_LIB_NAME}
             generated/src/Helper.cpp
             exemplu_test_oop/BankAccount.cpp
             exemplu_test_oop/BankAccount.h
 )
 
-target_include_directories(${MAIN_PROJECT_NAME}_lib PUBLIC
+target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
             generated/include
             exemplu_test_oop/
 )
@@ -35,8 +35,9 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
 )
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib)
-include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
+set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_PROJECT_LIB_NAME})
+
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
 ###############################################################################
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
