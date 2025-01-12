@@ -21,26 +21,16 @@ function(set_compiler_flags)
         ###############################################################################
 
         if(PROJECT_WARNINGS_AS_ERRORS)
-            if(NOT "${TARGET_NAME}" STREQUAL "pqxx")
-                set_property(TARGET ${TARGET_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
-            endif ()
+            set_property(TARGET ${TARGET_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
         endif()
 
         # custom compiler flags
         message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
         if(MSVC)
-            if("${TARGET_NAME}" STREQUAL "pqxx")
-                target_compile_options(${TARGET_NAME} PRIVATE /W0 /utf-8 /MP)
-            else()
-                target_compile_options(${TARGET_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996
-                        /external:anglebrackets /external:W0 /utf-8 /MP)
-            endif ()
+            target_compile_options(${TARGET_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996
+                    /external:anglebrackets /external:W0 /utf-8 /MP)
         else()
-            if("${TARGET_NAME}" STREQUAL "pqxx")
-                target_compile_options(${TARGET_NAME} PRIVATE -w -Wno-pre-c++2b-compat)
-            else()
-                target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic)
-            endif ()
+            target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic -Wno-pre-c++2b-compat)
         endif()
 
         ###############################################################################
