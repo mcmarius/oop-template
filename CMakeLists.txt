@@ -65,7 +65,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
-set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+set_compiler_flags(TARGET_NAMES pqxx ${MAIN_EXECUTABLE_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
@@ -90,7 +90,6 @@ if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
-copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-copy_files(FILES .env COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(FILES tastatura.txt .env COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
