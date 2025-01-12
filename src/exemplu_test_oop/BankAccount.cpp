@@ -15,7 +15,6 @@ void BankAccount::Deposit(const double amount) {
 
 void BankAccount::Withdraw(const double amount) {
     if (amount < 0) {
-        int unused;
         throw std::invalid_argument("Withdrawal amount cannot be negative");
     }
     if (amount > balance) {
