@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.26)
 # for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
+set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
 
 set(TESTS_PROJECT_NAME "tests")
 set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
@@ -19,12 +20,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
+
 include(cmake/CopyHelper.cmake)
 set(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
-set(CMAKE_HELPER_DIR "${PROJECT_ROOT}/cmake")
-
-include(${CMAKE_HELPER_DIR}/Options.cmake)
-include(${CMAKE_HELPER_DIR}/CopyHelper.cmake)
 
 # external dependencies with FetchContent
 include(FetchContent)

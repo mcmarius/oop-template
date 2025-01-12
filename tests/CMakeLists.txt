@@ -1,4 +1,5 @@
 project(${TESTS_PROJECT_NAME})
+
 FetchContent_Declare(
         gtest
         GIT_REPOSITORY https://github.com/google/googletest.git
@@ -12,8 +13,8 @@ add_executable(${TESTS_EXECUTABLE_NAME}
         exemplu_test_simplu.cpp
 )
 
-target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NAME}_lib gtest gtest_main)
+target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME} gtest gtest_main)
 
-include(${CMAKE_HELPER_DIR}/CompilerFlags.cmake)
+set_compiler_flags(TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
 
 add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
