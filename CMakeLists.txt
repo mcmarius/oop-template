@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/Options.cmake)
+include(cmake/CustomStdlibAndSanitizers.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
@@ -53,7 +54,11 @@ add_executable(${MAIN_EXECUTABLE_NAME}
     generated/src/Helper.cpp
 )
 
+# NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+# set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
+# where ${FOO} and ${BAR} represent additional executables or libraries
+# you want to compile with the set compiler flags
 
 ###############################################################################
 

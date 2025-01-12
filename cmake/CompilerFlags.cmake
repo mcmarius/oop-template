@@ -3,6 +3,8 @@
 function(set_compiler_flags)
     set(multiValueArgs TARGET_NAMES)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "${multiValueArgs}")
+
+    # iterate over all specified targets
     foreach (TARGET_NAME IN LISTS ARG_TARGET_NAMES)
         if(GITHUB_ACTIONS)
             message("NOTE: GITHUB_ACTIONS defined")
@@ -26,8 +28,6 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        include(cmake/CustomStdlibAndSanitizers.cmake)
-
         set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
     endforeach ()
 endfunction()
