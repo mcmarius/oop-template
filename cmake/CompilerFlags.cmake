@@ -1,3 +1,5 @@
+include(cmake/CustomStdlibAndSanitizers.cmake)
+
 # target definitions
 
 function(set_compiler_flags)
