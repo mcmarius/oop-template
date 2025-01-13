@@ -83,7 +83,7 @@ build() {
 }
 
 test() {
-    # ctest --test-dir build -C Debug --verbose --no-compress-output
+    # ctest --test-dir build -C Debug --verbose --no-compress-output --output-on-failure
     #
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DCMAKE_BUILD_TYPE}"
@@ -103,7 +103,7 @@ test() {
         esac
     done
 
-    ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
+    ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output --output-on-failure
 }
 
 install() {
