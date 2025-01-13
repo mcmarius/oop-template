@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.26)
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
+set(TESTS_PROJECT_NAME "${MAIN_PROJECT_NAME}_test")
+set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
 
 
 project(${MAIN_PROJECT_NAME})
@@ -76,19 +78,21 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
 
 ###############################################################################
 
-# NOTE: Update the path below if the 'tests' directory is moved or renamed.
 set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
 set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
-file(GLOB TEST_FILES "${TEST_SOURCES_DIR}/*.cpp")
 
-# Iterate over all the tests, compile them and add them to CTest
-foreach(TEST_FILE ${TEST_FILES})
-    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
-    add_executable(${TEST_NAME}_test ${TEST_FILE})
-    target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
-    target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_LIB_NAME})
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
-endforeach()
+add_executable(${TESTS_EXECUTABLE_NAME}
+        ${TEST_SOURCES_DIR}/main.cpp
+        ${TEST_SOURCES_DIR}/test_oop.cpp
+        ${TEST_SOURCES_DIR}/test_simplu.cpp
+)
+
+target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
+target_include_directories(${TESTS_EXECUTABLE_NAME} SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
+
+set_compiler_flags(TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
+
+add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
 
 ###############################################################################
 
