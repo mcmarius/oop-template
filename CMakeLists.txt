@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.26)
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
 set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
+set(MAIN_PROJECT_NO_SAN_LIB_NAME "${MAIN_PROJECT_NAME}_nslib")
 set(TESTS_PROJECT_NAME "${MAIN_PROJECT_NAME}_test")
 set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
 
@@ -63,6 +64,16 @@ target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
         exemplu_test_oop/
 )
 
+add_library(${MAIN_PROJECT_NO_SAN_LIB_NAME}
+        generated/src/Helper.cpp
+        exemplu_test_oop/BankAccount.cpp
+)
+
+target_include_directories(${MAIN_PROJECT_NO_SAN_LIB_NAME} PUBLIC
+        generated/include
+        exemplu_test_oop/
+)
+
 
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
@@ -70,6 +81,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_PROJECT_LIB_NAME})
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${MAIN_PROJECT_NO_SAN_LIB_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
@@ -87,10 +99,10 @@ add_executable(${TESTS_EXECUTABLE_NAME}
         ${TEST_SOURCES_DIR}/test_simplu.cpp
 )
 
-target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
+target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NO_SAN_LIB_NAME})
 target_include_directories(${TESTS_EXECUTABLE_NAME} SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
 
-set_compiler_flags(TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
 
 add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
 

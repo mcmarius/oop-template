@@ -4,7 +4,13 @@ include(cmake/CustomStdlibAndSanitizers.cmake)
 
 function(set_compiler_flags)
     set(multiValueArgs TARGET_NAMES)
-    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "" "${multiValueArgs}")
+    set(oneValueArgs RUN_SANITIZERS)
+    cmake_parse_arguments(PARSE_ARGV 0 ARG "" "${oneValueArgs}" "${multiValueArgs}")
+
+    if(NOT DEFINED ARG_RUN_SANITIZERS)
+        set(ARG_RUN_SANITIZERS TRUE)
+    endif()
+
 
     # iterate over all specified targets
     foreach (TARGET_NAME IN LISTS ARG_TARGET_NAMES)
@@ -30,7 +36,7 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        if(NOT "${TARGET_NAME}" STREQUAL "${TESTS_EXECUTABLE_NAME}")
+        if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
             set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
         endif ()
     endforeach ()
