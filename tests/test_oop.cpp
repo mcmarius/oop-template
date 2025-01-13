@@ -2,7 +2,7 @@
 #include <ut.hpp>
 #include <stdexcept>
 
-int main() {
+boost::ut::suite oop_test_suite = [] {
     using namespace boost::ut;
 
     "Initial Balance Is Set Correctly"_test = [] {
@@ -37,4 +37,4 @@ int main() {
         BankAccount account("John Doe", 100.0);
         expect(throws<std::invalid_argument>([&] { account.Withdraw(-20.0); }));
     };
-}
+};
