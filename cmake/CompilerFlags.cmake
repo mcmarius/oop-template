@@ -30,8 +30,6 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        if(NOT "${TARGET_NAME}" MATCHES ".*_test$")
-            set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
-        endif ()
+        set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
     endforeach ()
 endfunction()

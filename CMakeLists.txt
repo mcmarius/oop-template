@@ -87,7 +87,6 @@ foreach(TEST_FILE ${TEST_FILES})
     add_executable(${TEST_NAME}_test ${TEST_FILE})
     target_include_directories(${TEST_NAME}_test SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
     target_link_libraries(${TEST_NAME}_test PRIVATE ${MAIN_PROJECT_LIB_NAME})
-    set_compiler_flags(TARGET_NAMES ${TEST_NAME}_test)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}_test)
 endforeach()
 
