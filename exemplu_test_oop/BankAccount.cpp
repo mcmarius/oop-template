@@ -8,7 +8,6 @@ BankAccount::BankAccount(std::string owner, const double initialBalance)
 }
 
 void BankAccount::Deposit(const double amount) {
-    int unused;
     if (amount < 0) {
         throw std::invalid_argument("Deposit amount cannot be negative");
     }
