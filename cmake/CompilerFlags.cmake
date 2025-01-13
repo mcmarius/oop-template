@@ -38,6 +38,5 @@ function(set_compiler_flags)
         if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
             set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
         endif ()
-
     endforeach ()
 endfunction()
