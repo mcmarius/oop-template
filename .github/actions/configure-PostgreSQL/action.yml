@@ -18,6 +18,7 @@ runs:
       run: |
         brew install postgresql
         brew services start postgresql@14
+        sleep 5
         psql postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
         bash ./scripts/configure_postgres.sh
 
