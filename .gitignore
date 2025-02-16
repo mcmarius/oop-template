@@ -1,4 +1,6 @@
 
+build/
+install_dir/
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,clion,cmake,codeblocks,emacs,gcov,sublimetext,vim,visualstudio,visualstudiocode,xcode
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,clion,cmake,codeblocks,emacs,gcov,sublimetext,vim,visualstudio,visualstudiocode,xcode

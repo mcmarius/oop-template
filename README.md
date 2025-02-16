@@ -1,16 +1,25 @@
 # Nu primesc notă pentru că nu am pus titlu și descriere
 
+### Folosiți template-ul corespunzător grupei voastre!
+
+Laborant   | Link template
+-----------|--------------
+ Dragoș B  | https://github.com/Ionnier/oop-template
+ Tiberiu M | https://github.com/MaximTiberiu/oop-template
+ Marius MC | https://github.com/mcmarius/oop-template
+
+
 ### Important!
+
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
 Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
 în care oferă funcționalități ajutătoare și doar dacă are sens.
 
-O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie de apeluri proxy către cod generat.
+O cerință nu se consideră îndeplinită dacă este realizată doar prin cod generat.
 
-### Cerințe modele de limbaj la nivel de semestru
-- [ ] minim o funcționalitate majoritar doar cu LLM
-- [ ] minim 2-3 funcționalități ~50% voi, ~50% LLM-ul
-- [ ] minim 2-3 funcționalități suficient de complicate pe care un LLM nu le poate implementa
+- **Fără cod de umplutură/fără sens!**
+- **Fără variabile globale!**
+- **Fără atribute publice!**
 
 ### Tema 0
 
@@ -20,20 +29,21 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 ## Tema 1
 
 #### Cerințe
-- [ ] definirea a minim **3-4 clase** folosind compunere cu clasele definite de voi
-- [ ] constructori de inițializare cu parametri
+- [ ] definirea a minim **3-4 clase** folosind compunere cu clasele definite de voi; moștenirile nu se iau în considerare aici
+- [ ] constructori de inițializare cu parametri pentru fiecare clasă
 - [ ] pentru o aceeași (singură) clasă: constructor de copiere, `operator=` de copiere, destructor
 <!-- - [ ] pentru o altă clasă: constructor de mutare, `operator=` de mutare, destructor -->
 <!-- - [ ] pentru o altă clasă: toate cele 5 funcții membru speciale -->
-- [ ] `operator<<` pentru toate clasele pentru afișare (std::ostream)
-- [ ] cât mai multe `const` (unde este cazul)
-- [ ] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese, dintre care cel puțin 1-2 funcții mai complexe
+- [ ] `operator<<` pentru **toate** clasele pentru afișare (`std::ostream`) folosind compunere de apeluri cu `operator<<`
+- [ ] cât mai multe `const` (unde este cazul) și funcții `private`
+- [ ] implementarea a minim 3 funcții membru publice pentru funcționalități netriviale specifice temei alese, dintre care cel puțin 1-2 funcții mai complexe
   - nu doar citiri/afișări sau adăugat/șters elemente într-un/dintr-un vector
-- [ ] scenariu de utilizare a claselor definite:
+- [ ] scenariu de utilizare  **cu sens** a claselor definite:
   - crearea de obiecte și apelarea tuturor funcțiilor membru publice în main
   - vor fi adăugate în fișierul `tastatura.txt` DOAR exemple de date de intrare de la tastatură (dacă există); dacă aveți nevoie de date din fișiere, creați alte fișiere separat
+- [ ] minim 50-55% din codul propriu să fie C++, `.gitattributes` configurat corect
 - [ ] tag de `git`: de exemplu `v0.1`
-- [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions
+- [ ] serviciu de integrare continuă (CI) cu **toate bifele**; exemplu: GitHub Actions
 
 ## Tema 2
 
@@ -59,10 +69,11 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 - [ ] STL
 - [ ] cât mai multe `const`
 - [ ] funcții *de nivel înalt*, de eliminat cât mai mulți getters/setters/funcții low-level
+- [ ] minim 75-80% din codul propriu să fie C++
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate** din aceeași ierarhie
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
   - noua derivată va fi integrată în codul existent (adică va fi folosită, nu adăugată doar ca să fie)
-- [ ] tag de `git`: de exemplu `v0.2`
+- [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.2`
 
 ## Tema 3
 
@@ -70,8 +81,9 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 - [ ] 2 șabloane de proiectare (design patterns)
 - [ ] o clasă șablon cu sens; minim **2 instanțieri**
   - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
+- [ ] minim 85-90% din codul propriu să fie C++
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
-- [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
+- [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 
 ## Instrucțiuni de compilare
 
@@ -99,12 +111,16 @@ cmake --build build --config Debug --parallel 6
 
 Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
 
+
 3. Pasul de instalare (opțional)
 ```sh
 cmake --install build --config Debug --prefix install_dir
 ```
 
 Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
+
+Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul `.gitignore` deoarece conțin fișiere generate și nu ne ajută să le versionăm.
+
 
 ## Resurse
 
