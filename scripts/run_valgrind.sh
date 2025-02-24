@@ -79,9 +79,8 @@ run_valgrind() {
                  --error-exitcode=1 \
                  ./${BIN_DIR}/"${1}"
     fi
-    # wait for server shutdown
-    sleep 7
-
+    # server shutdown
+    kill -TERM $(jobs -p)
 }
 
 exit_code=0

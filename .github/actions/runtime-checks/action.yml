@@ -20,7 +20,8 @@ runs:
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
         # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -35,8 +36,8 @@ runs:
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
-        # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Valgrind
       shell: bash
@@ -56,8 +57,8 @@ runs:
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
-        # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Smoke test (Windows)
       shell: bash
@@ -70,5 +71,5 @@ runs:
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
-        # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
