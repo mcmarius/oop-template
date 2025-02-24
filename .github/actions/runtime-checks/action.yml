@@ -49,7 +49,12 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        # run server in background
+        ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}" &
+        # run client in foreground
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client"
+        # wait for server shutdown
+        sleep 6
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -57,14 +62,27 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        # run server in background
+        ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe &
+        # run client in foreground
+        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client".exe
+        # wait for server shutdown
+        sleep 6
 
     - name: Valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
       run: |
+        # run server in background
+        valgrind \
+            --leak-check=full --show-leak-kinds=all --track-origins=yes \
+            --error-exitcode=1 \
+            ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}" &
+        # run client in foreground
         # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
         cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
             --leak-check=full --show-leak-kinds=all --track-origins=yes \
             --error-exitcode=1 \
-            ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+            ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client"
+        # wait for server shutdown
+        sleep 6
