@@ -186,5 +186,5 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib/tree/71ba7e7b1b328fe0de6cfbd3e94e5e0ddd4b4073) (MIT)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
