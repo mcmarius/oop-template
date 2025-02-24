@@ -181,4 +181,5 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Resurse
 - [cpp-httplib](https://github.com/yhirose/cpp-httplib/tree/71ba7e7b1b328fe0de6cfbd3e94e5e0ddd4b4073) (MIT)
+  - schimbări: `poll` definită ca funcție în loc de macro
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
