@@ -12,7 +12,12 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        # run server in background
+        ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}" &
+        # run client in foreground
+        cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client"
+        # wait for server shutdown
+        sleep 6
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -20,7 +25,12 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        # run server in background
+        ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe &
+        # run client in foreground
+        cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client".exe
+        # wait for server shutdown
+        sleep 6
 
     - name: Valgrind
       shell: bash

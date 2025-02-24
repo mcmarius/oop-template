@@ -1,16 +1,42 @@
 #include <iostream>
 #include <array>
+#include <cstdlib>
+#include <thread>
+#include <chrono>
+
 #include "include/Example.h"
 // This also works if you do not want `include/`, but some editors might not like it
 // #include "Example.h"
+
+// #define CPPHTTPLIB_OPENSSL_SUPPORT
+#include <httplib.h>
 
 int main() {
     std::cout << "Hello, world!\n";
     Example e1;
     e1.g();
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
+    // HTTP
+    httplib::Server svr;
+
+    svr.Get("/hi", [](const httplib::Request &req, httplib::Response &res) {
+      std::cout << "Got req on path " << req.path << "\n";
+      res.set_content("Hello World!", "text/plain");
+    });
+
+    if (std::getenv("CI")) {
+        std::thread stopper([&](){
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::cout << "Shutting down server\n";
+            svr.stop();
+        });
+        stopper.detach();
+    }
+    std::cout << "Starting server\n";
+    svr.listen("0.0.0.0", 8080);
+    // std::cout << "Hello, world!\n";
+    // std::array<int, 100> v{};
+    // int nr;
+    // std::cout << "Introduceți nr: ";
     /////////////////////////////////////////////////////////////////////////
     /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
     /// dați exemple de date de intrare folosind fișierul tastatura.txt
@@ -31,17 +57,17 @@ int main() {
     /// program care merg (și să le evitați pe cele care nu merg).
     ///
     /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
+    // std::cin >> nr;
     /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
+    // for(int i = 0; i < nr; ++i) {
+    //     std::cout << "v[" << i << "] = ";
+    //     std::cin >> v[i];
+    // }
+    // std::cout << "\n\n";
+    // std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
+    // for(int i = 0; i < nr; ++i) {
+    //     std::cout << "- " << v[i] << "\n";
+    // }
     ///////////////////////////////////////////////////////////////////////////
     /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
     /// alt fișier propriu cu ce alt nume doriți.

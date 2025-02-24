@@ -174,7 +174,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2022 MinGW GCC 13"
-            cmake_flags: "-DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
 
     steps:
