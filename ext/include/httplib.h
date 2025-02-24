@@ -194,7 +194,8 @@ using ssize_t = long;
 
 using socket_t = SOCKET;
 using socklen_t = int;
-#define poll(fds, nfds, timeout) WSAPoll(fds, nfds, timeout)
+int poll(pollfd* fds, int nfds, int timeout);
+// #define poll(fds, nfds, timeout) WSAPoll(fds, nfds, timeout)
 
 #else // not _WIN32
 
