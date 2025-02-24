@@ -1,4 +1,4 @@
-#include "httplib.h"
+#include <httplib.h>
 namespace httplib {
 
 /*
@@ -600,7 +600,6 @@ ssize_t select_impl(socket_t sock, time_t sec, time_t usec) {
   pfd.events = (Read ? POLLIN : POLLOUT);
 
   auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
-
   return handle_EINTR([&]() { return poll(&pfd, 1, timeout); });
 }
 

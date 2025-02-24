@@ -73,8 +73,14 @@ target_include_directories(${MAIN_EXECUTABLE_NAME}-client SYSTEM PRIVATE ext/inc
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
-target_link_libraries(${MAIN_EXECUTABLE_NAME} httplib)
-target_link_libraries(${MAIN_EXECUTABLE_NAME}-client httplib)
+target_link_libraries(${MAIN_EXECUTABLE_NAME}
+    httplib
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+	$<$<PLATFORM_ID:Windows>:crypt32>)
+target_link_libraries(${MAIN_EXECUTABLE_NAME}-client
+    httplib
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+	$<$<PLATFORM_ID:Windows>:crypt32>)
 
 ###############################################################################
 
