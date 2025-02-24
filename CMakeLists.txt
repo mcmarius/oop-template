@@ -61,19 +61,24 @@ include(cmake/RegisterTests.cmake)
 # always STATIC (simpler); TBD if we ever want dynamic for this; BUILD_SHARED_LIBS is for ext deps
 add_library(${MAIN_LIBRARY_NAME} STATIC)
 
+add_library(httplib ext/lib/httplib.cc)
+
 # NOTE: update EXECUTABLE_NAME in .github/workflows/cmake.yml when changing name here
-add_executable(${MAIN_EXECUTABLE_NAME}
-    app/main.cpp
-)
 target_sources(${MAIN_LIBRARY_NAME}
     PRIVATE
         src/Example.cpp
         src/internal/Detail.cpp
 )
+add_executable(${MAIN_EXECUTABLE_NAME}
+    app/main.cpp
+)
+add_executable(${MAIN_EXECUTABLE_NAME}_client
+    app/main-client.cpp
+)
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_LIBRARY_NAME})
+set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_EXECUTABLE_NAME}_client ${MAIN_LIBRARY_NAME})
 
 ###############################################################################
 
@@ -97,13 +102,27 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
     ${EXT_PRIVATE_DIR}
 )
 
+target_include_directories(httplib PUBLIC
+    ${EXT_PUBLIC_DIR}
+)
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 
 ###############################################################################
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
+    ${MAIN_LIBRARY_NAME}
+    httplib
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+    $<$<PLATFORM_ID:Windows>:crypt32>
+)
+target_link_libraries(${MAIN_EXECUTABLE_NAME}_client PRIVATE
+    ${MAIN_LIBRARY_NAME}
+    httplib
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+    $<$<PLATFORM_ID:Windows>:crypt32>
+)
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
@@ -112,7 +131,7 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake
-install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
+install(TARGETS ${MAIN_EXECUTABLE_NAME} ${MAIN_EXECUTABLE_NAME}_client DESTINATION ${DESTINATION_DIR})
 install(TARGETS ${MAIN_LIBRARY_NAME} ARCHIVE DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION include
