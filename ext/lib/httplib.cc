@@ -1,4 +1,7 @@
 #include <httplib.h>
+
+int poll(pollfd* fds, int nfds, int timeout) { return WSAPoll(fds, nfds, timeout); }
+
 namespace httplib {
 
 /*
