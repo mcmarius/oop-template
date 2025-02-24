@@ -15,15 +15,31 @@ fi
 
 run_valgrind() {
     # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
+    # run server in background
     valgrind --leak-check=full \
              --show-leak-kinds=all \
              --track-origins=yes \
              --error-exitcode=1 \
-             ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
+             ./${BIN_DIR}/"${EXECUTABLE_NAME}" &
+    sleep 1  # allow server to start
+    # run client in foreground
+    # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
+    if [[ "${RUN_INTERACTIVE}" = true ]]; then
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --error-exitcode=1 \
+                 ./${BIN_DIR}/"${EXECUTABLE_NAME}-client"
+    else
+        tr -d '\r' < "${INPUT_FILENAME}" | \
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --error-exitcode=1 \
+                 ./${BIN_DIR}/"${EXECUTABLE_NAME}-client"
+    fi
+    # wait for server shutdown
+    sleep 7
 }
 
-if [[ "${RUN_INTERACTIVE}" = true ]]; then
-    run_valgrind
-else
-    tr -d '\r' < "${INPUT_FILENAME}" | run_valgrind
-fi
+run_valgrind
