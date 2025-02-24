@@ -12,9 +12,15 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
+        # run server in background
+        # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
+          ./"${EXECUTABLE_NAME}" &
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
+        # wait for server shutdown
+        sleep 6
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -22,9 +28,15 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
+        # run server in background
+        # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
-          cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}".exe && \
+          ./"${EXECUTABLE_NAME}".exe &
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
+        # wait for server shutdown
+        sleep 6
 
     - name: Valgrind
       shell: bash
@@ -37,14 +49,26 @@ runs:
       shell: bash
       if: runner.os != 'Windows' && (runner.os == 'macOS' || (matrix.runs_asan != true && matrix.runs_valgrind != true))
       run: |
+        # run server in background
+        # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
+          ./"${EXECUTABLE_NAME}" &
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
+        # wait for server shutdown
+        sleep 6
 
     - name: Smoke test (Windows)
       shell: bash
       if: runner.os == 'Windows' && matrix.runs_asan != true
       run: |
+        # run server in background
+        # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}".exe && \
+          ./"${EXECUTABLE_NAME}".exe &
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
+        # wait for server shutdown
+        sleep 6

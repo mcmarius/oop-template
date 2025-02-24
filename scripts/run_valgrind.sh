@@ -11,7 +11,7 @@
 INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
-EXECUTABLE_NAMES=${EXECUTABLE_NAMES:-${EXECUTABLE_NAME:-oop_main} ${TESTS_EXECUTABLE_NAME:-oop_test}}
+EXECUTABLE_NAMES=${EXECUTABLE_NAMES:-${CLIENT_EXECUTABLE_NAME:-oop_main_client} ${TESTS_EXECUTABLE_NAME:-oop_test}}
 SCRIPT_RUN_DIR="$(dirname "${0}")"
 
 # TODO: refactor into functions
@@ -45,6 +45,7 @@ fi
 run_valgrind() {
     # no ./ prefix: BIN_DIR always contains a /, so valgrind never searches PATH
     # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
+    # run server in background
     valgrind --leak-check=full \
              --show-leak-kinds=all \
              --track-origins=yes \
@@ -53,7 +54,34 @@ run_valgrind() {
              --gen-suppressions=all \
              --suppressions="${SCRIPT_RUN_DIR}/valgrind-suppressions.supp" \
              --error-exitcode=1 \
-             "${BIN_DIR}/$1"
+             ./${BIN_DIR}/"${EXECUTABLE_NAME}" &
+    sleep 1  # allow server to start
+    # run client/tests in foreground
+    if [[ "${RUN_INTERACTIVE}" = true ]]; then
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --leak-resolution=med \
+                 --vgdb=no \
+                 --gen-suppressions=all \
+                 --suppressions="${SCRIPT_RUN_DIR}/valgrind-suppressions.supp" \
+                 --error-exitcode=1 \
+                 ./${BIN_DIR}/"${1}"
+    else
+        tr -d '\r' < "${INPUT_FILENAME}" | \
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --leak-resolution=med \
+                 --vgdb=no \
+                 --gen-suppressions=all \
+                 --suppressions="${SCRIPT_RUN_DIR}/valgrind-suppressions.supp" \
+                 --error-exitcode=1 \
+                 ./${BIN_DIR}/"${1}"
+    fi
+    # wait for server shutdown
+    sleep 7
+
 }
 
 exit_code=0
