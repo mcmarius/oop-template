@@ -69,6 +69,11 @@ target_sources(${MAIN_LIBRARY_NAME}
         src/Example.cpp
         src/internal/Detail.cpp
 )
+
+# if changing this name, also update executable name in
+# - .github/actions/runtime-checks/action.yml
+# also check: scripts/run_valgrind.sh
+# we need two separate executables: one for the server and one for the client
 add_executable(${MAIN_EXECUTABLE_NAME}
     app/main.cpp
 )
