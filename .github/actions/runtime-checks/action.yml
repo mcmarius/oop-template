@@ -55,8 +55,8 @@ runs:
         ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}" &
         # run client in foreground
         cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client"
-        # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -68,8 +68,8 @@ runs:
         ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe &
         # run client in foreground
         cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client".exe
-        # wait for server shutdown
-        sleep 6
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Valgrind
       shell: bash
