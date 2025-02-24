@@ -1,6 +1,8 @@
 #include <httplib.h>
 
+#ifdef _WIN32
 int poll(pollfd* fds, int nfds, int timeout) { return WSAPoll(fds, nfds, timeout); }
+#endif
 
 namespace httplib {
 
