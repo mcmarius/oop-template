@@ -176,7 +176,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2025 MinGW GCC 16"
-            cmake_flags: "-DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
 
     steps:
