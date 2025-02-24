@@ -42,8 +42,8 @@ run_valgrind() {
                  --error-exitcode=1 \
                  ./${BIN_DIR}/"${EXECUTABLE_NAME}-client"
     fi
-    # wait for server shutdown
-    sleep 7
+    # server shutdown
+    kill -TERM $(jobs -p)
 }
 
 run_valgrind

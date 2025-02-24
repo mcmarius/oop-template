@@ -1,38 +1,62 @@
 #include <iostream>
-#include <array>
-#include <cstdlib>
+// #include <array>
 #include <thread>
-#include <chrono>
+#include <csignal>
+#include <semaphore>
 
 #include "include/Example.h"
 // This also works if you do not want `include/`, but some editors might not like it
 // #include "Example.h"
 
-// #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <httplib.h>
+
+// we need this global variable for graceful shutdown
+std::binary_semaphore quit_semaphore(0);
+
+void stopHandler(int /*signal*/) {
+    // do as little as possible in the signal handler; no std::cout
+    quit_semaphore.release();
+}
 
 int main() {
     std::cout << "Hello, world!\n";
     Example e1;
     e1.g();
-    // HTTP
-    httplib::Server svr;
 
-    svr.Get("/hi", [](const httplib::Request &req, httplib::Response &res) {
-      std::cout << "Got req on path " << req.path << "\n";
-      res.set_content("Hello World!", "text/plain");
+    // set global signal handlers
+    std::signal(SIGTERM, stopHandler); // stopping by IDE
+    std::signal(SIGINT, stopHandler); // stopping by Ctrl+C
+
+    // HTTP server object
+    // HTTPS would require additional configuration
+    httplib::Server server;
+
+    // request handlers
+    // decide how to handle each request based on route/path
+    // the path can contain segments for params
+    server.Get("/hi", [](const httplib::Request &req, httplib::Response &res) {
+        std::cout << "[server] Got req on path " << req.path << "\n";
+        res.set_content("Hello World!", "text/plain");
+    });
+    server.Get("/.*", [](const httplib::Request &req, httplib::Response &res) {
+        std::cout << "[server] Got req on unknown path " << req.path << "\n";
+        res.status = 404;
+        res.set_content("Not found", "text/plain");
     });
 
-    if (std::getenv("CI")) {
-        std::thread stopper([&](){
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            std::cout << "Shutting down server\n";
-            svr.stop();
-        });
-        stopper.detach();
-    }
-    std::cout << "Starting server\n";
-    svr.listen("0.0.0.0", 8080);
+    // thread used for graceful shutdown
+    std::thread stopper([&]() {
+        quit_semaphore.acquire();  // this is a blocking call
+        server.stop();
+    });
+    stopper.detach();
+
+    std::cout << "[server] Starting server\n";
+    // bind the server to a port and start accepting requests
+    // this runs a "while(true)" loop until the process is stopped
+    // port could be configured through an env variable to avoid recompiling
+    server.listen("0.0.0.0", 8080);
+    std::cout << "[server] Shutting down server\n";
     // std::cout << "Hello, world!\n";
     // std::array<int, 100> v{};
     // int nr;
