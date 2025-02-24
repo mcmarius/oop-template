@@ -49,10 +49,13 @@ include(cmake/CopyHelper.cmake)
 
 add_library(httplib ext/lib/httplib.cc)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
+# NOTE: update executable names in .github/workflows/cmake.yml:25 when changing names here
+# we need two separate executables: one for the server and one for the client
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
 )
+# if changing this name, also update executable name in
+# - .github/actions/runtime-checks/action.yml lines: 55, 68, 87
 add_executable(${MAIN_EXECUTABLE_NAME}-client
     main-client.cpp
 )
