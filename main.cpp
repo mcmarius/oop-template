@@ -12,19 +12,19 @@ int main() {
     httplib::Server svr;
 
     svr.Get("/hi", [](const httplib::Request &req, httplib::Response &res) {
-      std::cout << "Got req on path " << req.path << "\n";
+      std::cout << "[server] Got req on path " << req.path << "\n";
       res.set_content("Hello World!", "text/plain");
     });
 
     if (std::getenv("CI")) {
         std::thread stopper([&](){
             std::this_thread::sleep_for(std::chrono::seconds(5));
-            std::cout << "Shutting down server\n";
+            std::cout << "[server] Shutting down server\n";
             svr.stop();
         });
         stopper.detach();
     }
-    std::cout << "Starting server\n";
+    std::cout << "[server] Starting server\n";
     svr.listen("0.0.0.0", 8080);
     // std::cout << "Hello, world!\n";
     // std::array<int, 100> v{};

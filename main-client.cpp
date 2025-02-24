@@ -10,6 +10,6 @@ int main() {
     httplib::Client cli(url);
 
     auto res = cli.Get("/hi");
-    std::cout << "Got status " << res->status << "\n";
-    std::cout << "Got body " << res->body << "\n";
+    std::cout << "[client] Got status " << res->status << "\n";
+    std::cout << "[client] Got body " << res->body << "\n";
 }
