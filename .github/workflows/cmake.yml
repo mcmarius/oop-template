@@ -27,14 +27,9 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-<<<<<<< HEAD
-
-=======
-  GEN_DIR: "generated"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
-  SFML_VERSION: "2023-11-04-2.6.1"
->>>>>>> 1b352f5 (Adăugat SFML)
+  SFML_VERSION: "2024-12-21-3.0.0"
 
 defaults:
   run:
@@ -159,13 +154,8 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-<<<<<<< HEAD
             name: "ASan: Windows 2022 MSVC 19.44"
-            cmake_flags: "-DUSE_ASAN=ON"
-=======
-            name: "ASan: Windows 2022 MSVC 19.43"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=TRUE"
->>>>>>> 1b352f5 (Adăugat SFML)
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
