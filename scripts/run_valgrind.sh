@@ -24,7 +24,7 @@ run_valgrind() {
              --error-exitcode=0 \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}" &
     # --gen-suppressions=all \
-    bash ./scripts/run_test.sh 10 1 2
+    bash ./scripts/run_test.sh 13 1 2
 }
 
 if [[ "${RUN_INTERACTIVE}" = true ]]; then
