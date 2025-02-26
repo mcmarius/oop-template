@@ -35,7 +35,7 @@ set(WARNINGS_AS_ERRORS OFF)
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG        2.6.1
+    GIT_TAG        3.0.0
     # GIT_TAG        69ea0cd863aed1d4092b970b676924a716ff718b # 2.6.1
     # GIT_TAG        origin/master
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
@@ -73,7 +73,7 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
@@ -87,17 +87,6 @@ endif()
 install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
-endif()
-
-# copy dependent DLLs to build dir
-# see https://en.sfml-dev.org/forums/index.php?topic=28580.0
-# remove this if not using audio or if using SFML 3
-if (WIN32 AND SFML_BUILD_AUDIO)
-    add_custom_command(TARGET ${MAIN_EXECUTABLE_NAME} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-         ${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll
-         $<TARGET_FILE_DIR:${MAIN_EXECUTABLE_NAME}>
-    )
 endif()
 
 
