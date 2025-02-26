@@ -91,23 +91,21 @@ int main() {
 
     while(window.isOpen()) {
         bool shouldExit = false;
-        sf::Event e{};
-        while(window.pollEvent(e)) {
-            switch(e.type) {
-            case sf::Event::Closed:
+
+        while(const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 window.close();
-                break;
-            case sf::Event::Resized:
+            }
+            else if (event->is<sf::Event::Resized>()) {
                 std::cout << "New width: " << window.getSize().x << '\n'
                           << "New height: " << window.getSize().y << '\n';
-                break;
-            case sf::Event::KeyPressed:
-                std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
-                if(e.key.code == sf::Keyboard::Escape)
+            }
+            else if (event->is<sf::Event::KeyPressed>()) {
+                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
+                std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
+                if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
                     shouldExit = true;
-                break;
-            default:
-                break;
+                }
             }
         }
         if(shouldExit) {
