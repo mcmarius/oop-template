@@ -137,7 +137,7 @@
    <swrast_dri>
    Memcheck:Leak
    match-leak-kinds: possible
-   fun:malloc
+   ...
    obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
    ...
 }
@@ -146,7 +146,86 @@
    <swrast_dri>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:malloc
+   ...
    obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   ...
+}
+
+{
+   <libXi>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0
+   ...
+}
+
+{
+   <sfGlContext>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContextC1Ev
+   ...
+}
+
+{
+   <sfGlContext>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext13SharedContextC1Ev
+   ...
+}
+
+{
+   <sfopenXim>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv7openXimEv
+   ...
+}
+
+{
+   <sfopenDisplay>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv11openDisplayEv
+   ...
+}
+
+{
+   <sfwindowcreate>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjNS_5StateE
+   ...
+}
+
+{
+   <sfGlResource>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf10GlResourceC1Ev
+   ...
+}
+
+{
+   <sfwindowimpl>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv10WindowImplC1Ev
    ...
 }
