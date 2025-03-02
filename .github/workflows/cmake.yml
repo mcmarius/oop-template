@@ -176,6 +176,14 @@ jobs:
 
       - name: Set timestamp and zip name
         run: |
+          echo ${GITHUB_REF}
+          echo "---"
+          echo ${GITHUB_REF#'refs/tags/'}
+          echo "---"
+          echo $(echo ${GITHUB_REF#'refs/tags/'})
+          echo "---"
+          echo $(echo ${GITHUB_REF#'refs/tags/'} | sed "s|/|_|g")
+          echo "---"
           echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
 
           # use the full name as prefix: {user_name}_{repo_name} (replace / with _)
