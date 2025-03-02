@@ -1,5 +1,6 @@
 project(${TESTS_PROJECT_NAME})
 
+# NOTE: Also update GTEST_VERSION env var in .github/workflows/cmake.yml:31
 FetchContent_Declare(
         gtest
         GIT_REPOSITORY https://github.com/google/googletest.git
