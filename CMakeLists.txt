@@ -39,6 +39,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
 #FetchContent_MakeAvailable(SomeLib)
 
+# NOTE: Also update PQXX_VERSION env var in .github/workflows/cmake.yml:31
 FetchContent_Declare(
         pqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git

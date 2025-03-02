@@ -1,0 +1,17 @@
+{
+   <libgssapi>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2.2
+   ...
+}
+
+{
+   <libpq>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libpq.so.5.17
+   ...
+}
