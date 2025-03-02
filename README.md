@@ -86,6 +86,12 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 
+## Configurare variabile de mediu
+
+Actualizați fișierul `.env` cu valori corespunzătoare mediului vostru de lucru.
+
+După aceea, configurați editorul să vă încarce acest fișier ca variabile de mediu (sau scrieți cod care să facă asta).
+
 ## Instrucțiuni de compilare
 
 Proiectul este configurat cu CMake.
@@ -131,20 +137,50 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 ## Baza de date
 
+### Configurare inițială
+
+Dacă folosim docker sau podman, creăm baza de date astfel:
+```shell
+podman create --name postgres-container14 \
+           -e "POSTGRES_PASSWORD=pg-password" \
+           -v pg-14-oop-volume:/var/lib/postgresql/data \
+           -p 5432:5432 \
+           postgres:14.17-alpine
+```
+
+Apoi pornim baza de date (scoatem flag-urile `-ia` dacă nu dorim logs și blocarea terminalului):
+```shell
+podman start -ia postgres-container14
+```
+
+Creăm userul și introducem parola pentru un user existent al bazei de date (în acest caz, `pg-password` de mai sus):
+```shell
+source .env
+psql -h "${DATABASE_HOSTADDR}" -U "${DATABASE_PG_USER}" -c "CREATE USER "${DATABASE_USER}" WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
+```
+
+Configurăm baza de date și extensiile necesare:
+```shell
+./scripts/configure_postgres.sh
+```
+
+### Cod
+
 În acest proiect puteți folosi o bază de date PostgreSQL. Pentru a fi ușor de folosit am creat un [wrapper](./database/Database.cpp)
 peste API-ul din biblioteca pqxx. Acest wrapper este, de fapt, un singleton prin care puteți să interacționați ușor cu baza de date.
 
-Pentru a instanția singleton-ul puteți folosi sintaxa `Database& db = Database::getInstance();`.
-Dacă doriți să ștergeți mai întâi toate tabelele existente, folosiți `Database& db = Database::getInstance(true);`
+Pentru a instanția singleton-ul puteți folosi sintaxa `Database& db = Database::getDatabaseInstance();`.
+
+Dacă doriți să ștergeți mai întâi toate tabelele existente, folosiți `Database& db = Database::getDatabaseInstance(true);`
 
 
 ## Resurse
 
 - PostgreSQL
-  - Documentation: https://www.postgresql.org/
-  - Versiune folosită pe pipeline: 14
+  - Documentație: https://www.postgresql.org/
+  - Versiune folosită pe pipeline: 14.17 (martie 2025)
 - PQXX
   - Github: https://github.com/jtv/libpqxx
-  - Documentation: https://pqxx.org/development/libpqxx/
+  - Documentație: https://pqxx.org/development/libpqxx/
   - Versiune folosită: tag 7.9.2
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit

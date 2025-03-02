@@ -66,6 +66,8 @@ int main() {
 
     std::cout << "Afișarea unui utilizator după nume:\n";
     std::tuple<std::string,std::string> user = database.showUser("User1");
+    // Observație! Parolele sunt afișate aici doar cu scop demonstrativ
+    // De obicei nu vrem să expunem deloc informații secrete, chiar dacă sunt criptate.
     std::cout << std::get<0>(user) << " " << std::get<1>(user) << "\n\n";
 
     std::cout << "Afișarea tuturor utilizatorilor:\n";

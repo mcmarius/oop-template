@@ -64,7 +64,4 @@ runs:
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
       run: |
         # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
-        cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
-            --leak-check=full --show-leak-kinds=all --track-origins=yes \
-            --error-exitcode=1 \
-            ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        ./scripts/run_valgrind.sh

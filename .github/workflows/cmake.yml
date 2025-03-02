@@ -28,6 +28,7 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   GEN_DIR: "generated"
+  PQXX_VERSION: "7.9.2"
   DATABASE_USER: oop
   DATABASE_PASSWORD: ooppa55
   DATABASE_NAME: oop_db
