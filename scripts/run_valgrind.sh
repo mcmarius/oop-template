@@ -5,9 +5,9 @@ INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 ZIP_NAME=${ZIP_NAME:-install_dir/bin}
 EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop}
 
-#           --gen-suppressions=all \
 tr -d '\r' < "${INPUT_FILENAME}" | \
   valgrind --leak-check=full \
+           --gen-suppressions=all \
            --show-leak-kinds=all \
            --leak-resolution=med \
            --track-origins=yes \
