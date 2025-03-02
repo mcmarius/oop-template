@@ -77,8 +77,8 @@ int main() {
         std::cout << "Eroare: Poza nu a putut fi incarcata!" << std::endl;
         return 1;
     }
-
     // Textura a fost încărcată cu succes
+    std::cout << "Textura a fost încărcată\n";
 
     //     Acum vrem să asociem textura cu un sprite. Pentru a realiza acest lucru creăm un obiect de tip sf::Sprite
     // și trimitem `cat_texture` în constructor.
