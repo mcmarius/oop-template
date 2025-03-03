@@ -14,4 +14,4 @@ tr -d '\r' < "${INPUT_FILENAME}" | \
            --vgdb=no \
            --suppressions=./scripts/valgrind-suppressions.supp \
            --error-exitcode=0 ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
-bash ./scripts/run_test.sh 10 1 2
+bash ./scripts/run_test.sh 13 1 2

@@ -83,7 +83,7 @@
 }
 
 {
-   <deque>
+   <sfml_deque>
    Memcheck:Leak
    match-leak-kinds: reachable
    ...
@@ -94,7 +94,7 @@
 }
 
 {
-   <deque_push>
+   <sfml_deque_push>
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:_Znwm
@@ -134,7 +134,17 @@
 }
 
 {
-   <swrast_dri>
+   <sfml_string_locale>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf6StringC1EPKcRKSt6locale
+   ...
+}
+
+{
+   <swrast_dri_possible>
    Memcheck:Leak
    match-leak-kinds: possible
    ...
@@ -152,80 +162,206 @@
 }
 
 {
-   <libXi>
+   <dl_close>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_dl_close
+   ...
+   fun:exit
+   fun:(below main)
+}
+
+{
+   <curl_open_reachable>
    Memcheck:Leak
    match-leak-kinds: reachable
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libXi.so.6.1.0
+   fun:Curl_open
    ...
 }
 
 {
-   <sfGlContext>
+   <curl_easy_setopt>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf4priv9GlContextC1Ev
+   fun:curl_easy_setopt
    ...
 }
 
 {
-   <sfGlContext>
+   <curl_sendrecv>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf4priv9GlContext13SharedContextC1Ev
+   fun:Curl_sendrecv
    ...
 }
 
 {
-   <sfopenXim>
+   <curl_easy_perform>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf4priv7openXimEv
+   fun:curl_easy_perform
    ...
 }
 
 {
-   <sfopenDisplay>
+   <curl_conn_cf_connect>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf4priv11openDisplayEv
+   fun:Curl_conn_cf_connect
    ...
 }
 
 {
-   <sfwindowcreate>
+   <curl_conn_connect>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjNS_5StateE
+   fun:Curl_conn_connect
    ...
 }
 
 {
-   <sfGlResource>
+   <curl_connect>
    Memcheck:Leak
    match-leak-kinds: reachable
-   fun:_Znwm
    ...
-   fun:_ZN2sf10GlResourceC1Ev
+   fun:Curl_connect
    ...
 }
 
 {
-   <sfwindowimpl>
+   <curl_connect_possible>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:Curl_connect
+   ...
+}
+
+{
+   <curl_slist_append>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_slist_append
+   ...
+}
+
+{
+   <curl_client_write>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_client_write
+   ...
+}
+
+{
+   <curl_cwriter_write>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_cwriter_write
+   ...
+}
+
+{
+   <curl_multi_perform>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_multi_perform
+   ...
+}
+
+{
+   <curl_thread_create_thunk>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_thread_create_thunk
+   ...
+}
+
+{
+   <libcrypto>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libcrypto.so.3
+   ...
+}
+
+{
+   <libssl>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libssl.so.3
+   ...
+}
+
+{
+   <ssl_cf_connect>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:ssl_cf_connect
+}
+
+{
+   <cpr_cookies_emplace_back>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:allocate
+   ...
+   fun:_ZN3cpr7Cookies12emplace_backERKNS_6CookieE
+}
+
+{
+   <cpr_session_make_request>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:allocate
+   ...
+   fun:_ZN3cpr7Session11makeRequestEv
+}
+
+{
+   <cpr_session>
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:_Znwm
    ...
-   fun:_ZN2sf4priv10WindowImplC1Ev
+   fun:_ZN3cpr7SessionC1Ev
+   ...
+}
+
+{
+   <cpr_session_get>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN3cpr7Session3GetEv
+   ...
+}
+
+{
+   <cpr_url>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN3cpr3UrlC1EPKc
    ...
 }
