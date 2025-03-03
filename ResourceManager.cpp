@@ -3,6 +3,7 @@
 //
 
 #include "ResourceManager.hpp"
+#include <iostream>
 
 ResourceManager& ResourceManager::Instance()
 {
@@ -29,6 +30,7 @@ void ResourceManager::loadTexture(const std::string& path, const std::string& te
     }
 
     m_textures[texture_name] = texture;
+    std::cout << "Textura a fost încărcată\n";
 }
 
 void ResourceManager::loadFont(const std::string& path, const std::string& font_name)
@@ -43,6 +45,7 @@ void ResourceManager::loadFont(const std::string& path, const std::string& font_
     }
 
     m_fonts[font_name] = font;
+    std::cout << "Font-ul a fost încărcat\n";
 }
 
 
