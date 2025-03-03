@@ -74,7 +74,7 @@ int main() {
     /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
     window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
     ///////////////////////////////////////////////////////////////////////////
-    //
+    std::cout << "Fereastra a fost creată\n";
     ///////////////////////////////////////////////////////////////////////////
     /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
     /// This is needed so we do not burn the GPU                            ///
@@ -88,6 +88,7 @@ int main() {
         while(const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
+                std::cout << "Fereastra a fost închisă\n";
             }
             else if (event->is<sf::Event::Resized>()) {
                 std::cout << "New width: " << window.getSize().x << '\n'
@@ -103,6 +104,7 @@ int main() {
         }
         if(shouldExit) {
             window.close();
+            std::cout << "Fereastra a fost închisă (shouldExit == true)\n";
             break;
         }
         using namespace std::chrono_literals;
@@ -111,5 +113,7 @@ int main() {
         window.clear();
         window.display();
     }
+
+    std::cout << "Programul a terminat execuția\n";
     return 0;
 }
