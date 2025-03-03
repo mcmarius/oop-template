@@ -98,20 +98,21 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
 
     // Bucla principală a aplicației.
-    while (window.isOpen())
-    {
-        sf::Event event{};
-        while (window.pollEvent(event))
-        {
-            switch (event.type)
-            {
-                case sf::Event::Closed:
-                {
+    while(window.isOpen()) {
+        while(const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+            }
+            else if (event->is<sf::Event::Resized>()) {
+                std::cout << "New width: " << window.getSize().x << '\n'
+                          << "New height: " << window.getSize().y << '\n';
+            }
+            else if (event->is<sf::Event::KeyPressed>()) {
+                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
+                std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
+                if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
                     window.close();
-                    break;
                 }
-                default:
-                    break;
             }
         }
 
