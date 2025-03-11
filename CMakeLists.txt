@@ -35,8 +35,8 @@ set(WARNINGS_AS_ERRORS OFF)
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG        2.6.1
-    # GIT_TAG        69ea0cd863aed1d4092b970b676924a716ff718b # 2.6.1
+    GIT_TAG        2.6.2
+    # GIT_TAG        5383d2b3948f805af55c9f8a4587ac72ec5981d1 # 2.6.2
     # GIT_TAG        origin/master
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
