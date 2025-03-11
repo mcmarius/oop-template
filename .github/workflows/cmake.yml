@@ -33,7 +33,7 @@ env:
   EXT_DIR: "ext"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
-  SFML_VERSION: "2023-11-04-2.6.1"
+  SFML_VERSION: "2024-11-10-2.6.2"
 
 defaults:
   run:
