@@ -51,7 +51,11 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
+        # run LLM server in background
+        source ./scripts/run_llm.sh
         cat "${INPUT_FILENAME}" | tr -d '\r' | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -59,14 +63,22 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
+        # run LLM server in background
+        source ./scripts/run_llm.sh
         cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe
+        # server shutdown
+        kill -TERM $(jobs -p)
 
     - name: Valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
       run: |
+        # run LLM server in background
+        source ./scripts/run_llm.sh
         # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
         cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
             --leak-check=full --show-leak-kinds=all --track-origins=yes \
             --error-exitcode=1 \
             ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
+        # server shutdown
+        kill -TERM $(jobs -p)
