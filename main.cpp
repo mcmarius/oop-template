@@ -1,14 +1,20 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
-/////////////////////////////////////////////////////////////
-//// Vom folosi cpr pentru a descărca date dintr-un API /////
-#include <cpr/cpr.h>                                    /////
-/////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
+//// Vom folosi simsimd pentru a calcula similaritatea cosinus ////
+#include <simsimd/simsimd.h>                                   ////
+///////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+//// Vom folosi cpr pentru a descărca date dintr-un API ////
+#include <cpr/cpr.h>                                    ////
+////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// Pentru a putea accesa datele din API este nevoie să parsăm datele primite /////
-#include <json.hpp>                                                           /////
+//// Pentru a putea accesa datele din API este nevoie să parsăm datele primite ////
+#include <json.hpp>                                                            ////
 ///////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -27,100 +33,20 @@
     }
  */
 
-void ShowRandomFact()
+const std::string API_URL = "http://127.0.0.1:8080";
+
+std::vector<simsimd_f32_t> getEmbeddings(const std::string& word)
 {
-    /*
-        API-ul   https://uselessfacts.jsph.pl/api/v2/facts/random   ne dă următorul JSON
+    std::string api_url = API_URL;
+    if(const auto* url = std::getenv("LLM_URL")) {
+        api_url = url;
+    }
+    cpr::Url api_link = api_url + "/embedding"; // Link-ul către API
 
-        {
-            id: "...",
-            text: "...",
-            source: "...",
-            source_url: "...",
-            language: "en",
-            permalink: "..."
-        }
-
-    */
-
-
-    cpr::Url api_link = "https://uselessfacts.jsph.pl/api/v2/facts/random"; // Link-ul către API
-    // Înainte de a face un request la un API trebuie să specificăm în header cum vrem să primim răspunsul (Content-Type), deoarece
-    // pot exista API-uri care nu întorc neapărat un JSON (de exemplu, unele pot returna un XML).
-
-    cpr::Header header = {
-        {"Content-Type", "application/json"}
+    // Configurăm parametrii să fie URL-encoded
+    cpr::Parameters params = {
+        {"content", word}
     };
-
-    // Adăugăm timeout la request, deoarece pot exista situații când durează foarte mult.
-    const int miliseconds = 2000;
-    cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
-
-    if(res.elapsed * 1000 > miliseconds)
-    {
-        std::cout << "Request timeout" << std::endl;
-        return;
-    }
-    if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
-    {
-        std::cout << "Oops!!" << std::endl;
-        return;
-    }
-    if(res.text.empty())
-    {
-        std::cout << "Empty response" << std::endl;
-        return;
-    }
-
-    // res.text este doar un string cu datele descărcate din API.
-
-    // Așa arată res.text (nu este parsat)
-    std::cout << std::endl << "======== res.text neparsat =========" << std::endl;
-    std::cout << res.text;
-    std::cout << "======================" << std::endl;
-
-    // Pentru a ne ușura munca cu JSON-ul primit de la API este recomandat să îl parsăm.
-    nlohmann::json json = nlohmann::json::parse(res.text);
-
-    // Acum putem folosi mult mai ușor datele primite folosind următoarea sintaxă: json["un_nume_de_câmp].get<tip_de_date>();
-    std::string fact = json["text"].get<std::string>(); // accesăm câmpul "text" și îi facem convert la string
-
-    std::cout << "Uite un random fact: " << fact;
-}
-
-
-
-
-/*
-    << OBSERVAȚIE >>
-        Modul în care sunt făcute request-urile la API-ul din funcția ShowGithubAccountData() este supus unui rate
-    limit deoarece facem request-uri fără să folosim un key/token. Pentru a mări acest rate limit este necesar să
-    facem request-urile folosind un token.
-
-        Mai multe detalii despre creșterea rate limit-ului se pot găsi în documentația oficială a API-ului.
-    https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#getting-a-higher-rate-limit
-
-        Pentru testare mai avansată, am putea să facem mocking, adică să simulăm cererile către API cu ajutorul unor fișiere locale.
-        Exemplu: https://github.com/Bogdanctx/Radar-Contact
-*/
-void ShowGithubAccountData(const std::string& user)
-{
-    /*
-        API-ul   https://api.github.com/users/{{username}}   ne dă informații legate de un utilizator al platformei GitHub
-        având username-ul 'user'.
-
-        Printre toate câmpurile returnat de API, cele de jos reprezintă doar câteva:
-
-        {
-            name: "...",
-            public_repos: ...,
-            followers: ...,
-            following: ...,
-            created_at: "...",
-        }
-    */
-
-    cpr::Url api_link = "https://api.github.com/users/" + user; // Link-ul către API
 
     // Setăm header-ul
     cpr::Header header = {
@@ -130,60 +56,110 @@ void ShowGithubAccountData(const std::string& user)
 
     // Adăugăm timeout la request, deoarece pot exista situații când durează foarte mult.
     const int miliseconds = 2000;
-    cpr::Response res = cpr::Get(api_link, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
+    using json = nlohmann::json;
+    cpr::Response res = cpr::Get(api_link, params, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
 
     if(res.elapsed * 1000 > miliseconds)
     {
         std::cout << "Request timeout" << std::endl;
-        return;
+        return {};
     }
     if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
     {
-        std::cout << "Oops!!" << std::endl;
-        return;
+        std::cout << "Oops!! Got status " << res.status_code << std::endl;
+        return {};
     }
     if(res.text.empty())
     {
         std::cout << "Empty response" << std::endl;
-        return;
+        return {};
     }
 
-    nlohmann::json json = nlohmann::json::parse(res.text); // Parsăm răspunsul primit
-
-    if(json.contains("status")) // Dacă JSON-ul are câmpul 'status' înseamnă că a apărut o eroare
-    {
-        std::string status_code = json["status"].get<std::string>();
-        std::string message = json["message"].get<std::string>();
-
-        std::cout << "API-ul a returnat status code-ul " << status_code << " avand mesajul: " << message << std::endl;
-        return;
-    }
-
-    int public_repos = json["public_repos"].get<int>();
-    int followers = json["followers"].get<int>();
-    int following = json["following"].get<int>();
-    std::string created_at = json["created_at"].get<std::string>();
-
-    std::cout << "Utilizatorul " << user << " are urmatoarele date:" << std::endl;
-    std::cout << "=> Are " << public_repos << " repository-uri publice." << std::endl;
-    std::cout << "=> Are " << followers << " urmaritori." << std::endl;
-    std::cout << "=> Urmareste " << following << " persoane." << std::endl;
-    std::cout << "=> Contul a fost creat la data " << created_at << '.' << std::endl;
+    json json_resp = json::parse(res.text); // Parsăm răspunsul primit
+    std::vector<simsimd_f32_t> embedding = json_resp["embedding"];
+    // std::cout << json_resp["embedding"].size() << std::endl;
+    return embedding;
 }
+
+/*
+float getScore(const std::string& word1, const std::string& word2)
+{
+    std::string api_url = API_URL;
+    if(const auto* url = std::getenv("LLM_URL")) {
+        api_url = url;
+    }
+
+    std::string prompt = std::string("return the cosine similarity of ")
+        + word1 + " and " + word2
+        + ", respond with a real number between 0 and 1, do not respond with anything else, no explanations";
+    cpr::Url api_link = api_url + "/v1/chat/completions"; // Link-ul către API
+
+    // Setăm header-ul
+    cpr::Header header = {
+        {"Content-Type", "application/json"}
+    };
+
+
+    // Adăugăm timeout la request, deoarece pot exista situații când durează foarte mult.
+    const int miliseconds = 15000;
+    using json = nlohmann::json;
+    json json_body;
+    json_body["model"] = "local model";
+
+    json_body["messages"] = json::array({
+        // json::object({{"role", "system"}, {"content", "You are a helpful assistant"}}),
+        json::object({{"role", "user"}, {"content", prompt}, {"temperature", 0.0}, {"seed", 42}})
+    });
+    // std::cout << "sending " << json_body << "\n";
+    cpr::Body body = {json_body.dump()};
+    cpr::Response res = cpr::Post(api_link, body, header, cpr::Timeout{miliseconds}); // Facem o cerere la API
+
+    if(res.elapsed * 1000 > miliseconds)
+    {
+        std::cout << "Request timeout" << std::endl;
+        return {};
+    }
+    if(res.status_code != 200) // Dacă status code-ul nu este 200 înseamnă că a apărut o eroare
+    {
+        std::cout << "Oops!! Got status " << res.status_code << std::endl;
+        return {};
+    }
+    if(res.text.empty())
+    {
+        std::cout << "Empty response" << std::endl;
+        return {};
+    }
+
+    json json_resp = json::parse(res.text); // Parsăm răspunsul primit
+    // std::cout << res.text << "\n";
+    // std::cout << json_resp["choices"] << "\n";
+    std::string str_score = json_resp["choices"][0]["message"]["content"];
+    float score = std::stof(str_score);
+    return score;
+}
+*/
 
 int main()
 {
-    std::cout << std::endl << "================= Random Fact =================" << std::endl;
-    ShowRandomFact();
+    std::cout << std::endl << "================= Date Embeddings =================" << std::endl;
 
-    std::cout << std::endl;
+    std::string word1 = "N/A";
+    std::string word2 = "N/A";
 
-    std::cout << std::endl << "================= Date GitHub =================" << std::endl;
+    while(word1 != "" && word2 != "") {
+        std::cout << "> ";
+        std::getline(std::cin, word1);
+        std::cout << "> ";
+        std::getline(std::cin, word2);
 
-    std::string user;
-    std::cout << "Introdu un nume: "; std::cin >> user;
+        auto emb1 = getEmbeddings(word1);
+        auto emb2 = getEmbeddings(word2);
+        simsimd_distance_t distance;
+        simsimd_cos_f32(emb1.data(), emb2.data(), emb1.size(), &distance);
+        std::cout << "similarity " << word1 << " - " << word2 << ": " << distance << "\n";
 
-    ShowGithubAccountData(user);
-
+        // not very reliable, varies too much, not deterministic
+        // std::cout << "score: " << getScore(word1, word2) << "\n";
+    }
     return 0;
 }

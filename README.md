@@ -137,4 +137,7 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 - [cpr (1.11.0)](https://github.com/libcpr/cpr/releases/tag/1.11.0) (MIT)
 - [json (3.11.3)](https://github.com/nlohmann/json/releases/tag/v3.11.3) (MIT)
+- [llamafile (v0.9.1)](https://github.com/Mozilla-Ocho/llamafile) (Apache 2.0)
+- [simsimd (v6.4.0)](https://github.com/ashvardanian/simsimd) (Apache 2.0)
+  - pentru similaritate cosinus
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
