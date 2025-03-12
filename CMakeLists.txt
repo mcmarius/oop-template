@@ -53,6 +53,23 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(cpr)
 
 
+FetchContent_Declare(
+    simsimd
+    GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
+    GIT_TAG        v6.4.0
+    GIT_SHALLOW    1
+    GIT_PROGRESS   ON
+)
+FetchContent_GetProperties(simsimd)
+if(NOT simsimd_POPULATED)
+    FetchContent_Populate(simsimd)
+
+    # Copy an additional/replacement file into the populated source
+    # we override this because it has "/usr/include" hardcoded; we want a custom install location
+    file(COPY cmake/simsimd-patches/CMakeLists.txt DESTINATION ${simsimd_SOURCE_DIR})
+endif()
+
+
 ###############################################################################
 
 # external dependencies with find_package
@@ -87,6 +104,7 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
     ext/include/json
     ${cpr_SOURCE_DIR}/include
+    ${simsimd_SOURCE_DIR}/include
 )
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
@@ -105,6 +123,6 @@ if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
-copy_files(FILES tastatura.txt DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(FILES tastatura.txt scripts/run_llm.sh DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})

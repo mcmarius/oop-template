@@ -186,6 +186,7 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
   - Versiune: [1.14.2](https://github.com/libcpr/cpr/releases/tag/1.14.2) (MIT)
 - json
   - Versiune: [v3.11.3](https://github.com/nlohmann/json/releases/tag/v3.11.3) (MIT)
-- [GitHub API](https://docs.github.com/en/rest)
-- [Random facts API](https://uselessfacts.jsph.pl/)
+- [llamafile (v0.9.1)](https://github.com/Mozilla-Ocho/llamafile) (Apache 2.0)
+- [simsimd (v6.4.0)](https://github.com/ashvardanian/simsimd) (Apache 2.0)
+  - pentru similaritate cosinus
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
