@@ -1,2 +1,8 @@
-5
-11 22 33 44 55
+distracție
+students
+this is an example
+aceasta este o explicație
+totul merge perfect
+nu merge nimic
+penguin
+pidgeon
