@@ -71,7 +71,7 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    sf::Texture avion_texture;
+    //sf::Texture avion_texture;
     //sf::Text tip_avion(ResourceManager::Instance().getFont("FiraSans-Regular.ttf"));
     // sf::Texture dummyTexture; // @
 
@@ -83,7 +83,7 @@ int main() {
         return 0;
     }
 
-    sf::Sprite avion(avion_texture);
+    //sf::Sprite avion(avion_texture);
 
     //PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
 
@@ -127,7 +127,7 @@ int main() {
 
         window.clear();
 
-        window.draw(avion); // Afișăm avionul încărcat pe ecran
+        //window.draw(avion); // Afișăm avionul încărcat pe ecran
         //window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
