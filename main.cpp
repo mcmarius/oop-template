@@ -129,8 +129,8 @@ int main() {
 
         window.clear();
 
-        //window.draw(avion); // Afișăm avionul încărcat pe ecran
-        //window.draw(tip_avion); // Afișăm tipul avionului
+        window.draw(avion); // Afișăm avionul încărcat pe ecran
+        window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
     }
