@@ -7,9 +7,5 @@ EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop}
 
 tr -d '\r' < "${INPUT_FILENAME}" | \
   valgrind --leak-check=full \
-           --show-leak-kinds=all \
-           --leak-resolution=med \
-           --track-origins=yes \
-           --vgdb=no \
-           --error-exitcode=0 ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
+            ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
 bash ./scripts/run_test.sh 13 1 2
