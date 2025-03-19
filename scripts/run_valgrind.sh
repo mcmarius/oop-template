@@ -10,6 +10,7 @@ tr -d '\r' < "${INPUT_FILENAME}" | \
            --gen-suppressions=all \
            --show-leak-kinds=all \
            --leak-resolution=med \
+           --track-origins=yes \
            --vgdb=no \
            --suppressions=./scripts/valgrind-suppressions.supp \
            --error-exitcode=0 ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
