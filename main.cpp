@@ -76,7 +76,7 @@ int main() {
     // sf::Texture dummyTexture; // @
 
     try {
-        avion_texture = ResourceManager::Instance().getTexture("airplane.png");
+        //avion_texture = ResourceManager::Instance().getTexture("airplane.png");
         // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
     } catch(std::exception& exp) {
         std::cout << exp.what() << std::endl;
