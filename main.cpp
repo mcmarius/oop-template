@@ -83,7 +83,7 @@ int main() {
         return 0;
     }
 
-    //sf::Sprite avion(avion_texture);
+    sf::Sprite avion{avion_texture};
 
     //PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
 
