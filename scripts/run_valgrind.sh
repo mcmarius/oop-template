@@ -13,4 +13,4 @@ tr -d '\r' < "${INPUT_FILENAME}" | \
            --track-origins=yes \
            --suppressions=./scripts/valgrind-suppressions.supp \
            --error-exitcode=0 ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
-bash ./scripts/run_test.sh 13 1 2
+bash ./scripts/run_test.sh 25 4 8
