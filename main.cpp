@@ -71,7 +71,7 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    sf::Texture avion_texture;
+    sf::Texture avion_texture{ResourceManager::Instance().getTexture("airplane.png")};
     //sf::Text tip_avion(ResourceManager::Instance().getFont("FiraSans-Regular.ttf"));
     // sf::Texture dummyTexture; // @
 
