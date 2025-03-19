@@ -71,12 +71,12 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    /*sf::Font font = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
+    sf::Font font = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
 
-    sf::Texture avion_texture;
+    //sf::Texture avion_texture;
     sf::Text tip_avion(font);
     // sf::Texture dummyTexture; // @
-
+/*
     try {
         avion_texture = ResourceManager::Instance().getTexture("airplane.png");
         // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
@@ -90,7 +90,7 @@ int main() {
     PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
     */
 
-    //tip_avion.setString("An airplane");
+    tip_avion.setString("An airplane");
 
     while(window.isOpen()) {
         bool shouldExit = false;
@@ -130,7 +130,7 @@ int main() {
         window.clear();
 
         // window.draw(avion); // Afișăm avionul încărcat pe ecran
-        //window.draw(tip_avion); // Afișăm tipul avionului
+        window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
     }
