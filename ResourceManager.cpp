@@ -11,6 +11,13 @@ ResourceManager& ResourceManager::Instance()
     return instance;
 }
 
+ResourceManager::ResourceManager()
+{
+    loadTexture("images", "airplane.png");
+
+    loadFont("fonts", "FiraSans-Regular.ttf");
+}
+
 void ResourceManager::loadTexture(const std::string& path, const std::string& texture_name)
 {
     sf::Texture texture;
