@@ -68,14 +68,18 @@ int main() {
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
-    sf::Font font = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
+    ResourceManager::Instance().loadTexture("images", "airplane.png");
+
+    ResourceManager::Instance().loadFont("fonts", "FiraSans-Regular.ttf");
+
+    sf::Font font;// = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
 
     sf::Texture avion_texture;
     sf::Text tip_avion(font);
     // sf::Texture dummyTexture; // @
 
     try {
-        avion_texture = ResourceManager::Instance().getTexture("airplane.png");
+        // avion_texture = ResourceManager::Instance().getTexture("airplane.png");
         // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
     } catch(std::exception& exp) {
         std::cout << exp.what() << std::endl;

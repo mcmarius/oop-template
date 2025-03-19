@@ -27,13 +27,13 @@ public:
 
     sf::Texture& getTexture(const std::string& texture_name);
     sf::Font& getFont(const std::string& font_name);
-private:
-    ResourceManager();
-    ~ResourceManager() = default;
 
     // Funcțiile de `load*()` pot fi modificate în funcție de preferințele voastre
     void loadTexture(const std::string& path, const std::string& texture_name);
     void loadFont(const std::string& path, const std::string& font_name);
+private:
+    ResourceManager() = default;
+    ~ResourceManager() = default;
 
     std::unordered_map<std::string, sf::Texture> m_textures; // Aici vom ține toate texturile încărcate
     std::unordered_map<std::string, sf::Font> m_fonts; // Aici vom ține toate font-urile încărcate
