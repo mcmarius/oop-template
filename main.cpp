@@ -1,13 +1,8 @@
 #include <iostream>
-#include <array>
-#include <chrono>
-#include <thread>
 
 #include <SFML/Graphics.hpp>
 
 #include <Helper.h>
-
-#include "ResourceManager.hpp"
 
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
@@ -21,17 +16,6 @@ SomeClass *getC() {
 }
 //////////////////////////////////////////////////////////////////////
 
-void PersonalizeazaAvion(sf::Sprite& avion)
-{
-    avion.setScale({0.3f, 0.3f});
-    avion.setPosition({400, 350});
-
-    sf::FloatRect bounds = avion.getGlobalBounds();
-    avion.setOrigin({
-        bounds.position.x + bounds.size.x / 2,
-        bounds.position.y + bounds.size.y / 2
-    });
-}
 
 int main() {
     ///////////////////////////////////////////////////////////////////////////
@@ -54,43 +38,12 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////
     /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
     /// This is needed so we do not burn the GPU                            ///
-    // window.setVerticalSyncEnabled(true);                                 ///
-    window.setFramerateLimit(60);                                           ///
+    window.setVerticalSyncEnabled(true);                                    ///
+    /// window.setFramerateLimit(60);                                       ///
     ///////////////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////
-    /// Pentru a putea folosi resurse locale în cadrul programului trebuie modificat `CMakeLists.txt`.
-    /// Deschide `CMakeLists.txt` și dă scroll la final, unde sunt apelurile la funcția `copy_files()`.
-    ///
-    /// După pasul anterior, putem folosi resursele locale folosind sintaxa `ResourceManager::Instance().get*`, unde
-    /// * poate fi Texture, Font, Sound sau orice alt tip de resursă de care avem nevoie.
-    ////////////////////////////////////////////////////////
-
-    // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
-
-    sf::Font font = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
-
-    sf::Texture avion_texture;
-    sf::Text tip_avion(font);
-    // sf::Texture dummyTexture; // @
-
-    try {
-        avion_texture = ResourceManager::Instance().getTexture("airplane.png");
-        // dummyTexture = ResourceManager::Instance().getTexture("fizzbuzz.png"); // @
-    } catch(std::exception& exp) {
-        std::cout << exp.what() << std::endl;
-        return 0;
-    }
-
-    sf::Sprite avion(avion_texture);
-
-    PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
-
-    tip_avion.setString("An airplane");
-
+    // Bucla principală a aplicației.
     while(window.isOpen()) {
-        bool shouldExit = false;
-
         while(const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -104,29 +57,12 @@ int main() {
                 const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
                 std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
                 if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-                    shouldExit = true;
+                    window.close();
                 }
             }
         }
 
-        if(shouldExit) {
-            window.close();
-            std::cout << "Fereastra a fost închisă (shouldExit == true)\n";
-            break;
-        }
-
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(150ms);
-
-
-        float new_angle = avion.getRotation().asDegrees() + 1;
-        sf::Angle angle = sf::degrees(new_angle);
-        avion.setRotation(angle);
-
         window.clear();
-
-        window.draw(avion); // Afișăm avionul încărcat pe ecran
-        window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
     }
