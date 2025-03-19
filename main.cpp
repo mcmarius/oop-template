@@ -75,7 +75,7 @@ int main() {
     sf::Font font;// = ResourceManager::Instance().getFont("FiraSans-Regular.ttf");
 
     sf::Texture avion_texture;
-    // sf::Text tip_avion(font);
+    sf::Text tip_avion(font);
     // sf::Texture dummyTexture; // @
 
     try {
@@ -90,7 +90,7 @@ int main() {
 
     PersonalizeazaAvion(avion); // Este o funcție care modifică dimensiunea avionului și îi pune originea în centru.
 
-    // tip_avion.setString("An airplane");
+    tip_avion.setString("An airplane");
 
     while(window.isOpen()) {
         bool shouldExit = false;
@@ -129,8 +129,8 @@ int main() {
 
         window.clear();
 
-        window.draw(avion); // Afișăm avionul încărcat pe ecran
-        // window.draw(tip_avion); // Afișăm tipul avionului
+        //window.draw(avion); // Afișăm avionul încărcat pe ecran
+        //window.draw(tip_avion); // Afișăm tipul avionului
 
         window.display();
     }
