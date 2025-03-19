@@ -67,8 +67,7 @@ int main() {
     ////////////////////////////////////////////////////////
 
     ResourceManager::Instance().loadTexture("images", "airplane.png");
-
-    //loadFont("fonts", "FiraSans-Regular.ttf");
+    ResourceManager::Instance().loadFont("fonts", "FiraSans-Regular.ttf");
 
     // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
 
