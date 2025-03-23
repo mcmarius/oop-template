@@ -170,6 +170,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set timestamp, zip name, repo visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
 
