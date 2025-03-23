@@ -182,6 +182,8 @@ jobs:
           # the regex splits by / and keeps everything after / without the / character
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}${{ matrix.asan_name }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
           if [[ $(gh repo view "${{ github.repository }}" --json isPrivate -q ".isPrivate") == "true" ]]; then
+              echo "private"
+          else
               echo "PRIVATE_REPO=true" >> ${GITHUB_ENV}
           fi
 
