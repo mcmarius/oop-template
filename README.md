@@ -20,6 +20,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - **Fără copy-paste!**
 - **Fără variabile globale!**
 - **Fără atribute publice!**
+- **Pentru T2 și T3, fără date în cod!** Datele vor fi citite din fișier, aveți exemple destule.
 
 ### Tema 0
 
