@@ -144,6 +144,66 @@
 }
 
 {
+   <sfml_shared_context_load_extensions>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext13SharedContext14loadExtensionsEv
+   ...
+}
+
+{
+   <sfml_open_xim_ev>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv7openXimEv
+   ...
+}
+
+{
+   <sfml_glcontext_impl>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext4ImplC1Ev
+   ...
+}
+
+{
+   <sfml_open_display_ev>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv11openDisplayEv
+   ...
+}
+
+{
+   <sfml_window_impl_initializeEv>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   ...
+}
+
+{
+   <sfml_window_create_videomode_string_state>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjNS_5StateE
+   ...
+}
+
+{
    <swrast_dri_possible>
    Memcheck:Leak
    match-leak-kinds: possible
