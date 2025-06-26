@@ -204,6 +204,26 @@
 }
 
 {
+   <sfml_glcontext_getsharedcontext>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext16getSharedContextEv
+   ...
+}
+
+{
+   <sfml_glcontext_sharedcontext>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext13SharedContextC1Ev
+   ...
+}
+
+{
    <swrast_dri_possible>
    Memcheck:Leak
    match-leak-kinds: possible
