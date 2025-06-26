@@ -29,7 +29,7 @@ set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
 # din cauza SFML
-set(WARNINGS_AS_ERRORS OFF)
+set(SFML_WARNINGS_AS_ERRORS OFF)
 
 # NOTE: Also update SFML_VERSION env var in .github/workflows/cmake.yml:33
 FetchContent_Declare(
