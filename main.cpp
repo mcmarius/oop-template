@@ -1,13 +1,25 @@
-#include <iostream>
-#include <array>
+#include "ftxui/component/component.hpp"       // for Slider, Renderer, Vertical
+#include "ftxui/component/component_base.hpp"  // for ComponentBase
+#include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
+#include "ftxui/dom/elements.hpp"  // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
+#include "ftxui/screen/color.hpp"  // for Color
 
 #include <Helper.h>
 
+ftxui::Element ColorTile(int red, int green, int blue) {
+    return ftxui::text("") | ftxui::size(ftxui::WIDTH, ftxui::GREATER_THAN, 14) |
+           ftxui::size(ftxui::HEIGHT, ftxui::GREATER_THAN, 7) | ftxui::bgcolor(ftxui::Color::RGB(red, green, blue));
+}
+
+ftxui::Element ColorString(int red, int green, int blue) {
+    return ftxui::text("RGB = (" +             //
+                std::to_string(red) + "," +    //
+                std::to_string(green) + "," +  //
+                std::to_string(blue) + ")"     //
+    );
+}
+
 int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
     /////////////////////////////////////////////////////////////////////////
     /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
     /// dați exemple de date de intrare folosind fișierul tastatura.txt
@@ -28,17 +40,7 @@ int main() {
     /// program care merg (și să le evitați pe cele care nu merg).
     ///
     /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
+
     ///////////////////////////////////////////////////////////////////////////
     /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
     /// alt fișier propriu cu ce alt nume doriți.
@@ -53,5 +55,48 @@ int main() {
     Helper helper;
     helper.help();
     ///////////////////////////////////////////////////////////////////////////
+    ///
+    ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::TerminalOutput();
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                    Exemplu culori RGB                                           ///
+    ///                                                                                                 ///
+    ///    Sursa: https://github.com/ArthurSonzogni/FTXUI/blob/main/examples/component/slider_rgb.cpp   ///
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    int red = 128;
+    int green = 25;
+    int blue = 100;
+    ftxui::Component slider_red = ftxui::Slider("Red  :", &red, 0, 255, 1);
+    ftxui::Component slider_green = ftxui::Slider("Green:", &green, 0, 255, 1);
+    ftxui::Component slider_blue = ftxui::Slider("Blue :", &blue, 0, 255, 1);
+
+    ftxui::Component container = ftxui::Container::Vertical({
+        slider_red,
+        slider_green,
+        slider_blue,
+    });
+
+    ftxui::Component renderer = ftxui::Renderer(container, [&] {
+        return ftxui::hbox({
+                   ColorTile(red, green, blue),
+                   ftxui::separator(),
+                   ftxui::vbox({
+                       slider_red->Render(),
+                       ftxui::separator(),
+                       slider_green->Render(),
+                       ftxui::separator(),
+                       slider_blue->Render(),
+                       ftxui::separator(),
+                       ColorString(red, green, blue),
+                   }) | ftxui::xflex,
+               }) |
+               ftxui::border | ftxui::size(ftxui::WIDTH, ftxui::LESS_THAN, 80);
+    });
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    screen.Loop(renderer);
+
+
     return 0;
 }
