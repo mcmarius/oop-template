@@ -29,10 +29,10 @@ include(cmake/RegisterTests.cmake)
 
 # External dependencies with FetchContent
 
-# include(FetchContent)
+include(FetchContent)
 #
-# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
+set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
 #
 # NOTE: Also update env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
@@ -47,6 +47,16 @@ include(cmake/RegisterTests.cmake)
 # )
 #
 # FetchContent_MakeAvailable(SomeLib)
+
+FetchContent_Declare(
+    ftxui
+    GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui.git
+    GIT_TAG        v6.1.9 # <which tag/branch @ <some_date>>
+    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS   ON
+)
+
+FetchContent_MakeAvailable(ftxui)
 
 ###############################################################################
 
@@ -103,10 +113,11 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} ftxui::component ftxui::dom ftxui::screen)
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+
 
 ###############################################################################
 
