@@ -23,6 +23,7 @@ run_valgrind() {
              --gen-suppressions=all \
              --suppressions=./scripts/valgrind-suppressions.supp \
              --error-exitcode=1 \
+             --suppressions=./scripts/valgrind-suppressions.supp \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
 }
 
