@@ -69,4 +69,5 @@ runs:
         cat "${INPUT_FILENAME}" | tr -d '\r' | valgrind \
             --leak-check=full --show-leak-kinds=all --track-origins=yes \
             --error-exitcode=1 \
+            --suppressions=valgrind-suppressions.supp \
             ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}"
