@@ -14,18 +14,22 @@ project(${MAIN_PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+if (MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address /DANNOTATE_STRING=1 /DANNOTATE_VECTOR=1")
+endif()
 
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
 
+
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
+include(FetchContent)
 #
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
@@ -38,6 +42,15 @@ include(cmake/CopyHelper.cmake)
 # )
 #
 # FetchContent_MakeAvailable(SomeLib)
+
+FetchContent_Declare(
+        ftxui
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui.git
+        GIT_TAG        v6.1.9 # <which tag/branch @ <some_date>>
+        GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+)
+
+FetchContent_MakeAvailable(ftxui)
 
 ###############################################################################
 
@@ -66,6 +79,8 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+
+target_link_libraries(${MAIN_EXECUTABLE_NAME} ftxui::component ftxui::dom ftxui::screen)
 
 ###############################################################################
 
