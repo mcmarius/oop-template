@@ -6,8 +6,6 @@
 
 #include <Helper.h>
 
-#include "ftxui/component/loop.hpp"
-
 ftxui::Element ColorTile(int red, int green, int blue) {
     return ftxui::text("") | ftxui::size(ftxui::WIDTH, ftxui::GREATER_THAN, 14) |
            ftxui::size(ftxui::HEIGHT, ftxui::GREATER_THAN, 7) | ftxui::bgcolor(ftxui::Color::RGB(red, green, blue));
