@@ -6,6 +6,8 @@
 
 #include <Helper.h>
 
+#include "ftxui/component/loop.hpp"
+
 ftxui::Element ColorTile(int red, int green, int blue) {
     return ftxui::text("") | ftxui::size(ftxui::WIDTH, ftxui::GREATER_THAN, 14) |
            ftxui::size(ftxui::HEIGHT, ftxui::GREATER_THAN, 7) | ftxui::bgcolor(ftxui::Color::RGB(red, green, blue));
@@ -95,8 +97,18 @@ int main() {
     ///////////////////////////////////////////////////////////////////////////////
 
 
+
+    //////////////////////////////////////////////////////////////////////
+    ///           Programul se va opri automat dupa 5 secunde           //
+    std::thread auto_close([&] {                                //
+        std::this_thread::sleep_for(std::chrono::seconds(5));  //
+        screen.Exit();                                                  //
+    });                                                                 //
+    //////////////////////////////////////////////////////////////////////
+
     screen.Loop(renderer);
 
+    auto_close.join();
 
     return 0;
 }
