@@ -14,10 +14,14 @@ project(${MAIN_PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+if (MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DANNOTATE_STRING=1 -DANNOTATE_VECTOR=1")
+endif()
 
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
+
 
 ###############################################################################
 
