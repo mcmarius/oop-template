@@ -7,6 +7,10 @@ on:
   # pull_request:
   #   branches: ['**'] # NOTE: replace/update with appropriate branch name(s)
   workflow_dispatch: {}
+
+permissions:
+  contents: write
+
 jobs:
   remove-dependabot:
     name: "Remove Dependabot"
