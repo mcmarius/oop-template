@@ -10,6 +10,6 @@ updates:
       prefix: "Update"
     allow:
       - dependency-name: "suisei-cn/actions-download-file"
-      - dependency-name: "TheDoctor0/zip-release"
+      - dependency-name: "thedoctor0/zip-release"
       - dependency-name: "actions/attest-build-provenance"
       - dependency-name: "softprops/action-gh-release"
