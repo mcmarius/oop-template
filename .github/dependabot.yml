@@ -6,6 +6,7 @@ updates:
       - "/.github/actions/**"   # .github/actions/
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5 # default value; check https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#open-pull-requests-limit-
     commit-message:
       prefix: "Update"
     allow:
