@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"                     # .github/workflows
+      - "/.github/actions/**"   # .github/actions/
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "Update"
+    allow:
+      - dependency-name: "suisei-cn/actions-download-file"
+      - dependency-name: "TheDoctor0/zip-release"
+      - dependency-name: "actions/attest-build-provenance"
+      - dependency-name: "softprops/action-gh-release"

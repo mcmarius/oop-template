@@ -18,7 +18,7 @@ runs:
         mv ${{ env.ZIP_NAME }} ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}
 
     - name: Archive Release
-      uses: thedoctor0/zip-release@master
+      uses: thedoctor0/zip-release@0.7.6
       if: startsWith(github.ref, 'refs/tags/')
       with:
         type: 'zip'
