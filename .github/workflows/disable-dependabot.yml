@@ -1,0 +1,22 @@
+name: Disable Dependabot
+
+on:
+  push:
+    branches: ['**'] # NOTE: replace/update with appropriate branch name(s)
+    tags: ['**']
+  # pull_request:
+  #   branches: ['**'] # NOTE: replace/update with appropriate branch name(s)
+  workflow_dispatch: {}
+jobs:
+  remove-dependabot:
+    name: "Remove Dependabot"
+    if: github.repository != 'mcmarius/oop-template'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout repo
+        run: |
+          git rm -f .github/dependabot.yml
+          git rm -f .github/workflows/disable-dependabot.yml
+          git commit -m "remove Dependabot"
+          git push
