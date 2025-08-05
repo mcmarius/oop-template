@@ -15,8 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Checkout repo
-        run: |
+        run: | # github-actions name and email: https://github.com/orgs/community/discussions/160496#discussioncomment-625461
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
           git rm -f .github/dependabot.yml
           git rm -f .github/workflows/disable-dependabot.yml
-          git commit -m "remove Dependabot"
+          git commit -m "Remove Dependabot"
           git push
