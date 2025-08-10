@@ -12,7 +12,7 @@ jobs:
         
       - name: Run Renovate
         # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
-        uses: renovatebot/github-action@v43.0.4
+        uses: renovatebot/github-action@v43.0.6
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
