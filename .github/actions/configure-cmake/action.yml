@@ -30,6 +30,7 @@ runs:
     # Using the workaround found here: https://github.com/actions/cache/issues/171
     # Since this cache is small, it should not fill the cache too much
     - name: Cache Ninja deps
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
       uses: actions/cache@v4
       if: matrix.cmake_generator == 'Ninja'
       id: cache-deps-ninja
@@ -41,6 +42,7 @@ runs:
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-ninja-cache-
 
     - name: Cache MinGW
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
       uses: actions/cache@v4
       id: cache-mingw
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -49,6 +51,7 @@ runs:
         key: ${{ runner.os }}-${{ env.MINGW_VER }}
 
     - name: Download toolchain (MinGW)
+      # renovate: datasource=github-tags depName=suisei-cn/actions-download-file versioning=loose
       uses: suisei-cn/actions-download-file@v1.6.0
       id: download-mingw-gcc
       if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
