@@ -7,10 +7,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v4
         
       - name: Run Renovate
-        uses: renovatebot/github-action@v43.0.6
+        # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
+        uses: renovatebot/github-action@v43.0.4
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
@@ -18,4 +20,4 @@ jobs:
           RENOVATE_REQUIRE_CONFIG: "optional"
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: .github/renovate_ci.json
+          configurationFile: .github/renovate-ci.json
