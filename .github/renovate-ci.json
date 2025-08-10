@@ -6,6 +6,7 @@
       "customType": "regex",
       "managerFilePatterns": [
         ".github/workflows/cmake.yml",
+        ".github/workflows/renovate-ci.yml",
         ".github/actions/**/action.yml"
       ],
       "matchStrings": [
