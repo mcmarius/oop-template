@@ -1,0 +1,28 @@
+{
+  "recreateWhen": "always",
+  "enabledManagers": ["regex"],
+  "baseBranches": [
+		"baze-de-date/pqxx"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        ".github/workflows/*.yml",
+				".github/actions/**/*.yml",
+				"CMakeLists.txt",
+				"README.md"
+      ],
+      "matchStrings": [
+				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+PQXX_VERSION: \"(?<currentValue>\\S+)\"",
+				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+GIT_TAG (?<currentValue>\\S+)",
+				"<!--\\s+renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+)\\s+-->\\s+.*: tag (?<currentVersion>\\S+)"
+			],
+      "datasourceTemplate": "{{{datasource}}}",
+      "depNameTemplate": "{{{depName}}}",
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
+    }
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0
+}
