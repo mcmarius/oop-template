@@ -9,7 +9,7 @@
         ".github/actions/**/*.yml"
       ],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?) versioning=(?<versioning>.*?)\\s+uses: \\S*@(?<currentValue>\\S*)",
+        "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+uses: \\S*@(?<currentValue>\\S*)"
       ],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",
