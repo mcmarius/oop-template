@@ -16,8 +16,7 @@
       "matchStrings": [
 				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+PQXX_VERSION: \"(?<currentValue>\\S+)\"",
 				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+GIT_TAG (?<currentValue>\\S+)",
-				"<!--\\s+renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+)\\s+-->\\s+.*: tag (?<currentVersion>\\S+)",
-				"# renovate datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) versioning=(?<versioning>\\S+)\\s+GIT_TAG (?<currentVersion>\\S+)"
+				"<!--\\s+renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+)\\s+-->\\s+.*: tag (?<currentVersion>\\S+)"
 			],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",
