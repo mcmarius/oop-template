@@ -44,6 +44,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 FetchContent_Declare(
         pqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+        # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
         GIT_TAG 7.9.2
         GIT_SHALLOW    1
         GIT_PROGRESS ON
