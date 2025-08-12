@@ -145,6 +145,7 @@ funcționează, consultați [README_Tests](./tests/README_Tests.md)
 - GTest
   - Github: https://github.com/google/googletest
   - Documentation: https://google.github.io/googletest/
-  - Versiunea folosită: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
+  <!-- renovate: datasource=github-tags depName=google/googletest versioning=loose -->
+  - Versiune: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
 
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
