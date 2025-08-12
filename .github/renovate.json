@@ -2,7 +2,8 @@
   "recreateWhen": "always",
   "enabledManagers": ["regex"],
   "baseBranches": [
-		"baze-de-date/sqlite"
+		"baze-de-date/sqlite",
+    "tests/gtest"
   ],
   "customManagers": [
     {
@@ -16,7 +17,7 @@
       "matchStrings": [
 				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+PQXX_VERSION: \"(?<currentValue>\\S+)\"",
 				"# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+GIT_TAG (?<currentValue>\\S+)",
-				"<!--\\s+renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+)\\s+-->\\s+.*: tag (?<currentVersion>\\S+)"
+        "<!--\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+versioning=(?<versioning>\\S+)\\s*-->\\s*-\\s*Versiunea\\s+folosită:\\s*\\[v(?<currentValue>[^\\]]+)\\]\\([^\\)]+\\)"
 			],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",
