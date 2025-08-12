@@ -5,6 +5,7 @@ FetchContent_Declare(
     gtest
     SYSTEM
     GIT_REPOSITORY https://github.com/google/googletest.git
+    # renovate: datasource=github-tags depName=google/googletest versioning=loose
     GIT_TAG        v1.15.2
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
