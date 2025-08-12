@@ -2,6 +2,7 @@
   "recreateWhen": "always",
   "enabledManagers": ["regex"],
   "baseBranches": [
+    "baze-de-date/pqxx",
 		"baze-de-date/sqlite",
     "tests/gtest"
   ],
