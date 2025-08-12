@@ -34,6 +34,7 @@ env:
   LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
   PQXX_VERSION: "7.9.2"
   DATABASE_USER: oop
   DATABASE_PASSWORD: ooppa55
