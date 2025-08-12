@@ -43,6 +43,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 FetchContent_Declare(
         pqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git
+        # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
         GIT_TAG 7.9.2
 )
 
