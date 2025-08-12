@@ -1,4 +1,4 @@
-name: Renovate CI
+name: Renovate OS
 on:
   workflow_dispatch: {}
 
@@ -21,4 +21,4 @@ jobs:
           RENOVATE_REQUIRE_CONFIG: "optional"
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: .github/renovate-ci.json
+          configurationFile: .github/renovate-os.json
