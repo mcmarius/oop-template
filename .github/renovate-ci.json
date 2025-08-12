@@ -5,9 +5,8 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        ".github/workflows/cmake.yml",
-        ".github/workflows/renovate-ci.yml",
-        ".github/actions/**/action.yml"
+        ".github/workflows/*.yml",
+        ".github/actions/**/*.yml"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?\\s+uses:\\s*\\S+@(?<currentValue>[^\\s#]+)",
