@@ -111,6 +111,7 @@ jobs:
             cxx: clang++-18
             clang_ver: "18"
             clang_ver_full: "18.1.8"
+            # renovate: depName=ubuntu
             name: "MSan: Ubuntu 22.04 Clang 18"
             cmake_flags: "-DUSE_MSAN=ON"
             cmake_generator: Ninja
@@ -121,6 +122,7 @@ jobs:
           - os: ubuntu-22.04
             c: gcc-12
             cxx: g++-12
+            # renovate: depName=ubuntu
             name: "ASan: Ubuntu 22.04 GCC 12"
             cmake_flags: "-DUSE_ASAN=ON"
             cmake_generator: Ninja
@@ -133,6 +135,7 @@ jobs:
           - os: ubuntu-22.04
             c: gcc-12
             cxx: g++-12
+            # renovate: depName=ubuntu
             name: "Valgrind: Ubuntu 22.04 GCC 12"
             # cmake_flags:
             cmake_generator: Ninja
@@ -143,6 +146,7 @@ jobs:
           - os: macos-14
             c: clang
             cxx: clang++
+            # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
             cmake_flags: "-DUSE_ASAN=OFF"
             # cmake_generator:
@@ -153,6 +157,7 @@ jobs:
           - os: macos-14
             c: gcc-13
             cxx: g++-13
+            # renovate: depName=macos
             name: "macOS 14 GCC 13"
             # cmake_flags:
             # cmake_generator: Ninja
@@ -161,6 +166,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
+            # renovate: depName=windows
             name: "ASan: Windows 2022 MSVC 19.43"
             cmake_flags: "-DUSE_ASAN=ON"
             # Ninja is not faster on MSVC because... MSVC
@@ -173,6 +179,7 @@ jobs:
           - os: windows-2022
             c: gcc
             cxx: g++
+            # renovate: depName=windows
             name: "Windows 2022 MinGW GCC 13"
             # cmake_flags:
             cmake_generator: Ninja
