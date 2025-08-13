@@ -21,4 +21,4 @@ jobs:
           RENOVATE_REQUIRE_CONFIG: "optional"
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
-          configurationFile: .github/renovate.json
+          configurationFile: .github/renovate-deps.json
