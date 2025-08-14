@@ -204,7 +204,6 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-
-- [SFML](https://github.com/SFML/SFML/tree/2.6.2) (Zlib)
-  - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
+<!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
+- [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
