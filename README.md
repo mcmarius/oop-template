@@ -147,7 +147,7 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 
 ## Resurse
-
+<!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
 - [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
