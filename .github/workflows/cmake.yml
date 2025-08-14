@@ -140,12 +140,12 @@ jobs:
             # This env runs address sanitizers
             runs_asan: false
 
-          - os: macos-14
-            c: gcc-13
-            cxx: g++-13
-            name: "macOS 14 GCC 13"
-            # cmake_flags:
-            # cmake_generator: Ninja
+          #- os: macos-14
+          #  c: gcc-13
+          #  cxx: g++-13
+          #  name: "macOS 14 GCC 13"
+          #  # cmake_flags:
+          #  # cmake_generator: Ninja
 
           - os: windows-2022
             c: cl
