@@ -153,5 +153,5 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 ## Resurse
 
-- [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
+- [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
