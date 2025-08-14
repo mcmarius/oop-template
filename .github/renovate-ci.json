@@ -13,7 +13,6 @@
       ],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",
-      "extractVersionTemplate": "^v?(?<version>.*)$",
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver-coerced{{/if}}"
     }
   ],
