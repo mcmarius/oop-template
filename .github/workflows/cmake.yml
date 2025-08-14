@@ -27,7 +27,7 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-  GEN_DIR: "generated"
+
 
 defaults:
   run:
@@ -150,7 +150,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.43"
+            name: "ASan: Windows 2022 MSVC 19.44"
             cmake_flags: "-DUSE_ASAN=ON"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
