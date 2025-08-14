@@ -26,7 +26,6 @@ include(FetchContent)
 
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-# din cauza SFML
 set(SFML_WARNINGS_AS_ERRORS OFF)
 
 # NOTE: Also update SFML_VERSION and other env vars used for caching in
@@ -35,7 +34,9 @@ set(SFML_WARNINGS_AS_ERRORS OFF)
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
+    # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
     GIT_TAG        3.0.0
+    # renovate: depName=SFML/SFML
     # GIT_TAG        7f1162dfea4969bc17417563ac55d93b72e84c1e # 3.0.0
     # GIT_TAG        origin/master
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes

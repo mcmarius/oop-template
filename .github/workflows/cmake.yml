@@ -33,7 +33,8 @@ env:
   EXT_DIR: "ext"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
-  SFML_VERSION: "2024-12-21-3.0.0"
+  # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
+  SFML_VERSION: "3.0.0"
 
 defaults:
   run:
