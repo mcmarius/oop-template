@@ -50,7 +50,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5.0.0
 
       - name: Run cppcheck
         uses: ./.github/actions/cppcheck
@@ -60,13 +60,13 @@ jobs:
     # concurrency:
     #   group: "Clang-Tidy"
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       CLANG_VER: 18
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5.0.0
 
       - name: Run clang-tidy
         uses: ./.github/actions/clang-tidy
@@ -170,7 +170,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5.0.0
 
       - name: Set timestamp, zip name, repo visibility
         env:
@@ -220,7 +220,7 @@ jobs:
 
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
           include-hidden-files: true
