@@ -5,6 +5,7 @@ runs:
   using: "composite"
   steps:
     - name: Cache restore tools
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
       uses: actions/cache/restore@v4
       if: runner.os == 'Linux' && matrix.runs_msan == true
       id: cache-tools
@@ -35,6 +36,7 @@ runs:
         cmake --build build -j6 -- cxx cxxabi
 
     - name: Cache save tools
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
       uses: actions/cache/save@v4
       if: runner.os == 'Linux' && matrix.runs_msan == true && steps.cache-tools.outputs.cache-hit != 'true'
       with:
