@@ -6,7 +6,7 @@ runs:
   steps:
     - name: Cache cppcheck
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v4.2.4
       id: cache-cppcheck
       with:
         path: cppcheck
@@ -20,7 +20,7 @@ runs:
 
     - name: Save cppcheck cache
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v4.2.4
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
       with:
         path: cppcheck
