@@ -5,7 +5,7 @@
     "main",
     "tests/gtest",
     "baze-de-date/pqxx",
-    "sfml3.0"
+    "sfml3"
   ],
   "customManagers": [
     {
