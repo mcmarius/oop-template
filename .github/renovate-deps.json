@@ -23,7 +23,7 @@
         "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+.*: \"(?<currentValue>\\S+)\"",
         "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+GIT_TAG\\s+(?<currentValue>\\S+)",
         "<!--\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+versioning=(?<versioning>\\S+)\\s*-->\\s*-\\s*Versiunea\\s+folosită:\\s*\\[v(?<currentValue>[^\\]]+)\\]\\([^\\)]+\\)",
-        "<!--\\s+renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) versioning=(?<versioning>\\S+)\\s+-->\\s+.*\/tree\/(?<currentValue>\\S+)"
+        "<!--\\s+renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) versioning=(?<versioning>\\S+)\\s+-->\\s+.*\/tree\/(?<currentValue>\\S+)\\)"
       ],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",
