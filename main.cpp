@@ -5,8 +5,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <Helper.h>
-
 //////////////////////////////////////////////////////////////////////
 /// This class is used to test that the memory leak checks work as expected even when using a GUI
 class SomeClass {
@@ -65,11 +63,6 @@ int main() {
     /// for(int i = 0; i < nr2; ++i)
     ///     fis >> v2[i];
     ///
-    ///////////////////////////////////////////////////////////////////////////
-    ///                Exemplu de utilizare cod generat                     ///
-    ///////////////////////////////////////////////////////////////////////////
-    Helper helper;
-    helper.help();
     ///////////////////////////////////////////////////////////////////////////
 
     SomeClass *c = getC();
