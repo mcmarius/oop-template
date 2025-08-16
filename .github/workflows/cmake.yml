@@ -60,7 +60,7 @@ jobs:
     # concurrency:
     #   group: "Clang-Tidy"
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       CLANG_VER: 18
     steps:
@@ -220,7 +220,7 @@ jobs:
 
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
           include-hidden-files: true
