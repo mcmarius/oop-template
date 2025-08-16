@@ -14,7 +14,7 @@ jobs:
         
       - name: Run Renovate
         # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
-        uses: renovatebot/github-action@v43.0.6
+        uses: renovatebot/github-action@v43.0.7
         if: ${{ github.repository == 'mcmarius/oop-template' }}
         env:
           LOG_LEVEL: debug
