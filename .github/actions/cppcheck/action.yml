@@ -9,7 +9,8 @@ runs:
       uses: ./.github/actions/install-linux-deps
 
     - name: Cache cppcheck
-      uses: actions/cache/restore@v4
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
+      uses: actions/cache/restore@v4.2.4
       id: cache-cppcheck
       with:
         path: cppcheck
@@ -22,7 +23,8 @@ runs:
         bash ./scripts/build_cppcheck.sh -v ${CPPCHECK_VER}
 
     - name: Save cppcheck cache
-      uses: actions/cache/save@v4
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
+      uses: actions/cache/save@v4.2.4
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
       with:
         path: cppcheck

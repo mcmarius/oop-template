@@ -27,7 +27,6 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
-  GEN_DIR: "generated"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
   # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
@@ -53,7 +52,8 @@ jobs:
       CPPCHECK_VER: "2.14.2"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5.0.0
 
       - name: Run cppcheck
         uses: ./.github/actions/cppcheck
@@ -63,12 +63,13 @@ jobs:
     # concurrency:
     #   group: "Clang-Tidy"
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       CLANG_VER: 18
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5.0.0
 
       - name: Run clang-tidy
         uses: ./.github/actions/clang-tidy
@@ -154,7 +155,7 @@ jobs:
           - os: windows-2022
             c: cl
             cxx: cl
-            name: "ASan: Windows 2022 MSVC 19.43"
+            name: "ASan: Windows 2022 MSVC 19.44"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=TRUE"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -171,9 +172,12 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5.0.0
 
-      - name: Set timestamp and zip name
+      - name: Set timestamp, zip name, repo visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           echo "TIMESTAMP=$(date +%Y-%m-%d-%H-%M-%S)" >> ${GITHUB_ENV}
 
@@ -183,6 +187,11 @@ jobs:
           # or use only the repo name (github does not have a predefined environment variable for this)
           # the regex splits by / and keeps everything after / without the / character
           # echo "ZIP_NAME=$(echo "${GITHUB_REPOSITORY}_${{ env.BUILD_TYPE }}_${{ matrix.os }}_${{ matrix.cxx }}${{ matrix.asan_name }}" | sed -E 's|.+/(.+)|\1|')" >> ${GITHUB_ENV}
+          if [[ $(gh repo view "${{ github.repository }}" --json isPrivate -q ".isPrivate") == "true" ]]; then
+              echo "PRIVATE_REPO=true" >> ${GITHUB_ENV}
+          else
+              echo "Public repo"
+          fi
 
       - name: Install packages
         uses: ./.github/actions/install-packages
@@ -213,7 +222,8 @@ jobs:
         uses: ./.github/actions/process-artifacts
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
           include-hidden-files: true

@@ -23,12 +23,18 @@ runs:
 
     # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
     # - name: Install Clang ${{ matrix.clang_ver }}
-    #   shell: bash
     #   if: runner.os == 'Linux' && matrix.runs_msan == true
-    #   run: |
-    #     wget https://apt.llvm.org/llvm.sh
-    #     chmod +x ./llvm.sh
-    #     sudo ./llvm.sh ${{ matrix.clang_ver }}
+    #   # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
+    #   uses: nick-fields/retry@v3
+    #   with:
+    #     shell: bash
+    #     timeout_minutes: 5
+    #     max_attempts: 3
+    #     retry_on: error
+    #     command: |
+    #       wget https://apt.llvm.org/llvm.sh
+    #       chmod +x ./llvm.sh
+    #       sudo ./llvm.sh ${{ matrix.clang_ver }}
 
     # - name: Install libc++ (Linux Clang ${{ matrix.clang_ver }})
     #   shell: bash

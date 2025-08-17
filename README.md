@@ -10,9 +10,11 @@
 
 ### Important!
 
-Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
+Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar dacă documentați riguros acest proces.
 Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
 în care oferă funcționalități ajutătoare și doar dacă are sens.
+
+Codul din proiect trebuie să poată fi ușor de înțeles și de modificat de către altcineva. Pentru detalii, veniți la ore.
 
 O cerință nu se consideră îndeplinită dacă este realizată doar prin cod generat.
 
@@ -20,6 +22,9 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - **Fără copy-paste!**
 - **Fără variabile globale!**
 - **Fără atribute publice!**
+- **Pentru T2 și T3, fără date în cod!** Datele vor fi citite din fișier, aveți exemple destule.
+- **Obligatoriu** fișiere cu date mai multe din care să citiți
+- _aproape_ obligatoriu să integrați cel puțin două biblioteci externe
 
 ### Tema 0
 
@@ -116,7 +121,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 # sau ./scripts/cmake.sh configure
 ```
 
-Sau pe Windows cu GCC:
+Sau pe Windows cu GCC folosind Git Bash:
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
 # sau ./scripts/cmake.sh configure -g Ninja
