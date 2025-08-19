@@ -1,6 +1,24 @@
 {
   "recreateWhen": "always",
   "enabledManagers": ["regex"],
+  "baseBranches": [
+    "main",
+    "tests/gtest",
+    "tests/Boost-ext-ut",
+    "sfml3",
+    "sfml3-resurse-locale",
+    "sfml3-imagini-externe-api",
+    "sfml2",
+    "sfml2-resurse-locale",
+    "sfml2-imagini-externe-api",
+    "llms",
+    "http-server",
+    "ftxui",
+    "descarcare-date-api",
+    "common-libs",
+    "baze-de-date/sqlite",
+    "baze-de-date/pqxx"
+  ],
   "customManagers": [
     {
       "customType": "regex",
