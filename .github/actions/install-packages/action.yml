@@ -18,7 +18,7 @@ runs:
     - name: Install Clang ${{ matrix.clang_ver }}
       if: runner.os == 'Linux' && matrix.runs_msan == true
       # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
-      uses: nick-fields/retry@v3
+      uses: nick-fields/retry@v3.0.2
       with:
         shell: bash
         timeout_minutes: 5
