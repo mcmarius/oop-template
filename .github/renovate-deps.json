@@ -12,10 +12,8 @@
     "main",
     "sfml2",
     "sfml2-imagini-externe-api",
-    "sfml2-resurse-locale",
     "sfml3",
     "sfml3-imagini-externe-api",
-    "sfml3-resurse-locale",
     "tests/Boost-ext-ut",
     "tests/gtest"
   ],
