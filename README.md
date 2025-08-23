@@ -181,4 +181,6 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Resurse
 
+- ftxui
+  - Versiune: [v6.1.9](https://github.com/ArthurSonzogni/ftxui/releases/tag/v6.1.9) (MIT)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
