@@ -205,5 +205,8 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 - [SFML](https://github.com/SFML/SFML/tree/2.6.2) (Zlib)
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
+- [cpr](https://github.com/libcpr/cpr.git)
+  <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
+  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/1.11.0)
 - [Cataas (Cats API)](https://cataas.com/)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
