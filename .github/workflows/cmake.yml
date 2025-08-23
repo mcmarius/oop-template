@@ -31,6 +31,7 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
   CPR_VERSION: "1.11.0"
 
 defaults:
