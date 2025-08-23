@@ -159,4 +159,7 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
 - [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
 - [Cat API](https://cataas.com/)
+- [cpr](https://github.com/libcpr/cpr)
+  <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
+  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
