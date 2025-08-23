@@ -34,6 +34,7 @@ env:
   LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  # renovate: datasource=github-tags depName=ArthurSonzogni/ftxui versioning=loose
   FTXUI_VERSION: "v6.1.9"
 
 
