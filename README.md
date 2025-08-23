@@ -182,6 +182,7 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 ## Resurse
 
 - cpr
+  <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
   - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0) (MIT)
 - json
   - Versiune: [v3.11.3](https://github.com/nlohmann/json/releases/tag/v3.11.3) (MIT)
