@@ -43,6 +43,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 FetchContent_Declare(
     ftxui
     GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui.git
+    # renovate: datasource=github-tags depName=ArthurSonzogni/ftxui versioning=loose
     GIT_TAG        v6.1.9 # <which tag/branch @ <some_date>>
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS   ON
