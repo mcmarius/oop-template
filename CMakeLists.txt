@@ -54,6 +54,7 @@ FetchContent_MakeAvailable(cpr)
 FetchContent_Declare(
     simsimd
     GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
+    # renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose
     GIT_TAG        v6.4.0
     GIT_SHALLOW    1
 )
