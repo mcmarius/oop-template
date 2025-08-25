@@ -1,0 +1,25 @@
+{
+  "recreateWhen": "always",
+  "enabledManagers": ["regex"],
+  "baseBranches": [
+    "main"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        ".github/workflows/*.yml"
+      ],
+      "matchStrings": [
+				"# renovate: depName=(?<depName>\\S+)\\s+runs-on: \\S+-(?<currentValue>\\S+)",
+				"# renovate: depName=(?<depName>\\S+)\\s+- os: \\S+-(?<currentValue>\\S+)",
+        "# renovate: depName=(?<depName>\\S+)\\s+name:\\s.*\\b(?:Ubuntu|macOS|Windows)\\s+(?<currentValue>\\S+)"
+    	],
+      "datasourceTemplate": "github-runners",
+      "depNameTemplate": "{{{depName}}}",
+      "versioningTemplate": "docker"
+    }
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0
+}
