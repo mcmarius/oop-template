@@ -22,7 +22,6 @@
       "customType": "regex",
       "managerFilePatterns": [
         ".github/workflows/*.yml",
-        ".github/actions/**/*.yml",
         "CMakeLists.txt",
         "README.md",
         "tests/CMakeLists.txt",
