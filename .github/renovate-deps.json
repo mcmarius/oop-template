@@ -32,7 +32,7 @@
         "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+.*: \"(?<currentValue>\\S+)\"",
         "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+GIT_TAG\\s+(?<currentValue>\\S+)",
         "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+#\\s*GIT_TAG\\s+[0-9a-fA-F]{40}\\s+#\\s*(?<currentValue>\\S+)",
-        "<!--\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+versioning=(?<versioning>\\S+)\\s*-->\\s*-\\s*Versiune:\\s*\\[v(?<currentValue>[^\\]]+)\\]\\([^\\)]+\\)",
+        "<!--\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s+versioning=(?<versioning>\\S+)\\s*-->\\s*-\\s*Versiune:\\s*\\[v*(?<currentValue>[^\\]]+)\\]\\([^\\)]+\\)",
         "<!--\\s+renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) versioning=(?<versioning>\\S+)\\s+-->\\s+.*\\/tree\\/(?<currentValue>\\S+)\\)"
       ],
       "datasourceTemplate": "{{{datasource}}}",
