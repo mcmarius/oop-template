@@ -37,6 +37,9 @@ function(set_compiler_flags)
         # sanitizers
         if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
             set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
+            set_custom_stdlib_and_sanitizers(screen true) # ftxui::screen
+            set_custom_stdlib_and_sanitizers(dom true) # ftxui::dom
+            set_custom_stdlib_and_sanitizers(component true) # ftxui::component
         endif ()
     endforeach ()
 endfunction()
