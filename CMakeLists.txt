@@ -14,9 +14,6 @@ project(${MAIN_PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address /DANNOTATE_STRING=1 /DANNOTATE_VECTOR=1")
-endif()
 
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
@@ -81,7 +78,7 @@ set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} ftxui::component ftxui::dom ftxui::screen)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} ftxui::screen ftxui::dom ftxui::component)
 
 ###############################################################################
 
