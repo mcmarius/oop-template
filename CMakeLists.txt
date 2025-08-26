@@ -86,7 +86,7 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ext)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} ftxui::component ftxui::dom ftxui::screen)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} ftxui::screen ftxui::dom ftxui::component)
 
 ###############################################################################
 
