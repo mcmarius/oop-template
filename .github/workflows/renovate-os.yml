@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.3.0
 
       - name: Run Renovate
         # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
