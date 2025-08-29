@@ -205,5 +205,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 
 ## Resurse
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
+- [SFML](https://github.com/SFML/SFML/tree/3.0.1) (Zlib)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
