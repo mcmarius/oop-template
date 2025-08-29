@@ -28,7 +28,7 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   # renovate: datasource=github-tags depName=google/googletest versioning=loose
-  GTEST_VERSION: "v1.15.2"
+  GTEST_VERSION: "v1.17.0"
 
 
 defaults:
