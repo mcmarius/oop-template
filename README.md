@@ -190,6 +190,6 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
   - Versiune: [v0.9.1](https://github.com/Mozilla-Ocho/llamafile) (Apache 2.0)
 - [simsimd](https://github.com/ashvardanian/simsimd)
   <!-- renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose -->
-  - Versiune: [v6.4.0](https://github.com/ashvardanian/simsimd) (Apache 2.0)
+  - Versiune: [v6.5.1](https://github.com/ashvardanian/simsimd) (Apache 2.0)
   - pentru similaritate cosinus
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
