@@ -45,9 +45,9 @@ FetchContent_Declare(
     pqxx
     GIT_REPOSITORY https://github.com/jtv/libpqxx.git
     # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
-    GIT_TAG 7.9.2
+    GIT_TAG        7.10.5
     GIT_SHALLOW    1
-    GIT_PROGRESS ON
+    GIT_PROGRESS   ON
 )
 
 FetchContent_MakeAvailable(pqxx)
