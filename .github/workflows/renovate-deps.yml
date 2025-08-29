@@ -1,0 +1,25 @@
+name: Renovate deps
+on:
+  workflow_dispatch: {}
+
+jobs:
+  Renovate:
+    # renovate: depName=ubuntu
+    runs-on: ubuntu-22.04
+    if: ${{ github.repository == 'mcmarius/oop-template' }}
+    steps:
+      - name: Checkout
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v4
+        
+      - name: Run Renovate
+        # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
+        uses: renovatebot/github-action@v43.0.6
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REQUIRE_CONFIG: "optional"
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          configurationFile: .github/renovate-deps.json
