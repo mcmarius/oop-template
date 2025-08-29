@@ -161,6 +161,6 @@ conțin fișiere generate și nu ne ajută să le versionăm.
   - [OpenAL](https://openal-soft.org/) (LGPL): din cauza licenței, trebuie distribuită ca shared library
 - [cpr](https://github.com/libcpr/cpr.git)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
-  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/1.11.0)
+  - Versiune: [1.12.0](https://github.com/libcpr/cpr/releases/1.12.0)
 - [Cataas (Cats API)](https://cataas.com/)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
