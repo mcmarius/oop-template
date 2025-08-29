@@ -242,5 +242,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
   - Github: https://github.com/jtv/libpqxx
   - Documentație: https://pqxx.org/development/libpqxx/
   <!-- renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose -->
-  - Versiune: [7.9.2](https://github.com/jtv/libpqxx/releases/tag/7.9.2)
+  - Versiune: [7.10.5](https://github.com/jtv/libpqxx/releases/tag/7.10.5)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
