@@ -30,7 +30,7 @@ env:
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
   # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-  SFML_VERSION: "3.0.0"
+  SFML_VERSION: "3.0.1"
 
 defaults:
   run:
