@@ -19,7 +19,7 @@ runs:
 
     - name: Archive Release
       # renovate: datasource=github-tags depName=thedoctor0/zip-release versioning=loose
-      uses: thedoctor0/zip-release@master
+      uses: thedoctor0/zip-release@0.7.6
       if: startsWith(github.ref, 'refs/tags/')
       with:
         type: 'zip'
