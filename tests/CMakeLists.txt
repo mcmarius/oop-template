@@ -5,7 +5,7 @@ FetchContent_Declare(
         gtest
         GIT_REPOSITORY https://github.com/google/googletest.git
         # renovate: datasource=github-tags depName=google/googletest versioning=loose
-        GIT_TAG v1.15.2
+        GIT_TAG v1.17.0
 )
 FetchContent_MakeAvailable(gtest)
 
