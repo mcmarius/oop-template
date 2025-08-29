@@ -137,7 +137,7 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 - [cpr](https://github.com/libcpr/cpr)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
-  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0) (MIT)
+  - Versiune: [1.12.0](https://github.com/libcpr/cpr/releases/tag/1.12.0) (MIT)
 - [json](https://github.com/nlohmann/json)
   - Versiune: [v3.11.3](https://github.com/nlohmann/json/releases/tag/v3.11.3) (MIT)
 - [llamafile](https://github.com/Mozilla-Ocho/llamafile)

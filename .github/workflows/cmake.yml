@@ -28,7 +28,7 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
-  CPR_VERSION: "1.11.0"
+  CPR_VERSION: "1.12.0"
 
 defaults:
   run:
