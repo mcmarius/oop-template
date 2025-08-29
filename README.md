@@ -157,7 +157,7 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 
 ## Resurse
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.0.0) (Zlib)
+- [SFML](https://github.com/SFML/SFML/tree/3.0.1) (Zlib)
 - [Cat API](https://cataas.com/)
 - [cpr](https://github.com/libcpr/cpr)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
