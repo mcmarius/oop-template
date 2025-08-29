@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 # default values
+# renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
 CPPCHECK_VER=2.14.2   # NOTE: consider updating this value in .github/workflows/cmake.yml:47 when changing this value
 CMAKE_BUILD_DIR=build
 CMAKE_OPTS=()         # example for CLI: -o "-DCMAKE_INSTALL_PREFIX=~/.local/ -DFILESDIR=~/.local/share/Cppcheck"
