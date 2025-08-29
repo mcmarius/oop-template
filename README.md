@@ -161,5 +161,5 @@ conțin fișiere generate și nu ne ajută să le versionăm.
 - [Cat API](https://cataas.com/)
 - [cpr](https://github.com/libcpr/cpr)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
-  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0)
+  - Versiune: [1.12.0](https://github.com/libcpr/cpr/releases/tag/1.12.0)
 - adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
