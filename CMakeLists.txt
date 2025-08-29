@@ -45,7 +45,7 @@ FetchContent_Declare(
         pqxx
         GIT_REPOSITORY https://github.com/jtv/libpqxx.git
         # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
-        GIT_TAG 7.9.2
+        GIT_TAG 7.10.1
         GIT_SHALLOW    1
         GIT_PROGRESS ON
 )
@@ -65,7 +65,6 @@ find_package(PostgreSQL)
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
-        src/database/Database.cpp
 )
 target_sources(${MAIN_EXECUTABLE_NAME}
     PRIVATE
