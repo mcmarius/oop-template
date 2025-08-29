@@ -200,6 +200,6 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
   - Github: https://github.com/google/googletest
   - Documentation: https://google.github.io/googletest/
   <!-- renovate: datasource=github-tags depName=google/googletest versioning=loose -->
-  - Versiune: [v1.15.2](https://github.com/google/googletest/releases/tag/v1.15.2)
+  - Versiune: [v1.17.0](https://github.com/google/googletest/releases/tag/v1.17.0)
 
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
