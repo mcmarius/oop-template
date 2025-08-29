@@ -44,7 +44,7 @@ FetchContent_Declare(
     cpr
     GIT_REPOSITORY https://github.com/libcpr/cpr.git
     # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
-    GIT_TAG 1.11.0
+    GIT_TAG 1.12.0
     GIT_SHALLOW    1
 )
 
