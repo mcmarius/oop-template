@@ -1,16 +1,8 @@
-//
-// Created by bgd on 12/15/2024.
-//
-
 #ifndef RESOURCEMANAGER_HPP
 #define RESOURCEMANAGER_HPP
 
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
-
-/*
- *  Pentru ușurință clasa `ResourceManager` va fi un Singleton.
- */
 
 //////////////////////////////////////////
 ////
@@ -36,7 +28,7 @@ private:
     void loadFont(const std::string& path, const std::string& font_name);
 
     std::unordered_map<std::string, sf::Texture> m_textures; // Aici vom ține toate texturile încărcate
-    std::unordered_map<std::string, sf::Font> m_fonts; // Aici vom ține toate font-urile încărcate
+    std::unordered_map<std::string, sf::Font> m_fonts; // Aici vom ține toate fonturile încărcate
 };
 
 
