@@ -10,7 +10,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////
 /// Pentru a putea accesa datele din API este nevoie să parsăm datele primite /////
-#include <json/json.hpp>                                                      /////
+#include <json/json.hpp> // mereu trebuie să fie ultimul include              /////
 ///////////////////////////////////////////////////////////////////////////////////
 
 /*
