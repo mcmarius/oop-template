@@ -56,7 +56,7 @@ int main() {
     /// * poate fi Texture, Font, Sound sau orice alt tip de resursă de care avem nevoie.
     ////////////////////////////////////////////////////////
 
-    // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să primești o textură inexistentă.
+    // Decomentează liniile marcate cu `@` de mai jos pentru a vedea ce se întâmplă atunci când încerci să folosești o textură inexistentă.
 
     sf::Texture avion_texture;
     sf::Text tip_avion;
