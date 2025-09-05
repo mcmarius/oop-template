@@ -100,20 +100,9 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian)
+0. Biblioteci necesare pe Linux (presupunem sistem de operare bazat pe Debian, necesită `sudo`)
 ```sh
-sudo apt-get update && \
-  sudo apt-get install libxrandr-dev \
-    libxcursor-dev \
-    libudev-dev \
-    libopenal-dev \
-    libflac-dev \
-    libvorbis-dev \
-    libgl1-mesa-dev \
-    libegl1-mesa-dev \
-    libdrm-dev \
-    libgbm-dev \
-    libfreetype6-dev
+bash ./scripts/install-sfml-deps.sh
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
