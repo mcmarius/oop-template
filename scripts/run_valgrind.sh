@@ -5,10 +5,12 @@ RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
 EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop}
 
-if [[ -d "install_dir/bin" ]]; then
-    ZIP_NAME="install_dir/bin"
+if [[ -n "$1" ]]; then
+    BIN_DIR="$1"
+elif [[ -d "install_dir/bin" ]]; then
+    BIN_DIR="install_dir/bin"
 else
-    ZIP_NAME="${BUILD_DIR}"
+    BIN_DIR="${BUILD_DIR}"
 fi
 
 run_valgrind() {
@@ -17,7 +19,7 @@ run_valgrind() {
             --show-leak-kinds=all \
             --track-origins=yes \
             --error-exitcode=1 \
-            ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}"
+            ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
 }
 
 if [[ "${RUN_INTERACTIVE}" = true ]]; then
