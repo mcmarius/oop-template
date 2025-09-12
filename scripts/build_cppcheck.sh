@@ -23,16 +23,23 @@ while getopts ":b:o:v:" opt; do
   esac
 done
 
+OS=$(uname)
 if [[ "${OS}" == MINGW* || "${OS}" == MSYS* || "${OS}" == CYGWIN* ]]; then
-    curl -L -o "cppcheck-${CPPCHECK_VER}-x64-Setup.msi" "https://github.com/danmar/cppcheck/archive/refs/tags/${CPPCHECK_VER}.zip" 
-    powershell.exe -Command "Expand-Archive -Path '${CPPCHECK_VER}.zip' -DestinationPath 'cppcheck'"
+  curl -L -o "${CPPCHECK_VER}.zip" "https://github.com/danmar/cppcheck/archive/refs/tags/${CPPCHECK_VER}.zip" 
+  powershell.exe -Command "Expand-Archive -Path '${CPPCHECK_VER}.zip' -DestinationPath 'cppcheck'"
+  powershell.exe -Command "Remove-Item '${CPPCHECK_VER}.zip'"
+  powershell.exe -Command "Move-Item -Path 'cppcheck/cppcheck-${CPPCHECK_VER}/*' -Destination 'cppcheck/'"
+  powershell.exe -Command "Remove-Item -Recurse -Force 'cppcheck/cppcheck-${CPPCHECK_VER}'"
+
+  cd cppcheck || { echo "Eroare cd"; exit 1; }
+  make RDYNAMIC="" -j6
 else
   wget "https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
   unzip -q "${CPPCHECK_VER}.zip"
   rm "${CPPCHECK_VER}.zip"
   mv "cppcheck-${CPPCHECK_VER}" cppcheck
-fi
 
-cd cppcheck || { echo "Eroare cd"; exit 1; }
-cmake -S . -B "${CMAKE_BUILD_DIR}" -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
-cmake --build "${CMAKE_BUILD_DIR}" -j6
+  cd cppcheck || { echo "Eroare cd"; exit 1; }
+  cmake -S . -B "${CMAKE_BUILD_DIR}" -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
+  cmake --build "${CMAKE_BUILD_DIR}" -j6
+fi

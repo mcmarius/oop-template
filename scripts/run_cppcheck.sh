@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
-AUTO_INSTALL=${AUTO_INSTALL:-0}
-while getopts ":i" opt; do
+INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-0}
+while getopts ":s" opt; do
   case "${opt}" in
-    i) AUTO_INSTALL=1
+    s) INSTALL_FROM_SOURCE=1
     ;;
     *) printf "Unknown option %s; available options: \n\
         -s (instaleaza Cppcheck din sursa)\n" "${opt}"
@@ -14,12 +14,15 @@ done
 
 
 if ! command -v cppcheck >/dev/null 2>&1; then # daca cppcheck nu exista in path
-  if [[ "${AUTO_INSTALL}" -eq 0 ]]; then # daca nu este setat AUTO_INSTALL, se descarca un binar pentru Windows 
+  if [[ "${INSTALL_FROM_SOURCE}" -eq 0 ]]; then # daca nu este setat INSTALL_FROM_SOURCE, se descarca un binar pentru Windows 
     echo "[INFO] Cppcheck nu este instalat. Se va descarca un binar pentru Cppcheck."
     ./scripts/install_cppcheck.sh
-  else # daca este setat AUTO_INSTALL, se compileaza cppcheck din sursa
+  elif [[ "${INSTALL_FROM_SOURCE}" -eq 1 ]]; then # daca este setat INSTALL_FROM_SOURCE, se compileaza cppcheck din sursa
     echo "[INFO] Cppcheck nu este instalat. Se va compila Cppcheck din sursa."
     ./scripts/build_cppcheck.sh
+  fi
+
+  printf "\n%s\n" "[INFO] Dupa instalare, Cppcheck va trebui adaugat in PATH."
 else
   echo "[INFO] Cppcheck found."
 fi
