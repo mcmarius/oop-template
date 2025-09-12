@@ -24,11 +24,18 @@ while getopts ":b:o:v:" opt; do
 done
 
 
-wget "https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
-unzip -q "${CPPCHECK_VER}.zip"
-rm "${CPPCHECK_VER}.zip"
-mv "cppcheck-${CPPCHECK_VER}" cppcheck
+OS=$(uname)
+if [[ "${OS}" == MINGW* || "${OS}" == MSYS* || "${OS}" == CYGWIN* ]]; then
+    curl -L -o "cppcheck-2.18.0-x64-Setup.msi" "https://github.com/danmar/cppcheck/releases/download/2.18.0/cppcheck-2.18.0-x64-Setup.msi"
+    powershell.exe -Command "Start-Process 'cppcheck-2.18.0-x64-Setup.msi' -Wait"
+    echo "Dupa instalare, cppcheck va trebui adaugat in PATH."
+else
+    wget "https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
+    unzip -q "${CPPCHECK_VER}.zip"
+    rm "${CPPCHECK_VER}.zip"
+    mv "cppcheck-${CPPCHECK_VER}" cppcheck
 
-cd cppcheck || { echo "Eroare cd"; exit 1; }
-cmake -S . -B "${CMAKE_BUILD_DIR}" -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
-cmake --build "${CMAKE_BUILD_DIR}" -j6
+    cd cppcheck || { echo "Eroare cd"; exit 1; }
+    cmake -S . -B "${CMAKE_BUILD_DIR}" -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
+    cmake --build "${CMAKE_BUILD_DIR}" -j6
+fi
