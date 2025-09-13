@@ -13,19 +13,25 @@ while getopts ":s" opt; do
 done
 
 
-if ! command -v cppcheck >/dev/null 2>&1; then # daca cppcheck nu exista in path
-  if [[ "${INSTALL_FROM_SOURCE}" -eq 0 ]]; then # daca nu este setat INSTALL_FROM_SOURCE, se descarca un binar pentru Windows 
-    echo "[INFO] Cppcheck nu este instalat. Se va descarca un binar pentru Cppcheck."
-    ./scripts/install_cppcheck.sh
-  elif [[ "${INSTALL_FROM_SOURCE}" -eq 1 ]]; then # daca este setat INSTALL_FROM_SOURCE, se compileaza cppcheck din sursa
-    echo "[INFO] Cppcheck nu este instalat. Se va compila Cppcheck din sursa."
-    ./scripts/build_cppcheck.sh
+if ! command -v cppcheck >/dev/null 2>&1; then # daca cppcheck nu exista
+  echo "[INFO] Cppcheck nu a fost gasit"
+  OS=$(uname)
+  if [[ "${OS}" = MINGW* || "${OS}" = MSYS* || "${OS}" = CYGWIN* ]]; then # daca este pe windows
+    if [[ ${INSTALL_FROM_SOURCE} -eq 1 ]]; then # instaleaza cppcheck din sursa pe windows
+      echo "[INFO] Se va compila Cppcheck din sursa"
+      ./scripts/build_cppcheck.sh
+    else
+      echo "[INFO] Se descarca un wizard pentru a instala Cppcheck"
+      ./scripts/install_cppcheck.sh
+    fi
+  elif [[ "${OS}" = "Linux" || "${OS}" = "Darwin" ]]; then # daca este linux/macos
+    echo "[INFO] Se va instala Cppcheck din sursa"
+    ./scripts/build_cppcheck.sh -o "-DCMAKE_INSTALL_PREFIX=~/.local/ -DFILESDIR=~/.local/share/Cppcheck"
   fi
-
-  printf "\n%s\n" "[INFO] Dupa instalare, Cppcheck va trebui adaugat in PATH."
 else
-  echo "[INFO] Cppcheck found."
+  echo "[INFO] Cppcheck a fost gasit"
 fi
+
 
 cppcheck --enable=all \
     --inline-suppr \
