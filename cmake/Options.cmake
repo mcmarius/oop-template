@@ -11,6 +11,17 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install_dir" CACHE PATH "..." FORCE)
 endif()
 
+# use local SFML3 if environment variables are set
+if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_SFML AND DEFINED ENV{SFML3_DIR})
+    set(FETCHCONTENT_SOURCE_DIR_SFML $ENV{SFML3_DIR})
+endif()
+
+if (NOT DEFINED FETCHCONTENT_BASE_DIR AND DEFINED ENV{SFML3_DEPS})
+    set(FETCHCONTENT_BASE_DIR $ENV{SFML3_DEPS})
+endif()
+#########
+
+
 # disable sanitizers when releasing executables without explicitly requested debug info
 # use generator expressions to set flags correctly in both single and multi config generators
 set(is_debug "$<CONFIG:Debug>")
