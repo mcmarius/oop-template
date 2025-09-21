@@ -5,7 +5,6 @@
 | Laborant  | Link template                                |
 |-----------|----------------------------------------------|
 | Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
 ### Important!
@@ -23,8 +22,8 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - **Fără variabile globale!**
 - **Fără atribute publice!**
 - **Pentru T2 și T3, fără date în cod!** Datele vor fi citite din fișier, aveți exemple destule.
-- **Obligatoriu** fișiere cu date mai multe din care să citiți
-- _aproape_ obligatoriu să integrați cel puțin două biblioteci externe
+- **Obligatoriu** fișiere cu date mai multe din care să citiți, obligatoriu cu biblioteci externe: fișiere (local sau server) sau baze de date
+- obligatoriu (TBD) să integrați cel puțin două biblioteci externe pe lângă cele pentru stocare
 
 ### Tema 0
 
