@@ -43,10 +43,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SFML)
 
-
-get_target_property(SFML_VERSION SFML::System VERSION)
-message(STATUS "======================== SFML version: ${SFML_VERSION}")
-
 ###############################################################################
 
 # external dependencies with find_package
