@@ -1,0 +1,76 @@
+name: Clear artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Start date (YYYY-MM-DD)"
+        required: false
+      to_date:
+        description: "End date (YYYY-MM-DD)"
+        required: false
+      older_than_date:
+        description: "Artifacts older than (YYYY-MM-DD)"
+        required: false
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  clear-cache:
+    # renovate: depName=ubuntu
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Delete artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Deletion requires authorization with the `repo` scope.
+        run: |
+          FROM="${{ github.event.inputs.from_date }}"
+          TO="${{ github.event.inputs.to_date }}"
+          OLDER_THAN="${{ github.event.inputs.older_than_date }}"
+
+          # Fara start si end date, dar cu `older_than` - sterg toate artefactele mai vechi decat older_than
+          if [[ -z "$FROM" && -z "$TO" && -n "$OLDER_THAN" ]]; then
+            echo "[INFO] Deleting artifacts older than $OLDER_THAN"
+            FROM="1970-01-01"
+            TO="$OLDER_THAN"
+          
+          # Fara start si end date si fara `older_than` - sterg toate artefactele
+          elif [[ -z "$FROM" && -z "$TO" && -z "$OLDER_THAN" ]]; then
+            FROM="1970-01-01"
+            TO=$(date +%Y-%m-%d)
+            echo "[INFO] No dates provided. Deleting all artifacts."
+
+          # Cu start si end date - sterg artefactele din intervalul specificat
+          elif [[ -n "$FROM" && -n "$TO" ]]; then
+            echo "[INFO] Deleting artifacts in range [$FROM - $TO]"
+
+          # Altceva - eroare
+          else
+            echo "[ERROR] Missing input data."
+            exit 1
+          fi
+
+          FROM_TIMESTAMP=$(date -d "$FROM" +%s)
+          TO_TIMESTAMP=$(date -d "$TO +1 day" +%s) # inclusiv data `TO`
+          
+          # --paginate - by default API-ul returneaza doar 30 de rezultate, cu --paginate returneaza toate
+          # https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api?apiVersion=2022-11-28#about-pagination
+
+          # cu -q extrag id, created_at si name din fiecare artefact si le separ cu tab-uri ( @tsv = tab-separated values )
+          #   -q, --jq string             Query to select values from the response using jq syntax
+
+          gh api /repos/${{ github.repository }}/actions/artifacts --paginate \
+            -q '.artifacts[] | [.id, .created_at, .name] | @tsv' |
+            while IFS=$'\t' read -r ID CREATED NAME; do
+              CREATED_TIMESTAMP=$(date -d "$CREATED" +%s)
+
+              if [[ "$CREATED_TIMESTAMP" -ge "$FROM_TIMESTAMP" && "$CREATED_TIMESTAMP" -le "$TO_TIMESTAMP" ]]; then
+                echo "[INFO] Deleting artifact $NAME (ID: $ID) created at $CREATED"
+                gh api --method DELETE /repos/${{ github.repository }}/actions/artifacts/$ID
+              fi
+            done
