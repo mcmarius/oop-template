@@ -23,7 +23,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5
 
       - name: Delete artifacts
         env:
