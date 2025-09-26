@@ -1,0 +1,57 @@
+name: Automatic rebase branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to rebase onto"
+        required: false # daca nu e specificat, se face rebase pe toate branch-urile
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      
+      - name: Read config file
+        id: config
+        run: |
+          BASE=$(jq -r '.base' .github/rebase-branches.json)
+          echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "Base branch: $BASE"
+
+      - name: Fetch branches
+        run: |
+          git fetch origin
+
+          if [[ -n ${{ github.event.inputs.branch }} ]]; then
+            SPECIFIED_BRANCH="${{ github.event.inputs.branch }}"
+            echo "${SPECIFIED_BRANCH}" > branches.txt
+          else
+            git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
+          fi
+          
+          echo "Branches used for rebase:"
+          cat branches.txt
+
+      - name: Rebase onto ${{ env.BASE }}
+        continue-on-error: true # in caz de conflict sa nu se opreasca
+        run: |
+          while read -r BRANCH; do
+            echo "Rebasing branch: $BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            if git rebase "origin/${{ env.BASE }}"; then
+              git push origin "$BRANCH" --force-with-lease
+              echo "Rebased and pushed $BRANCH"
+            else
+              echo "Conflict on $BRANCH"
+              git rebase --abort
+            fi
+            echo "-----------------------------------"
+          done <<< "$(cat branches.txt)"
