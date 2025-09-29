@@ -1,0 +1,22 @@
+name: Clear Cache
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  clear-cache:
+    # renovate: depName=ubuntu
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5
+
+      - name: Delete all caches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Din documentatie: Deletion requires authorization with the `repo` scope.
+        run: gh cache delete --all --succeed-on-no-caches # --succeed-on-no-caches pentru exit code 0
