@@ -12,9 +12,11 @@ permissions:
 
 jobs:
   rebase:
+    # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
