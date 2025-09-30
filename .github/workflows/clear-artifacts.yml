@@ -1,0 +1,62 @@
+name: Clear artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Start date (YYYY-MM-DD)"
+        required: false
+      to_date:
+        description: "End date (YYYY-MM-DD)"
+        required: false
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  clear-artifacts:
+    # renovate: depName=ubuntu
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5
+
+      - name: Delete artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Deletion requires authorization with the `repo` scope.
+        run: |
+          FROM_DATE="${{ github.event.inputs.from_date }}"
+          TO_DATE="${{ github.event.inputs.to_date }}"
+
+          if [[ -n "$FROM_DATE" && -n "$TO_DATE" ]]; then        # Daca sunt specificate ambele date, sterg artefactele din interval
+            echo "[INFO] Deleting artifacts from $FROM_DATE to $TO_DATE"
+          elif [[ -z "$FROM_DATE" && -n "$TO_DATE" ]]; then      # Daca e specificat doar TO_DATE, sterg toate artefactele mai vechi de TO_DATE
+            FROM_DATE="1970-01-01"
+            echo "[INFO] Deleting artifacts older than $TO_DATE"
+          else                                                   # Altceva, sterg toate artefactele
+            FROM_DATE="1970-01-01"
+            TO_DATE=$(date +%F) # azi
+            echo "[INFO] Deleting all artifacts"
+          fi
+
+          FROM_TIMESTAMP=$(date -d "$FROM_DATE" +%s)
+          TO_TIMESTAMP=$(date -d "$TO_DATE +1 day" +%s) # inclusiv data `TO_DATE`
+          
+          # --paginate - by default API-ul returneaza doar 30 de rezultate, cu --paginate returneaza toate
+          # https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api?apiVersion=2022-11-28#about-pagination
+
+          # cu -q extrag id, created_at si name din fiecare artefact si le separ cu tab-uri ( @tsv = tab-separated values )
+          #   -q, --jq string             Query to select values from the response using jq syntax
+
+          gh api /repos/${{ github.repository }}/actions/artifacts --paginate \
+            -q '.artifacts[] | [.id, .created_at, .name] | @tsv' |
+            while IFS=$'\t' read -r ID CREATED NAME; do
+              CREATED_TIMESTAMP=$(date -d "$CREATED" +%s)
+
+              if [[ "$CREATED_TIMESTAMP" -ge "$FROM_TIMESTAMP" && "$CREATED_TIMESTAMP" -le "$TO_TIMESTAMP" ]]; then
+                echo "[INFO] Deleting artifact $NAME (ID: $ID) created at $CREATED"
+                gh api --method DELETE /repos/${{ github.repository }}/actions/artifacts/$ID
+              fi
+            done
