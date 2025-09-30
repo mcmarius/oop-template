@@ -5,6 +5,7 @@
 | Laborant  | Link template                                |
 |-----------|----------------------------------------------|
 | Dragoș B  | https://github.com/Ionnier/oop-template      |
+| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
 ### Important!
@@ -48,6 +49,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - [ ] minim 50-55% din codul propriu să fie C++, `.gitattributes` configurat corect
 - [ ] tag de `git`: de exemplu `v0.1`
 - [ ] serviciu de integrare continuă (CI) cu **toate bifele**; exemplu: GitHub Actions
+- [ ] code review #1 2 proiecte
 
 ## Tema 2
 
@@ -79,6 +81,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
   - noua derivată va fi integrată în codul existent (adică va fi folosită, nu adăugată doar ca să fie)
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.2`
+- [ ] code review #2 2 proiecte
 
 ## Tema 3
 
@@ -89,6 +92,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - [ ] minim 85% din codul propriu să fie C++
 <!-- - [ ] o specializare pe funcție/clasă șablon -->
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
+- [ ] code review #3 2 proiecte
 
 ## Instrucțiuni de compilare
 
