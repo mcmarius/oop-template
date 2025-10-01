@@ -4,6 +4,7 @@ DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
 DEFAULT_INSTALL_DIR="install_dir"
 
+# Pentru a folosi SFML local: ./scripts/cmake.sh configure -e "-DFETCHCONTENT_BASE_DIR=~/.local/sfml-deps -DFETCHCONTENT_SOURCE_DIR_SFML=~/.local/SFML"
 configure() {
     # cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
     #
