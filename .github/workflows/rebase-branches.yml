@@ -3,12 +3,19 @@ name: Automatic rebase branches
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: "Branch to rebase onto"
+      base_branch:
+        description: 'Branch to rebase onto'
         required: false # daca nu e specificat, se face rebase pe toate branch-urile
+
+env:
+  INPUT_BASE: ${{ github.event.inputs.base_branch }}
 
 permissions:
   contents: write
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   rebase:
@@ -21,36 +28,51 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Read config file
-        id: config
-        run: |
-          BASE=$(jq -r '.base' .github/rebase-branches.json)
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "Base branch: $BASE"
-
       - name: Fetch branches
         run: |
           git fetch origin
 
-          if [[ -n ${{ github.event.inputs.branch }} ]]; then
-            SPECIFIED_BRANCH="${{ github.event.inputs.branch }}"
-            echo "${SPECIFIED_BRANCH}" > branches.txt
+          # Daca nu am nimic in input, atunci se face rebase din main
+          if [[ -z "${{ env.INPUT_BASE }}" ]]; then
+            REBASE_BRANCH="main"
           else
-            git branch -r | grep 'origin/' | grep -v "origin/HEAD" | grep -v "origin/$BASE" | sed 's#origin/##' > branches.txt
+            REBASE_BRANCH="${{ env.INPUT_BASE }}"
           fi
+
+          git branch -r |                      # lista toate branch-urile remote
+            grep 'origin/' |                   # pastrez doar branch-urile care incep cu origin/
+            grep -v "origin/HEAD" |            # exclud HEAD
+            grep -v "origin/$REBASE_BRANCH" |  # exclud branch-ul de rebase
+            sed 's#origin/##' > branches.txt   # sterg origin/ si salveaza in fisier
           
-          echo "Branches used for rebase:"
+          echo "Branches to rebase:"
           cat branches.txt
 
-      - name: Rebase onto ${{ env.BASE }}
+      - name: Read custom base branches
+        run: |
+          # citesc config-ul cu base-uri custom din JSON
+          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV 
+
+      - name: Rebase branches
         continue-on-error: true # in caz de conflict sa nu se opreasca
         run: |
           while read -r BRANCH; do
             echo "Rebasing branch: $BRANCH"
+
+            # Daca BRANCH e in rebase-branches.json, folosesc base-ul de acolo. Daca nu, folosesc default_base = 'main'
+            BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // "main"')
+            
+            # Daca a fost scris un base in input, suprascriu BASE cu ce a fost in input
+            if [[ -n "${{ env.INPUT_BASE }}" ]]; then
+              BASE="${{ env.INPUT_BASE }}"
+            fi
+            
+            echo "Using base: $BASE"
             git checkout -B "$BRANCH" "origin/$BRANCH"
-            if git rebase "origin/${{ env.BASE }}"; then
+            
+            if git rebase "origin/$BASE"; then
               git push origin "$BRANCH" --force-with-lease
-              echo "Rebased and pushed $BRANCH"
+              echo "Rebased $BRANCH"
             else
               echo "Conflict on $BRANCH"
               git rebase --abort
