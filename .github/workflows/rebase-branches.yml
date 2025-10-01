@@ -1,0 +1,81 @@
+name: Automatic rebase branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: 'Branch to rebase onto'
+        required: false # daca nu e specificat, se face rebase pe toate branch-urile
+
+env:
+  INPUT_BASE: ${{ github.event.inputs.base_branch }}
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  rebase:
+    # renovate: depName=ubuntu
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        # renovate: datasource=github-tags depName=actions/checkout versioning=loose
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      
+      - name: Fetch branches
+        run: |
+          git fetch origin
+
+          # Daca nu am nimic in input, atunci se face rebase din main
+          if [[ -z "${{ env.INPUT_BASE }}" ]]; then
+            REBASE_BRANCH="main"
+          else
+            REBASE_BRANCH="${{ env.INPUT_BASE }}"
+          fi
+
+          git branch -r |                      # lista toate branch-urile remote
+            grep 'origin/' |                   # pastrez doar branch-urile care incep cu origin/
+            grep -v "origin/HEAD" |            # exclud HEAD
+            grep -v "origin/$REBASE_BRANCH" |  # exclud branch-ul de rebase
+            sed 's#origin/##' > branches.txt   # sterg origin/ si salveaza in fisier
+          
+          echo "Branches to rebase:"
+          cat branches.txt
+
+      - name: Read custom base branches
+        run: |
+          # citesc config-ul cu base-uri custom din JSON
+          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV 
+
+      - name: Rebase branches
+        continue-on-error: true # in caz de conflict sa nu se opreasca
+        run: |
+          while read -r BRANCH; do
+            echo "Rebasing branch: $BRANCH"
+
+            # Daca BRANCH e in rebase-branches.json, folosesc base-ul de acolo. Daca nu, folosesc default_base = 'main'
+            BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // "main"')
+            
+            # Daca a fost scris un base in input, suprascriu BASE cu ce a fost in input
+            if [[ -n "${{ env.INPUT_BASE }}" ]]; then
+              BASE="${{ env.INPUT_BASE }}"
+            fi
+            
+            echo "Using base: $BASE"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            
+            if git rebase "origin/$BASE"; then
+              git push origin "$BRANCH" --force-with-lease
+              echo "Rebased $BRANCH"
+            else
+              echo "Conflict on $BRANCH"
+              git rebase --abort
+            fi
+            echo "-----------------------------------"
+          done <<< "$(cat branches.txt)"
