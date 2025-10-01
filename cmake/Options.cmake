@@ -11,7 +11,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install_dir" CACHE PATH "..." FORCE)
 endif()
 
-# use local SFML3 if environment variables are set
+# if CMake vars are not defined, use paths from environment variables
 if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_SFML AND DEFINED ENV{SFML3_DIR})
     set(FETCHCONTENT_SOURCE_DIR_SFML $ENV{SFML3_DIR})
 endif()
