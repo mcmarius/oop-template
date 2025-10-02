@@ -136,6 +136,20 @@ Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul 
 conțin fișiere generate și nu ne ajută să le versionăm.
 
 
+## Instrucțiuni pentru a rula executabilul
+1. Din directorul `build`. Executabilul se află la locația `./build/oop` după ce a fost rulat pasul de compilare al proiectului.
+
+2. Din directorul `install_dir`. Executabilul se află la locația `./install_dir/bin/oop` după ce a fost rulat pasul de instalare. 
+
+3. Rularea programului folosind Valgrind se poate face executând script-ul `run_valgrind.sh` care se află la locația `./scripts/run_valgrind.sh`. Pe Windows acest script se poate rula folosind WSL (Windows Subsystem for Linux). Valgrind se poate rula în modul interactiv folosind: `RUN_INTERACTIVE=true ./scripts/run_valgrind.sh`
+
+4. Pentru a rula executabilul folosind ASan (Address Sanitizer) este nevoie ca la pasul de configurare să puneți flag-ul `-DUSE_ASAN=ON`:
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
+# sau ./scripts/cmake.sh configure -e "-DUSE_ASAN=ON"
+```
+
+
 ## Resurse
 
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
