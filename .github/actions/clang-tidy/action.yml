@@ -13,7 +13,7 @@ runs:
     # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
     - name: Install Clang ${{ env.CLANG_VER }}
       # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
-      uses: nick-fields/retry@v3
+      uses: nick-fields/retry@v3.0.2
       with:
         shell: bash
         timeout_minutes: 5
