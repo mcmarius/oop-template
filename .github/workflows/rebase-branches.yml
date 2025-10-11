@@ -21,7 +21,7 @@ jobs:
   rebase:
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
-    steps:    
+    steps:
       - name: Checkout repository
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v5
@@ -84,3 +84,15 @@ jobs:
             fi
             echo "-----------------------------------"
           done <<< "$(cat branches.txt)"
+
+      # https://github.com/orgs/community/discussions/25702
+      - name: Trigger Publish Workflow
+        # renovate: datasource=github-tags depName=actions/github-script versioning=loose
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'publish-trigger',
+            });

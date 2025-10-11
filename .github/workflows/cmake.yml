@@ -4,6 +4,9 @@ on:
   push:
     branches: ['**'] # NOTE: replace/update with appropriate branch name(s)
     tags: ['**']
+  # https://github.com/orgs/community/discussions/25702
+  repository_dispatch:
+    types: [publish-trigger]
   # pull_request:
   #   branches: ['**'] # NOTE: replace/update with appropriate branch name(s)
   workflow_dispatch:
