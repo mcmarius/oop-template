@@ -192,7 +192,7 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Resurse
 <!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.0.1) (Zlib)
+- [SFML](https://github.com/SFML/SFML/tree/3.0.2) (Zlib)
 - [Cat API](https://cataas.com/)
 - [cpr](https://github.com/libcpr/cpr)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
