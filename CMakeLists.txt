@@ -35,9 +35,9 @@ FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
     # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-    GIT_TAG        3.0.1
+    GIT_TAG        3.0.2
     # renovate: depName=SFML/SFML
-    # GIT_TAG        016bea9491ccafc3529019fe1d403885a8b3a6ae # 3.0.1
+    # GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 # 3.0.2
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
 )
 
