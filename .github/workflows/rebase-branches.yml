@@ -22,6 +22,12 @@ jobs:
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
     steps:
+      - name: Configure identity
+        # https://github.com/orgs/community/discussions/160496
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+    
       - name: Checkout repository
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v5
