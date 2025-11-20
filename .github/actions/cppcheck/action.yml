@@ -46,6 +46,14 @@ runs:
         custom_flags: '-GNinja'
         cache_key: 'cache-cppcheck'
 
+    - name: Cppcheck run cache
+      # renovate: datasource=github-tags depName=actions/cache versioning=loose
+      uses: actions/cache@v4.3.0
+      with:
+        path: cppcheck-scan-dir
+        key: cppcheck-scan-${{ env.CPPCHECK_VER }}-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: cppcheck-scan-${{ env.CPPCHECK_VER }}-
+
     - name: Cppcheck
       shell: bash
       run: |

@@ -33,8 +33,8 @@ env:
   EXT_DIR: "ext"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
-  # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-  SFML_VERSION: "3.0.2"
+  # renovate: datasource=github-tags depName=wxWidgets/wxWidgets versioning=loose
+  WX_VERSION: "v3.3.1"
 
 defaults:
   run:
@@ -48,7 +48,7 @@ jobs:
     name: "Cppcheck"
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
       CPPCHECK_VER: "2.19.1"
@@ -64,7 +64,7 @@ jobs:
     name: "Clang-Tidy"
     # renovate: depName=ubuntu
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
       CC: clang-18
       CXX: clang++-18
@@ -81,7 +81,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       attestations: write
       contents: write
@@ -112,6 +112,7 @@ jobs:
             cxx: clang++-18
             # renovate: depName=ubuntu
             name: "Ubuntu 24.04 Clang 18"
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF -DwxBUILD_SHARED=FALSE"
             cmake_generator: Ninja
 
             # renovate: depName=ubuntu
@@ -120,7 +121,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "ASan: Ubuntu 22.04 GCC 12"
-            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF -DwxBUILD_SHARED=OFF"
             cmake_generator: Ninja
             # This env runs address sanitizers
             runs_asan: true
@@ -133,7 +134,7 @@ jobs:
             cxx: g++-12
             # renovate: depName=ubuntu
             name: "Valgrind: Ubuntu 22.04 GCC 12"
-            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
+            cmake_flags: "-DBUILD_SHARED_LIBS=OFF -DwxBUILD_SHARED=OFF"
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
@@ -144,7 +145,8 @@ jobs:
             cxx: clang++
             # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=OFF"
+            # https://github.com/wxWidgets/wxWidgets/issues/24687
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DwxUSE_SYS_LIBS=OFF -DwxBUILD_PRECOMP=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15"
             cmake_generator: Ninja
             # This env does not currently run address sanitizers
             # runs_asan: false
@@ -164,7 +166,7 @@ jobs:
             cxx: cl
             # renovate: depName=windows
             name: "ASan: Windows 2022 MSVC 19.44"
-            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON -DwxBUILD_SHARED=ON"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
@@ -177,7 +179,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2022 MinGW GCC 13"
-            cmake_flags: "-DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DBUILD_SHARED_LIBS=ON -DwxBUILD_SHARED=ON"
             cmake_generator: Ninja
 
     steps:

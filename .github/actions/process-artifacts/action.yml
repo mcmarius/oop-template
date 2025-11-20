@@ -36,7 +36,7 @@ runs:
     #     cp /opt/homebrew/lib/gcc/13/libstdc++.6.dylib /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib lib
     #     install_name_tool -change /opt/homebrew/lib/gcc/13/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
     #     install_name_tool -change /opt/homebrew/lib/gcc/13/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-    #     # not sure about these - SFML might not support GCC on macOS
+    #     # not sure about these - WX might not support GCC on macOS
     #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% lib
     #     ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
     #     mv lib ${{ env.ZIP_NAME }}/
@@ -69,6 +69,7 @@ runs:
              "$(which VCRUNTIME140.dll)" \
              ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
         # fi
+        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv vc_x64_dll/* .
 
     - name: Copy stdlib (MinGW)
       shell: bash
@@ -79,3 +80,4 @@ runs:
           gcc/mingw64/bin/libgcc_s_seh-1.dll \
           gcc/mingw64/bin/libwinpthread-1.dll \
           ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
+        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv gcc_x64_dll/* .
