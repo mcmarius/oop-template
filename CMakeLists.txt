@@ -26,23 +26,22 @@ include(FetchContent)
 
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-set(SFML_WARNINGS_AS_ERRORS OFF)
 
-# NOTE: Also update SFML_VERSION and other env vars used for caching in
+# NOTE: Also update WX_VERSION and other env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
 #         - .github/workflows/cmake.yml
 FetchContent_Declare(
-    SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-    GIT_TAG        3.0.2
-    # renovate: depName=SFML/SFML
-    # GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 # 3.0.2
+    wx
+    GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
+    # renovate: datasource=github-tags depName=wxWidgets/wxWidgets versioning=loose
+    GIT_TAG        v3.3.1
+    # renovate: depName=wxWidgets/wxWidgets
+    # GIT_TAG        49c6810948f40c457e3d0848b9111627b5b61de5 # v3.3.1
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS ON
 )
 
-FetchContent_MakeAvailable(SFML)
+FetchContent_MakeAvailable(wx)
 
 ###############################################################################
 
@@ -67,7 +66,7 @@ target_sources(${MAIN_EXECUTABLE_NAME}
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS TRUE TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
+set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
@@ -81,9 +80,7 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
 )
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
-    SFML::Graphics SFML::Window SFML::System Threads::Threads
-)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE wx::core Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)

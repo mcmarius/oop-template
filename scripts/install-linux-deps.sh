@@ -22,6 +22,7 @@ esac
 # ---------- 2. Common list of dev packages ----------
 # We keep the *logical* names (as you wrote them) and map them later.
 LINUX_DEPS=(
+    libgtk-3-dev
     libxrandr-dev
     libxcursor-dev
     libudev-dev
