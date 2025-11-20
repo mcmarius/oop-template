@@ -28,20 +28,18 @@ function(set_compiler_flags)
         message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
         if(MSVC)
             target_compile_options(${TARGET_NAME} PRIVATE /W4 /Zc:__cplusplus /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0 /utf-8 /MP)
+            set_target_properties(${TARGET_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
         else()
             target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic)
         endif()
 
         ###############################################################################
-
+        set(WX_LIBS sharpyuv webputils webpdecode webpencode webpdsp webp wxxml wxnet wxwebkit2_ext webpdemux wxrc wxscintilla wxlexilla wxcore wxadv wxribbon wxaui wxpropgrid wxhtml wxstc wxwebview wxqa wxgl wxrichtext wxxrc)
         # sanitizers
         if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
             if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
             else()
-                set_custom_stdlib_and_sanitizers(sfml-system false)
-                set_custom_stdlib_and_sanitizers(sfml-window false)
-                set_custom_stdlib_and_sanitizers(sfml-graphics false)
-                set_custom_stdlib_and_sanitizers(sfml-audio false)
+                set_custom_stdlib_and_sanitizers(${WX_LIBS} false)
             endif()
 
             set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
