@@ -2,7 +2,7 @@ option(PROJECT_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(USE_MSAN "Use Memory Sanitizer" OFF)
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
-option(BUILD_SHARED_LIBS "Build SFML as shared library" FALSE)
+option(wxBUILD_SHARED "Build WX as shared library" FALSE)
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")
@@ -19,9 +19,9 @@ if (NOT DEFINED FETCHCONTENT_BASE_DIR AND DEFINED ENV{FETCHCONTENT_BASE_DIR})
     )
 endif()
 
-if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_SFML AND DEFINED ENV{SFML3_DIR})
-    set(FETCHCONTENT_SOURCE_DIR_SFML $ENV{SFML3_DIR}
-        CACHE INTERNAL "Override source directory for SFML3 via environment variable"
+if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_WX AND DEFINED ENV{WX_DIR})
+    set(FETCHCONTENT_SOURCE_DIR_WX $ENV{WX_DIR}
+        CACHE INTERNAL "Override source directory for WX via environment variable"
         FORCE
     )
 endif()

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 LINUX_DEPS=(
+    libgtk-3-dev
     libxrandr-dev
     libxcursor-dev
     libudev-dev

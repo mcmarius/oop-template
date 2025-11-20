@@ -4,5 +4,5 @@ runs:
   using: "composite"
   steps:
     - run: |
-        bash ./scripts/install-sfml-deps.sh
+        bash ./scripts/install-linux-deps.sh
       shell: bash
