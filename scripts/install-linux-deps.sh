@@ -22,6 +22,7 @@ esac
 # ---------- 2. Common list of dev packages ----------
 # We keep the *logical* names (as you wrote them) and map them later.
 LINUX_DEPS=(
+    libgtk-3-dev
     libxrandr-dev
     libxcursor-dev
     libudev-dev
@@ -39,6 +40,7 @@ LINUX_DEPS=(
 
 # ---------- 3. Map logical names → real package names ----------
 declare -A DEB_MAP=(
+    [libgtk-3-dev]=libgtk-3-dev
     [libxrandr-dev]=libxrandr-dev
     [libxcursor-dev]=libxcursor-dev
     [libudev-dev]=libudev-dev
@@ -55,6 +57,7 @@ declare -A DEB_MAP=(
 )
 
 declare -A RPM_MAP=(
+    [libgtk-3-dev]=gtk3-devel
     [libxrandr-dev]=libXrandr-devel
     [libxcursor-dev]=libXcursor-devel
     [libudev-dev]=libudev-devel
@@ -71,6 +74,7 @@ declare -A RPM_MAP=(
 )
 
 declare -A SUSE_MAP=(
+    [libgtk-3-dev]=gtk3-devel
     [libxrandr-dev]=libXrandr-devel
     [libxcursor-dev]=libXcursor-devel
     [libudev-dev]=libudev-devel
@@ -87,6 +91,7 @@ declare -A SUSE_MAP=(
 )
 
 declare -A ARCH_MAP=(
+    [libgtk-3-dev]=gtk3
     [libxrandr-dev]=libxrandr
     [libxcursor-dev]=libxcursor
     [libudev-dev]=libudev

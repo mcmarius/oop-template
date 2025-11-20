@@ -16,7 +16,7 @@ runs:
     - name: Configure CMake
       uses: ./.github/actions/configure-cmake
       with:
-        custom_flags: '-GNinja'
+        custom_flags: '-GNinja -DwxBUILD_SHARED=FALSE'
         cache_key: 'cache-clang-tidy'
 
     - name: Clang-Tidy
