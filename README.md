@@ -102,7 +102,7 @@ Instrucțiuni pentru terminal:
 
 0. Biblioteci necesare pe Linux (ar trebui să meargă pe sisteme bazate pe Debian/Arch/Fedora/OpenSUSE, necesită `sudo`)
 ```sh
-bash ./scripts/install-sfml-deps.sh
+bash ./scripts/install-linux-deps.sh
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
@@ -193,6 +193,6 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-<!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.0.2) (Zlib)
+<!-- renovate: datasource=github-tags depName=wxWidgets/wxWidgets versioning=loose -->
+- [wxWidgets](https://github.com/wxWidgets/wxWidgets/tree/v3.3.1) (wxWindows Library Licence ~ LGPL)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit

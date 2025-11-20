@@ -3,7 +3,7 @@
 #include <chrono>
 #include <thread>
 
-#include <SFML/Graphics.hpp>
+#include <wx/wx.h>
 
 #include "include/Example.h"
 // This also works if you do not want `include/`, but some editors might not like it
@@ -21,8 +21,37 @@ SomeClass *getC() {
 }
 //////////////////////////////////////////////////////////////////////
 
+// Start of wxWidgets "Hello World" Program
+// Taken from https://docs.wxwidgets.org/latest/overview_helloworld.html
 
-int main() {
+class MyApp : public wxApp
+{
+public:
+    bool OnInit() override;
+};
+
+// cppcheck-suppress unusedFunction
+wxIMPLEMENT_APP(MyApp);
+
+class MyFrame : public wxFrame
+{
+public:
+    MyFrame();
+
+private:
+    void OnHello(wxCommandEvent& event);
+    void OnExit(wxCommandEvent& event);
+    void OnAbout(wxCommandEvent& event);
+};
+
+enum
+{
+    ID_Hello = 1
+};
+
+bool MyApp::OnInit()
+{
+    ///
     std::cout << "Hello, world!\n";
     Example e1;
     e1.g();
@@ -74,51 +103,54 @@ int main() {
     std::cout << c << "\n";
     delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
 
-    sf::RenderWindow window;
-    ///////////////////////////////////////////////////////////////////////////
+
+
+    MyFrame *frame = new MyFrame();
+    frame->Show(true);
+
+    return true;
+}
+
+MyFrame::MyFrame()
     /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
-    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
-    std::cout << "Fereastra a fost creată\n";
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                                    ///
-    /// window.setFramerateLimit(60);                                       ///
-    ///////////////////////////////////////////////////////////////////////////
+    : wxFrame(nullptr, wxID_ANY, "My Window")
+{
+    wxMenu *menuFile = new wxMenu;
+    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
+                     "Help string shown in status bar for this menu item");
+    menuFile->AppendSeparator();
+    menuFile->Append(wxID_EXIT);
 
-    while(window.isOpen()) {
-        bool shouldExit = false;
+    wxMenu *menuHelp = new wxMenu;
+    menuHelp->Append(wxID_ABOUT);
 
-        while(const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-                std::cout << "Fereastra a fost închisă\n";
-            }
-            else if (event->is<sf::Event::Resized>()) {
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-            }
-            else if (event->is<sf::Event::KeyPressed>()) {
-                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
-                if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-                    shouldExit = true;
-                }
-            }
-        }
-        if(shouldExit) {
-            window.close();
-            std::cout << "Fereastra a fost închisă (shouldExit == true)\n";
-            break;
-        }
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(300ms);
+    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar->Append(menuFile, "&File");
+    menuBar->Append(menuHelp, "&Help");
 
-        window.clear();
-        window.display();
-    }
+    SetMenuBar( menuBar );
 
+    CreateStatusBar();
+    SetStatusText("Welcome to wxWidgets!");
+
+    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
+    Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
+    Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+}
+
+void MyFrame::OnExit([[maybe_unused]] wxCommandEvent& event)
+{
     std::cout << "Programul a terminat execuția\n";
-    return 0;
+    Close(true);
+}
+
+void MyFrame::OnAbout([[maybe_unused]] wxCommandEvent& event)
+{
+    wxMessageBox("This is a wxWidgets Hello World example",
+                 "About Hello World", wxOK | wxICON_INFORMATION);
+}
+
+void MyFrame::OnHello([[maybe_unused]] wxCommandEvent& event)
+{
+    wxLogMessage("Hello world from wxWidgets!");
 }
