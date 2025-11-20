@@ -15,7 +15,8 @@
     "sfml3",
     "sfml3-imagini-externe-api",
     "tests/Boost-ext-ut",
-    "tests/gtest"
+    "tests/gtest",
+    "wxwidgets"
   ],
   "customManagers": [
     {

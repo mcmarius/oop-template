@@ -24,7 +24,7 @@ runs:
       with:
         path: |
           ${{ env.BUILD_DIR }}/_deps
-        key: ${{ inputs.cache_key }}-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}-${{ env.SFML_VERSION }}
+        key: ${{ inputs.cache_key }}-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.asan_name }}-${{ env.BUILD_TYPE }}-${{ env.WX_VERSION }}
 
     # NOTE: GH Actions does not allow updating the cache yet
     # Using the workaround found here: https://github.com/actions/cache/issues/171
