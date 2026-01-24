@@ -39,6 +39,7 @@ FetchContent_Declare(
     # renovate: depName=SFML/SFML
     # GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 # 3.0.2
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS ON
 )
 
 FetchContent_MakeAvailable(SFML)
