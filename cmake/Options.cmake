@@ -17,15 +17,15 @@ endif ()
 # if CMake vars are not defined, use paths from environment variables
 if (NOT DEFINED FETCHCONTENT_BASE_DIR AND DEFINED ENV{FETCHCONTENT_BASE_DIR})
     set(FETCHCONTENT_BASE_DIR $ENV{FETCHCONTENT_BASE_DIR}
-            CACHE INTERNAL "Override deps directory via environment variable"
-            FORCE
+        CACHE INTERNAL "Override deps directory via environment variable"
+        FORCE
     )
 endif()
 
-if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_SFML AND DEFINED ENV{SFML3_DIR} AND NOT IS_DIRECTORY $ENV{SMFL3_DIR})
+if (NOT DEFINED FETCHCONTENT_SOURCE_DIR_SFML AND DEFINED ENV{SFML3_DIR} AND IS_DIRECTORY $ENV{SMFL3_DIR})
     set(FETCHCONTENT_SOURCE_DIR_SFML $ENV{SFML3_DIR}
-            CACHE INTERNAL "Override source directory for SFML3 via environment variable"
-            FORCE
+        CACHE INTERNAL "Override source directory for SFML3 via environment variable"
+        FORCE
     )
 endif()
 #########
