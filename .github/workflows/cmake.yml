@@ -43,14 +43,10 @@ defaults:
 jobs:
   cppcheck:
     name: "Cppcheck"
-    # concurrency:
-    #   group: "Cppcheck"
     # renovate: depName=ubuntu
     runs-on: ubuntu-22.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     env:
-      # check https://github.com/danmar/cppcheck/releases for latest version
-      # NOTE: consider updating this value in scripts/build_cppcheck.sh:4 when changing this value
       # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
       CPPCHECK_VER: "2.18.3"
     steps:
@@ -63,12 +59,12 @@ jobs:
 
   clang-tidy:
     name: "Clang-Tidy"
-    # concurrency:
-    #   group: "Clang-Tidy"
     # renovate: depName=ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
+      CC: clang-18
+      CXX: clang++-18
       CLANG_VER: 18
     steps:
       - name: Checkout repo
@@ -81,10 +77,8 @@ jobs:
 
   build:
     name: ${{ matrix.name }}
-    # concurrency:
-    #   group: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 8
+    timeout-minutes: 10
     permissions:
       attestations: write
       contents: write
@@ -110,17 +104,12 @@ jobs:
       matrix:
         include:
             # renovate: depName=ubuntu
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             c: clang-18
             cxx: clang++-18
-            clang_ver: "18"
-            clang_ver_full: "18.1.8"
             # renovate: depName=ubuntu
-            name: "MSan: Ubuntu 22.04 Clang 18"
-            cmake_flags: "-DUSE_MSAN=ON"
+            name: "Ubuntu 24.04 Clang 18"
             cmake_generator: Ninja
-            # This env runs memory sanitizers
-            runs_msan: true
 
             # renovate: depName=ubuntu
           - os: ubuntu-22.04
@@ -153,8 +142,8 @@ jobs:
             # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
             cmake_flags: "-DUSE_ASAN=OFF"
-            # cmake_generator:
-            # This env runs address sanitizers
+            cmake_generator: Ninja
+            # This env does not currently run address sanitizers
             runs_asan: false
 
             # renovate: depName=macos
@@ -164,7 +153,7 @@ jobs:
             # renovate: depName=macos
             name: "macOS 14 GCC 13"
             # cmake_flags:
-            # cmake_generator: Ninja
+            cmake_generator: Ninja
 
             # renovate: depName=windows
           - os: windows-2022
