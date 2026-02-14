@@ -24,8 +24,8 @@ include(cmake/CopyHelper.cmake)
 # external dependencies with FetchContent
 # include(FetchContent)
 #
-# set(FETCHCONTENT_QUIET OFF)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
 #
 # NOTE: Also update env vars used for caching in
 #         - .github/actions/configure-cmake/action.yml
@@ -35,6 +35,7 @@ include(cmake/CopyHelper.cmake)
 #         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
 #         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
 #         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+#         GIT_PROGRESS ON
 # )
 #
 # FetchContent_MakeAvailable(SomeLib)
