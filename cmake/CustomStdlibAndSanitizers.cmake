@@ -38,11 +38,6 @@ function(set_custom_stdlib_and_sanitizers target add_apple_asan)
             # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
             target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
             target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-        elseif(USE_MSAN)
-            # use semi-colons instead of spaces to separate arguments
-            # it is recommended to quote generator expressions in order to avoid unintentional splitting
-            target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
-            target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
         endif()
     endif()
 endfunction()

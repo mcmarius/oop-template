@@ -4,26 +4,6 @@ description: 'Install and run clang-tidy'
 runs:
   using: "composite"
   steps:
-    - name: Setup compiler env vars
-      shell: bash
-      run: |
-        echo "CC=clang-${CLANG_VER}" >> $GITHUB_ENV
-        echo "CXX=clang++-${CLANG_VER}" >> $GITHUB_ENV
-
-    # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
-    - name: Install Clang ${{ env.CLANG_VER }}
-      # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
-      uses: nick-fields/retry@v3.0.2
-      with:
-        shell: bash
-        timeout_minutes: 5
-        max_attempts: 3
-        retry_on: error
-        command: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x ./llvm.sh
-          sudo ./llvm.sh ${CLANG_VER}
-
     - name: Install clang-tidy
       shell: bash
       run: |
@@ -33,7 +13,7 @@ runs:
     - name: Configure CMake
       uses: ./.github/actions/configure-cmake
       with:
-        custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON -GNinja'
+        custom_flags: '-GNinja'
         cache_key: 'cache-clang-tidy'
 
     - name: Clang-Tidy

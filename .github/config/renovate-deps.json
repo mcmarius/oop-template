@@ -10,12 +10,11 @@
     "http-server",
     "llms",
     "main",
-    "sfml2",
-    "sfml2-imagini-externe-api",
     "sfml3",
     "sfml3-imagini-externe-api",
     "tests/Boost-ext-ut",
-    "tests/gtest"
+    "tests/gtest",
+    "wxwidgets"
   ],
   "customManagers": [
     {
@@ -42,9 +41,7 @@
     {
       "customType": "regex",
       "description": "Update SFML commented SHA",
-      "managerFilePatterns": [
-        "CMakeLists.txt"
-      ],
+      "managerFilePatterns": ["CMakeLists.txt"],
       "matchStrings": [
         "# renovate: depName=(?<depName>\\S+)\\s+# GIT_TAG\\s+(?<currentDigest>[a-z0-9]{40}) # (?<currentValue>\\S+)"
       ],

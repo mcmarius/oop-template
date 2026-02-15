@@ -18,6 +18,10 @@ run_valgrind() {
     valgrind --leak-check=full \
              --show-leak-kinds=all \
              --track-origins=yes \
+             --leak-resolution=med \
+             --vgdb=no \
+             --gen-suppressions=all \
+             --suppressions=./scripts/valgrind-suppressions.supp \
              --error-exitcode=1 \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
 }

@@ -1,0 +1,3331 @@
+{
+   <dlopen_rpath>
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   ...
+   fun:fillin_rpath.isra.0
+   fun:decompose_rpath
+   fun:cache_rpath
+   ...
+}
+{
+   <glx_mesa_leak>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0
+   ...
+}
+{
+   <glx_mesa_leak_reachable>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0
+   ...
+}
+{
+   <libx11>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   ...
+}
+{
+   <llvm>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-15.so.1
+   ...
+}
+{
+   <llvm_possible>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libLLVM-15.so.1
+   ...
+}
+{
+   <xrandr>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libXrandr.so.2.2.0
+   ...
+}
+{
+   <malloc_dlopen>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_dl_open
+   ...
+}
+{
+   <calloc_dlopen>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   fun:_dl_open
+   ...
+}
+{
+   <sfml_deque>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:allocate
+   ...
+   fun:_ZNSt5dequeIN2sf5EventESaIS1_EEC1Ev
+   ...
+}
+{
+   <new_reachable>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_Znwm
+   ...
+}
+{
+   <sfml_deque_push>
+   Memcheck:Leak
+   ...
+   fun:_Znwm
+   ...
+   fun:_ZNSt5queueIN2sf5EventESt5dequeIS1_SaIS1_EEE4pushERKS1_
+   ...
+}
+{
+   <sfml_gl_context>
+   Memcheck:Leak
+   ...
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext12initResourceEv
+   ...
+}
+{
+   <sfml_gl_context_settings>
+   Memcheck:Leak
+   ...
+   fun:_Znwm
+   ...
+   fun:_ZN2sf4priv9GlContext6createERKNS_15ContextSettingsEPKNS0_10WindowImplEj
+   ...
+}
+{
+   <sfml_window_impl_initializeEv>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   ...
+}
+{
+   <sfml_font_open_from_file>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_ZN2sf4Font12openFromFileERKNSt10filesystem7__cxx114pathE
+   ...
+}
+{
+   <libfreetype>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libfreetype.so.6.18.1
+   ...
+}
+{
+   <swrast_dri_possible>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   ...
+}
+{
+   <swrast_dri>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   ...
+}
+{
+   <dl_close>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:_dl_close
+   ...
+   fun:exit
+   fun:(below main)
+}
+{
+   <curl_open_reachable>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_open
+   ...
+}
+{
+   <curl_easy_setopt>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_easy_setopt
+   ...
+}
+{
+   <curl_sendrecv>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_sendrecv
+   ...
+}
+{
+   <curl_easy_perform>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_easy_perform
+   ...
+}
+{
+   <curl_conn_cf_connect>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_conn_cf_connect
+   ...
+}
+{
+   <curl_conn_connect>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_conn_connect
+   ...
+}
+{
+   <curl_connect>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_connect
+   ...
+}
+{
+   <curl_connect_possible>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:Curl_connect
+   ...
+}
+{
+   <curl_slist_append>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_slist_append
+   ...
+}
+{
+   <curl_client_write>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_client_write
+   ...
+}
+{
+   <curl_cwriter_write>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:Curl_cwriter_write
+   ...
+}
+{
+   <curl_multi_perform>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_multi_perform
+   ...
+}
+{
+   <curl_thread_create_thunk>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_thread_create_thunk
+   ...
+}
+{
+   <libcrypto>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libcrypto.so.3
+   ...
+}
+{
+   <libssl>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libssl.so.3
+   ...
+}
+{
+   <ssl_cf_connect>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:ssl_cf_connect
+   ...
+}
+{
+   <cpr_cookies_emplace_back>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:allocate
+   ...
+   fun:_ZN3cpr7Cookies12emplace_backERKNS_6CookieE
+   ...
+}
+{
+   <cpr_session_make_request>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:allocate
+   ...
+   fun:_ZN3cpr7Session11makeRequestEv
+   ...
+}
+{
+   <f2>
+   Memcheck:Leak
+   ...
+   fun:create
+   ...
+}
+{
+   <f3>
+   Memcheck:Leak
+   ...
+   fun:g_strdup
+   ...
+}
+{
+   <f4>
+   Memcheck:Leak
+   ...
+   fun:g_strdup_inline
+   ...
+}
+{
+   <suppress_13>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_variant_type_copy
+   fun:g_param_spec_variant
+   fun:gtk_actionable_default_init
+}
+{
+   <suppress_15>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strndup
+   fun:atom_intern
+   fun:xkb_atom_intern
+   fun:InitKeyInfo
+}
+{
+   <f5>
+   Memcheck:Leak
+   ...
+   fun:_ZN6glycin7sandbox7Sandbox13bwrap_command28_$u7b$$u7b$closure$u7d$$u7d$17h0a224bc44b1ff867E
+   ...
+}
+{
+   <f6>
+   Memcheck:Leak
+   ...
+   fun:g_strndup
+   ...
+}
+{
+   <f7>
+   Memcheck:Leak
+   ...
+   fun:strdup
+   ...
+}
+{
+   <f8>
+   Memcheck:Leak
+   ...
+   fun:_ZN6glycin7sandbox7Sandbox5spawn28_$u7b$$u7b$closure$u7d$$u7d$17h21d3a0937812af69E
+   ...
+}
+{
+   <f9>
+   Memcheck:Leak
+   ...
+   fun:create_bits_image_internal
+   ...
+}
+{
+   <f10>
+   Memcheck:Leak
+   ...
+   fun:_gdk_wayland_display_create_window_impl
+   ...
+}
+{
+   <f11>
+   Memcheck:Leak
+   ...
+   fun:ft_mem_qrealloc
+   ...
+}
+{
+   <f12>
+   Memcheck:Leak
+   ...
+   fun:_gdk_wayland_keymap_update_from_fd
+   ...
+}
+{
+   <suppress_55>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_dbus_strdup
+   fun:dbus_bus_register
+   fun:atspi_get_a11y_bus
+   fun:init_bus
+}
+{
+   <suppress_67>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strndup
+   fun:atom_intern
+   fun:xkb_atom_intern
+   fun:_xkbcommon_parse
+}
+{
+   <f13>
+   Memcheck:Leak
+   ...
+   fun:internal_bus_get
+   ...
+}
+{
+   <f14>
+   Memcheck:Leak
+   ...
+   fun:type_node_any_new_W
+   ...
+}
+{
+   <f15>
+   Memcheck:Leak
+   ...
+   fun:type_data_make_W
+   ...
+}
+{
+   <f16>
+   Memcheck:Leak
+   ...
+   fun:type_iface_add_prerequisite_W
+   ...
+}
+{
+   <f17>
+   Memcheck:Leak
+   ...
+   fun:freelist_alloc
+   ...
+}
+{
+   <f18>
+   Memcheck:Leak
+   ...
+   fun:g_memdup2
+   ...
+}
+{
+   <f19>
+   Memcheck:Leak
+   ...
+   fun:g_slice_alloc
+   ...
+}
+{
+   <suppress_160>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:dconf_engine_default_profile
+   fun:dconf_engine_profile_open
+   fun:dconf_engine_new
+}
+{
+   <f20>
+   Memcheck:Leak
+   ...
+   fun:_g_io_module_get_default
+   ...
+}
+{
+   <f21>
+   Memcheck:Leak
+   ...
+   fun:socket_source_new
+   ...
+}
+{
+   <suppress_171>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_main_context_iterate_unlocked.isra.0
+   fun:g_main_context_iteration
+   fun:dconf_gdbus_worker_thread
+}
+{
+   <f22>
+   Memcheck:Leak
+   ...
+   fun:_dbus_string_init_preallocated
+   ...
+}
+{
+   <f23>
+   Memcheck:Leak
+   ...
+   fun:async_initable_init_first
+   ...
+}
+{
+   <f24>
+   Memcheck:Leak
+   ...
+   fun:ft_mem_qalloc
+   ...
+}
+{
+   <f25>
+   Memcheck:Leak
+   ...
+   fun:gtk_im_module_initialize
+   ...
+}
+{
+   <suppress_292>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:_gdk_display_enable_motion_hints
+   fun:gdk_window_get_device_position_double
+   fun:gdk_wayland_device_get_state
+}
+{
+   <f26>
+   Memcheck:Leak
+   ...
+   fun:_lookup_namespace.part.0
+   ...
+}
+{
+   <f27>
+   Memcheck:Leak
+   ...
+   fun:ik_source_new
+   ...
+}
+{
+   <f28>
+   Memcheck:Leak
+   ...
+   fun:_ZN6glycin4dbus22RemoteProcess$LT$P$GT$3new28_$u7b$$u7b$closure$u7d$$u7d$17hb6be829dcb6f599eE
+   ...
+}
+{
+   <f29>
+   Memcheck:Leak
+   ...
+   fun:_ZN4zbus10connection7builder7Builder6build_28_$u7b$$u7b$closure$u7d$$u7d$17h8057cfb91ed25775E
+   ...
+}
+{
+   <suppress_314>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:meta_tree_init
+   fun:meta_tree_refresh
+   fun:meta_tree_refresh
+}
+{
+   <suppress_320>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:g_variant_builder_end
+   fun:g_variant_valist_new
+   fun:g_variant_new_va
+}
+{
+   <suppress_321>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_keyframes_lookup_property
+   fun:keyframes_set_value.part.0.lto_priv.0
+   fun:keyframes_set_value
+}
+{
+   <f30>
+   Memcheck:Leak
+   ...
+   fun:_ZN3std6thread6Thread3new17hbf20b44944ed93c5E
+   ...
+}
+{
+   <f31>
+   Memcheck:Leak
+   ...
+   fun:g_file_monitor_source_new
+   ...
+}
+{
+   <f32>
+   Memcheck:Leak
+   ...
+   fun:g_get_language_names_with_category
+   ...
+}
+{
+   <f33>
+   Memcheck:Leak
+   ...
+   fun:type_set_qdata_W
+   ...
+}
+{
+   <f34>
+   Memcheck:Leak
+   ...
+   fun:type_class_init_Wm
+   ...
+}
+{
+   <suppress_464>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:IA__FcFontSetCreate
+   fun:FcConfigCreate
+   fun:FcInitLoadOwnConfig
+   fun:FcInitLoadOwnConfigAndFonts
+}
+{
+   <f35>
+   Memcheck:Leak
+   ...
+   fun:FcPtrListCreate
+   ...
+}
+{
+   <f36>
+   Memcheck:Leak
+   ...
+   fun:FcPtrListIterAdd
+   ...
+}
+{
+   <f37>
+   Memcheck:Leak
+   ...
+   fun:_FcStrSetGrow
+   ...
+}
+{
+   <f38>
+   Memcheck:Leak
+   ...
+   fun:xkb_context_new
+   ...
+}
+{
+   <f39>
+   Memcheck:Leak
+   ...
+   fun:g_object_class_install_properties
+   ...
+}
+{
+   <f40>
+   Memcheck:Leak
+   ...
+   fun:g_signal_newv
+   ...
+}
+{
+   <f41>
+   Memcheck:Leak
+   ...
+   fun:get_dispatch
+   ...
+}
+{
+   <f42>
+   Memcheck:Leak
+   ...
+   fun:weak_ref_data_get_or_create_cb
+   ...
+}
+{
+   <f43>
+   Memcheck:Leak
+   ...
+   fun:g_type_create_instance
+   ...
+}
+{
+   <suppress_648>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_main_loop_new
+   fun:_g_dbus_shared_thread_ref
+   fun:_g_dbus_worker_new
+}
+{
+   <suppress_652>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_main_context_iterate_unlocked.isra.0
+   fun:g_main_loop_run
+   fun:gdbus_shared_thread_func
+}
+{
+   <f44>
+   Memcheck:Leak
+   ...
+   fun:g_cclosure_new
+   ...
+}
+{
+   <f45>
+   Memcheck:Leak
+   ...
+   fun:g_ptr_array_maybe_expand
+   ...
+}
+{
+   <suppress_673>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:IA__FcFontSetCreate
+   fun:FcConfigBuildFonts
+   fun:FcInitLoadOwnConfigAndFonts
+   fun:IA__FcInitLoadConfigAndFonts
+}
+{
+   <f46>
+   Memcheck:Leak
+   ...
+   fun:g_array_maybe_expand
+   ...
+}
+{
+   <f47>
+   Memcheck:Leak
+   ...
+   fun:type_iface_ensure_dflt_vtable_Wm
+   ...
+}
+{
+   <f48>
+   Memcheck:Leak
+   ...
+   fun:atk_bridge_adaptor_init
+   ...
+}
+{
+   <f49>
+   Memcheck:Leak
+   ...
+   fun:droute_path_add_interface
+   ...
+}
+{
+   <f50>
+   Memcheck:Leak
+   ...
+   fun:g_daemon_vfs_init
+   ...
+}
+{
+   <f51>
+   Memcheck:Leak
+   ...
+   fun:ensure_families
+   ...
+}
+{
+   <suppress_1050>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_blob_create_from_file_or_fail
+   fun:hb_blob_create_from_file
+   fun:pango_fc_font_map_get_hb_face
+   fun:pango_fc_font_create_hb_font
+}
+{
+   <suppress_1051>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_hb_face_for_data_closure_create
+   fun:hb_face_create
+   fun:pango_fc_font_map_get_hb_face
+   fun:pango_fc_font_create_hb_font
+}
+{
+   <suppress_1052>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_shape_plan_create_cached2
+   fun:hb_shape_full
+   fun:pango_hb_shape.isra.0
+   fun:pango_shape_internal
+}
+{
+   <suppress_1057>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_shape_plan_create_cached2
+   fun:hb_shape_full
+   fun:pango_hb_shape.isra.0
+   fun:pango_shape_internal
+}
+{
+   <suppress_1078>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:SetGroupName
+   fun:HandleGlobalVar
+   fun:HandleSymbolsFile
+   fun:CompileSymbols
+}
+{
+   <suppress_1084>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:_lookup_attribute.part.0
+   fun:_lookup_attribute
+   fun:ensure_attribute_hash.part.0
+}
+{
+   <suppress_1095>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_main_context_iterate_unlocked.isra.0
+   fun:g_main_context_iteration
+   fun:glib_worker_main
+}
+{
+   <suppress_1103>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_icon_set_new
+   fun:register_stock_icon
+   fun:get_default_icons
+}
+{
+   <suppress_1105>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_icon_set_new
+   fun:register_bidi_stock_icon
+   fun:get_default_icons
+}
+{
+   <f52>
+   Memcheck:Leak
+   ...
+   fun:xdg_mime_init
+   ...
+}
+{
+   <f53>
+   Memcheck:Leak
+   ...
+   fun:xdg_run_command_on_dirs
+   ...
+}
+{
+   <f54>
+   Memcheck:Leak
+   ...
+   fun:_ZN3std4sync6poison4once4Once15call_once_force28_$u7b$$u7b$closure$u7d$$u7d$17h94868681416c757dE
+   ...
+}
+{
+   <suppress_1142>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h73697c5cf3ab62dfE
+   fun:_ZN5alloc7raw_vec20RawVecInner$LT$A$GT$7reserve21do_reserve_and_handle17hebe5c27fd778e78bE
+   fun:_ZN4zbus10connection6socket8ReadHalf15receive_message28_$u7b$$u7b$closure$u7d$$u7d$17h73a296945af56f5fE
+   fun:_ZN122_$LT$alloc..boxed..Box$LT$dyn$u20$zbus..connection..socket..ReadHalf$GT$$u20$as$u20$zbus..connection..socket..ReadHalf$GT$15receive_message28_$u7b$$u7b$closure$u7d$$u7d$17h411301bb6177803eE
+}
+{
+   <suppress_1168>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gtk_image_definition_alloc
+   fun:gtk_image_definition_new_icon_name.part.0
+   fun:gtk_image_definition_new_icon_name
+}
+{
+   <f55>
+   Memcheck:Leak
+   ...
+   fun:_ZN6glycin6config6Config6cached28_$u7b$$u7b$closure$u7d$$u7d$17h56a9f4579212b600E
+   ...
+}
+{
+   <f56>
+   Memcheck:Leak
+   ...
+   fun:_ZN3std3sys4sync4once5futex4Once4call17habd4b36067f4c0daE
+   ...
+}
+{
+   <f57>
+   Memcheck:Leak
+   ...
+   fun:FcStrSetAddFilename
+   ...
+}
+{
+   <suppress_1310>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_param_spec_pool_new
+   fun:g_object_maybe_init_pspec_pool
+   fun:g_object_maybe_init_pspec_pool
+}
+{
+   <f58>
+   Memcheck:Leak
+   ...
+   fun:g_bsearch_array_grow
+   ...
+}
+{
+   <suppress_1389>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_socket_connection_factory_register_type
+   fun:g_unix_connection_get_type_once
+   fun:g_unix_connection_get_type
+}
+{
+   <suppress_1390>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_socket_connection_factory_register_type
+   fun:g_tcp_connection_get_type_once
+   fun:g_tcp_connection_get_type
+}
+{
+   <suppress_1394>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:add_mechanism
+   fun:_g_dbus_auth_add_mechs
+   fun:_g_dbus_auth_run_client
+}
+{
+   <f59>
+   Memcheck:Leak
+   ...
+   fun:gtk_widget_class_init
+   ...
+}
+{
+   <suppress_1499>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_dbus_register_shutdown_func_unlocked
+   fun:init_global_locks
+   fun:dbus_threads_init
+   fun:_dbus_lock
+}
+{
+   <f60>
+   Memcheck:Leak
+   ...
+   fun:_dbus_register_shutdown_func
+   ...
+}
+{
+   <f61>
+   Memcheck:Leak
+   ...
+   fun:_dbus_connection_new_for_transport
+   ...
+}
+{
+   <suppress_1506>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:ensure_bus_data
+   fun:dbus_bus_register
+   fun:atspi_get_a11y_bus
+   fun:init_bus
+}
+{
+   <suppress_1508>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:connection_setup_add_watch.part.0
+   fun:connection_setup_add_watch
+   fun:add_watch
+}
+{
+   <suppress_1525>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_private_set_alloc0
+   fun:g_get_filename_charsets
+   fun:g_filename_display_name
+}
+{
+   <suppress_1526>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_private_set_alloc0
+   fun:g_get_charset
+   fun:g_get_filename_charsets
+}
+{
+   <suppress_1559>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gtk_stock_set_translate_func
+   fun:init_stock_hash
+   fun:init_stock_hash
+}
+{
+   <suppress_1561>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gtk_stock_set_translate_func
+   fun:real_add
+   fun:init_stock_hash
+}
+{
+   <suppress_1563>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:FcPatternCreate
+   fun:FcPatternBuild
+   fun:pango_fc_make_pattern
+   fun:pango_fc_fontset_key_make_pattern
+}
+{
+   <f62>
+   Memcheck:Leak
+   ...
+   fun:FcFontRenderPrepare
+   ...
+}
+{
+   <suppress_1567>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcCharSetCreate
+   fun:_pango_fc_font_map_fc_to_coverage
+   fun:_pango_fc_font_map_get_coverage
+   fun:pango_fc_font_get_coverage
+}
+{
+   <suppress_1571>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_ft_unscaled_font_map_create
+   fun:_cairo_ft_unscaled_font_map_lock
+   fun:_cairo_ft_unscaled_font_create_internal
+   fun:_cairo_ft_unscaled_font_create_for_pattern
+}
+{
+   <suppress_1579>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_main_context_iterate_unlocked.isra.0
+   fun:g_main_loop_run
+   fun:gtk_main
+}
+{
+   <f63>
+   Memcheck:Leak
+   ...
+   fun:g_dbus_connection_signal_subscribe
+   ...
+}
+{
+   <f64>
+   Memcheck:Leak
+   ...
+   fun:_ZN21async_global_executor9threading16thread_main_loop17hfc976ef02d6301f6E
+   ...
+}
+{
+   <f65>
+   Memcheck:Leak
+   ...
+   fun:_ZN104_$LT$futures_util..future..future..shared..Shared$LT$Fut$GT$$u20$as$u20$core..future..future..Future$GT$4poll17h152675e8ec63c40eE
+   ...
+}
+{
+   <f66>
+   Memcheck:Leak
+   ...
+   fun:g_datalist_id_update_atomic
+   ...
+}
+{
+   <suppress_1607>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_path_create_internal.lto_priv.0
+   fun:append_arc
+   fun:_cairo_ellipsis
+   fun:_cairo_ellipsis
+}
+{
+   <suppress_1640>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:g_malloc0
+   fun:pango_language_from_string
+   fun:pango_language_get_default
+   fun:pango_context_init
+}
+{
+   <suppress_1642>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_convert_with_iconv
+   fun:g_convert
+   fun:convert_checked
+}
+{
+   <suppress_1646>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:__vasprintf_internal
+   fun:vasprintf
+   fun:g_vasprintf
+   fun:g_strdup_vprintf
+}
+{
+   <suppress_1649>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_key_file_parse_value_as_string
+   fun:g_key_file_get_string
+   fun:g_key_file_get_locale_string
+}
+{
+   <suppress_1651>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_key_file_parse_value_as_string
+   fun:g_key_file_get_string
+   fun:g_key_file_get_locale_string
+}
+{
+   <suppress_1654>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_dbus_strdup
+   fun:get_from_env
+   fun:init_session_address
+   fun:init_connections_unlocked
+}
+{
+   <f67>
+   Memcheck:Leak
+   ...
+   fun:_dbus_transport_init_base
+   ...
+}
+{
+   <suppress_1658>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_convert_with_iconv
+   fun:g_convert
+   fun:convert_checked
+}
+{
+   <suppress_1664>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h73697c5cf3ab62dfE
+   fun:_ZN5alloc7raw_vec20RawVecInner$LT$A$GT$7reserve21do_reserve_and_handle17hebe5c27fd778e78bE
+   fun:_ZN6glycin4dbus18spawn_stdio_reader28_$u7b$$u7b$closure$u7d$$u7d$17h800a6300da69cdc0E
+   fun:_ZN10async_task3raw28RawTask$LT$F$C$T$C$S$C$M$GT$3run17hc821bcf0b0be71abE
+}
+{
+   <f68>
+   Memcheck:Leak
+   ...
+   fun:reallocate_for_length
+   ...
+}
+{
+   <f69>
+   Memcheck:Leak
+   ...
+   fun:g_hash_table_setup_storage
+   ...
+}
+{
+   <f70>
+   Memcheck:Leak
+   ...
+   fun:type_add_interface_Wm
+   ...
+}
+{
+   <f71>
+   Memcheck:Leak
+   ...
+   fun:g_closure_new_simple
+   ...
+}
+{
+   <suppress_1694>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcStrSetCreateEx
+   fun:IA__FcStrSetCreate
+   fun:FcConfigCreate
+   fun:FcInitLoadOwnConfig
+}
+{
+   <f72>
+   Memcheck:Leak
+   ...
+   fun:g_source_set_callback
+   ...
+}
+{
+   <suppress_1806>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_io_extension_point_register
+   fun:_g_io_modules_ensure_extension_points_registered.part.0
+   fun:_g_io_modules_ensure_extension_points_registered
+}
+{
+   <f73>
+   Memcheck:Leak
+   ...
+   fun:initable_init
+   ...
+}
+{
+   <f74>
+   Memcheck:Leak
+   ...
+   fun:FcPopExpr
+   ...
+}
+{
+   <suppress_1922>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:shm_pool_create
+   fun:wl_cursor_theme_load
+   fun:gdk_wayland_display_set_cursor_theme
+   fun:_gdk_wayland_display_load_cursor_theme
+}
+{
+   <f75>
+   Memcheck:Leak
+   ...
+   fun:realloc_arrays
+   ...
+}
+{
+   <f76>
+   Memcheck:Leak
+   ...
+   fun:cairo_region_create
+   ...
+}
+{
+   <suppress_2283>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_dbus_data_slot_list_set.isra.0
+   fun:dbus_connection_set_data
+   fun:dbus_connection_set_data
+   fun:ensure_bus_data
+}
+{
+   <suppress_2410>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_file_attribute_info_list_new
+   fun:g_local_file_class_init
+   fun:g_local_file_class_intern_init
+}
+{
+   <suppress_2614>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcStrSetCreateEx
+   fun:IA__FcStrSetCreate
+   fun:FcGetDefaultLangs
+   fun:FcGetDefaultLang
+}
+{
+   <f77>
+   Memcheck:Leak
+   ...
+   fun:_FcObjectLookupOtherTypeByName.lto_priv.0
+   ...
+}
+{
+   <suppress_2632>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FT_New_Memory
+   fun:FT_Init_FreeType
+   fun:_cairo_ft_unscaled_font_map_create
+   fun:_cairo_ft_unscaled_font_map_lock
+}
+{
+   <suppress_2653>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:weak_ref_data_list_add
+   fun:_weak_ref_set
+   fun:weak_ref_new
+}
+{
+   <f78>
+   Memcheck:Leak
+   ...
+   fun:theme_subdir_load.lto_priv.0
+   ...
+}
+{
+   <f79>
+   Memcheck:Leak
+   ...
+   fun:_ZN21async_global_executor4init4init17h2f302c79e7405a55E
+   ...
+}
+{
+   <suppress_2719>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h36a88127a3b6a926E
+   fun:_ZN5alloc7raw_vec19RawVec$LT$T$C$A$GT$8grow_one17ha4bce9255818b89cE
+   fun:_ZN5alloc11collections9vec_deque21VecDeque$LT$T$C$A$GT$4grow17h3f3295f53038b02bE
+   fun:_ZN8blocking8Executor8schedule17hcc304ce8ad1fb9acE
+}
+{
+   <f80>
+   Memcheck:Leak
+   ...
+   fun:_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17ha3ed014f65ced943E
+   ...
+}
+{
+   <f81>
+   Memcheck:Leak
+   ...
+   fun:_ZN5alloc7raw_vec11finish_grow17h0035e3ca822a692cE
+   ...
+}
+{
+   <suppress_2725>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:__cxa_thread_atexit_impl
+   fun:_ZN3std6thread9spawnhook15ChildSpawnHooks3run17h02105f8d0267f257E
+   fun:_ZN3std3sys9backtrace28__rust_begin_short_backtrace17h0282836663f3e75aE
+   fun:_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17h8ed9d4574bf8db0aE
+}
+{
+   <suppress_2728>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:__cxa_thread_atexit_impl
+   fun:_ZN3std6thread9spawnhook15ChildSpawnHooks3run17h02105f8d0267f257E
+   fun:_ZN3std3sys9backtrace28__rust_begin_short_backtrace17h0282836663f3e75aE
+   fun:_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17h8792881be5e0f034E
+}
+{
+   <suppress_2730>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:g_closure_add_invalidate_notifier
+   fun:add_invalid_closure_notify
+   fun:g_signal_connect_closure_by_id
+}
+{
+   <suppress_2733>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h36a88127a3b6a926E
+   fun:_ZN5alloc7raw_vec19RawVec$LT$T$C$A$GT$8grow_one17h0034fcad9a7ea9ffE
+   fun:_ZN14async_executor6Ticker4wake17h94f0b1066ab945d2E
+   fun:_ZN14async_executor6Runner8runnable28_$u7b$$u7b$closure$u7d$$u7d$17hfcfd05d7b3104f4eE
+}
+{
+   <suppress_2737>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:g_closure_add_invalidate_notifier
+   fun:add_invalid_closure_notify
+   fun:g_signal_connect_closure_by_id
+}
+{
+   <f82>
+   Memcheck:Leak
+   ...
+   fun:_ZN6glycin10api_common14spin_up_loader28_$u7b$$u7b$closure$u7d$$u7d$17h5be8d1b170f0c523E
+   ...
+}
+{
+   <suppress_2936>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_resource_new_from_table
+   fun:g_resource_new_from_data
+   fun:register_lazy_static_resources_unlocked
+}
+{
+   <suppress_2943>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_keyframes_add_keyframe.lto_priv.0
+   fun:gtk_css_keyframes_new
+   fun:_gtk_css_keyframes_parse
+}
+{
+   <suppress_2944>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gtk_css_keyframes_lookup_property
+   fun:keyframes_set_value.part.0.lto_priv.0
+   fun:keyframes_set_value
+}
+{
+   <suppress_2975>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_strdupv
+   fun:real_choose_icon
+   fun:gtk_icon_theme_lookup_icon_for_scale
+}
+{
+   <suppress_2981>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_box_pack
+   fun:g_cclosure_marshal_VOID__OBJECTv
+   fun:_g_closure_invoke_va
+}
+{
+   <suppress_2988>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:find_subtree_recurse.constprop.0
+   fun:ensure_subtree
+   fun:_dbus_object_tree_register
+   fun:_dbus_connection_register_object_path
+}
+{
+   <f83>
+   Memcheck:Leak
+   ...
+   fun:FcValueListCreate
+   ...
+}
+{
+   <suppress_3009>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_path_get_dirname
+   fun:_gtk_css_provider_load_named
+   fun:settings_update_theme
+}
+{
+   <suppress_3011>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_path_get_dirname
+   fun:_gtk_css_provider_load_named
+   fun:gtk_css_provider_get_named
+}
+{
+   <suppress_3021>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_key_file_parse_value_as_string
+   fun:g_key_file_get_string
+   fun:g_key_file_get_locale_string
+}
+{
+   <f84>
+   Memcheck:Leak
+   ...
+   fun:g_memdup
+   ...
+}
+{
+   <suppress_3032>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_rec_mutex_impl_new
+   fun:g_rec_mutex_get_impl
+   fun:g_rec_mutex_lock_impl
+   fun:g_rec_mutex_lock
+   obj:/usr/lib64/ld-linux-x86-64.so.2
+}
+{
+   <f85>
+   Memcheck:Leak
+   ...
+   fun:g_param_type_register_static
+   ...
+}
+{
+   <suppress_3034>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_rec_mutex_impl_new
+   fun:g_rec_mutex_get_impl
+   fun:g_rec_mutex_lock_impl
+   fun:g_rec_mutex_lock
+}
+{
+   <f86>
+   Memcheck:Leak
+   ...
+   fun:g_module_open_full
+   ...
+}
+{
+   <f87>
+   Memcheck:Leak
+   ...
+   fun:g_bytes_new_with_free_func
+   ...
+}
+{
+   <suppress_3076>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_rec_mutex_impl_new
+   fun:g_rec_mutex_get_impl
+   fun:g_rec_mutex_lock_impl
+   fun:g_rec_mutex_lock
+}
+{
+   <suppress_3084>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_rec_mutex_impl_new
+   fun:g_rec_mutex_get_impl
+   fun:g_rec_mutex_lock_impl
+   fun:g_rec_mutex_lock
+}
+{
+   <suppress_3092>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:wl_cursor_theme_load
+   fun:gdk_wayland_display_set_cursor_theme
+   fun:_gdk_wayland_display_load_cursor_theme
+   fun:load_cursor_theme_closure_run
+}
+{
+   <suppress_3093>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:lock_cache.lto_priv.0
+   fun:FcCacheFindByStat
+   fun:FcDirCacheMapFd
+   fun:FcDirCacheMapHelper.lto_priv.0
+}
+{
+   <suppress_3217>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_string_chunk_new
+   fun:path_new
+   fun:droute_add_many
+}
+{
+   <suppress_3218>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dbus_mem_pool_new
+   fun:alloc_link
+   fun:_dbus_list_prepend
+   fun:_dbus_list_append
+}
+{
+   <f88>
+   Memcheck:Leak
+   ...
+   fun:_dbus_hash_table_new
+   ...
+}
+{
+   <f89>
+   Memcheck:Leak
+   ...
+   fun:_dbus_platform_rmutex_new
+   ...
+}
+{
+   <suppress_3235>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:connection_setup_new
+   fun:atspi_dbus_connection_setup_with_g_main
+   fun:init_bus
+}
+{
+   <suppress_3299>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:lock_config
+   fun:IA__FcConfigReference.part.0
+   fun:IA__FcConfigReference
+   fun:FcInitBringUptoDate
+}
+{
+   <suppress_3319>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_rec_mutex_impl_new
+   fun:g_rec_mutex_get_impl
+   fun:g_rec_mutex_lock_impl
+   fun:g_rec_mutex_lock
+}
+{
+   <suppress_3322>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:_ih_sub_new
+   fun:g_inotify_file_monitor_start
+   fun:g_local_file_monitor_new_for_path
+}
+{
+   <suppress_3330>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:_gtk_key_hash_new
+   fun:binding_key_hash_for_keymap
+   fun:binding_key_hash_for_keymap
+}
+{
+   <suppress_3332>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_icon_source_copy
+   fun:gtk_icon_set_add_source
+   fun:register_stock_icon
+}
+{
+   <f90>
+   Memcheck:Leak
+   ...
+   fun:insert_theme
+   ...
+}
+{
+   <f91>
+   Memcheck:Leak
+   ...
+   fun:load_module
+   ...
+}
+{
+   <suppress_3389>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strndup
+   fun:atom_intern
+   fun:xkb_atom_intern
+   fun:update_builtin_keymap_fields
+}
+{
+   <suppress_3448>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_dbus_data_slot_list_set.isra.0
+   fun:dbus_connection_set_data
+   fun:dbus_connection_set_data
+   fun:atspi_dbus_connection_setup_with_g_main
+}
+{
+   <f92>
+   Memcheck:Leak
+   ...
+   fun:g_vfs_init
+   ...
+}
+{
+   <f93>
+   Memcheck:Leak
+   ...
+   fun:hb_object_create<hb_blob_t>
+   ...
+}
+{
+   <suppress_3496>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:_gdk_wayland_display_create_shm_surface
+   fun:gdk_wayland_window_ensure_cairo_surface.isra.0
+   fun:gdk_window_impl_wayland_begin_paint
+}
+{
+   <suppress_3497>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_cairo_realloc_ab
+   fun:_cairo_array_grow_by
+   fun:_cairo_array_allocate
+   fun:_cairo_array_append_multiple
+}
+{
+   <suppress_3503>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:ip_watched_dir_new
+   fun:_ip_start_watching
+   fun:_ih_sub_add
+}
+{
+   <suppress_3521>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc5alloc6Global10alloc_impl17ha68d71a2fe2e269bE.7891
+   fun:_ZN50_$LT$T$u20$as$u20$core..convert..Into$LT$U$GT$$GT$4into17hbb20b6224e744e79E
+   fun:_ZN87_$LT$zvariant..str..Str$u20$as$u20$core..convert..From$LT$alloc..string..String$GT$$GT$4from17h5eb86d6d99415247E
+   fun:_ZN4zbus4guid4Guid8generate17hc6631392fb2f8bedE
+}
+{
+   <f94>
+   Memcheck:Leak
+   ...
+   fun:binding_entry_new
+   ...
+}
+{
+   <f95>
+   Memcheck:Leak
+   ...
+   fun:FcEditCreate
+   ...
+}
+{
+   <f96>
+   Memcheck:Leak
+   ...
+   fun:FcRuleCreate
+   ...
+}
+{
+   <suppress_3659>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:call_destroy_notify.part.0
+   fun:call_destroy_notify
+   fun:signal_subscriber_unref
+}
+{
+   <f97>
+   Memcheck:Leak
+   ...
+   fun:FcValueSave
+   ...
+}
+{
+   <suppress_3668>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_node_declaration_make_writable_resize.lto_priv.0
+   fun:gtk_css_node_declaration_add_class
+   fun:gtk_css_node_add_class
+}
+{
+   <suppress_3669>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_node_declaration_make_writable_resize.lto_priv.0
+   fun:gtk_css_node_declaration_add_class
+   fun:gtk_css_node_add_class
+}
+{
+   <f98>
+   Memcheck:Leak
+   ...
+   fun:g_rw_lock_impl_new
+   ...
+}
+{
+   <f99>
+   Memcheck:Leak
+   ...
+   fun:datalist_append
+   ...
+}
+{
+   <f100>
+   Memcheck:Leak
+   ...
+   fun:g_signal_add_emission_hook
+   ...
+}
+{
+   <suppress_3764>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_font_options_copy
+   fun:gdk_screen_set_font_options
+   fun:gdk_screen_set_font_options
+   fun:settings_update_font_options
+}
+{
+   <f101>
+   Memcheck:Leak
+   ...
+   fun:pango_fc_fontset_key_copy
+   ...
+}
+{
+   <suppress_3789>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_font_options_copy
+   fun:pango_fc_font_key_copy
+   fun:pango_fc_font_map_add
+   fun:pango_fc_font_map_new_font
+}
+{
+   <suppress_3805>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_font_options_copy
+   fun:pango_fc_font_key_copy
+   fun:pango_fc_font_map_add
+   fun:pango_fc_font_map_new_font
+}
+{
+   <suppress_3824>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc5alloc15exchange_malloc17hdc261253de182727E.7537
+   fun:_ZN122_$LT$alloc..boxed..Box$LT$dyn$u20$zbus..connection..socket..ReadHalf$GT$$u20$as$u20$zbus..connection..socket..ReadHalf$GT$15receive_message17hbf7c7481e29dad9bE
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11read_socket28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h12ffb94f17f074a6E
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11receive_msg28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h951c4444d36ae1c5E
+}
+{
+   <suppress_3825>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN4zbus10connection6socket8ReadHalf15receive_message28_$u7b$$u7b$closure$u7d$$u7d$17h73a296945af56f5fE
+   fun:_ZN122_$LT$alloc..boxed..Box$LT$dyn$u20$zbus..connection..socket..ReadHalf$GT$$u20$as$u20$zbus..connection..socket..ReadHalf$GT$15receive_message28_$u7b$$u7b$closure$u7d$$u7d$17h411301bb6177803eE
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11read_socket28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h12ffb94f17f074a6E
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11receive_msg28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h951c4444d36ae1c5E
+}
+{
+   <f102>
+   Memcheck:Leak
+   ...
+   fun:g_hash_table_realloc_key_or_value_array
+   ...
+}
+{
+   <f103>
+   Memcheck:Leak
+   ...
+   fun:FcRuleSetCreate
+   ...
+}
+{
+   <f104>
+   Memcheck:Leak
+   ...
+   fun:g_task_thread_pool_init
+   ...
+}
+{
+   <f105>
+   Memcheck:Leak
+   ...
+   fun:gtk_binding_set_new
+   ...
+}
+{
+   <f106>
+   Memcheck:Leak
+   ...
+   fun:_dbus_transport_new_for_socket
+   ...
+}
+{
+   <suppress_3984>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_dbus_message_loader_get_unix_fds
+   fun:do_reading
+   fun:socket_do_iteration
+   fun:_dbus_transport_do_iteration
+}
+{
+   <suppress_3988>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_dbus_message_loader_get_unix_fds
+   fun:do_reading
+   fun:socket_do_iteration
+   fun:_dbus_transport_do_iteration
+}
+{
+   <suppress_4017>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gdk_pixbuf_load_module_unlocked
+   fun:gdk_pixbuf_io_init_builtin
+   fun:gdk_pixbuf_io_init
+}
+{
+   <suppress_4084>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gtk_im_context_wayland_global_init
+   fun:_gtk_immodule_wayland_init
+   fun:gtk_im_module_load
+}
+{
+   <suppress_4093>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:_lookup_attribute.part.0
+   fun:_lookup_attribute
+   fun:lookup_attribute
+}
+{
+   <suppress_4114>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h52d2d16f1edab3afE
+   fun:_ZN5alloc7raw_vec20RawVecInner$LT$A$GT$14grow_amortized17h09796720184f9ba3E
+   fun:_ZN5alloc7raw_vec19RawVec$LT$T$C$A$GT$8grow_one17h3ac4b285bfca5a17E
+   fun:_ZN4slab20VacantEntry$LT$T$GT$6insert17h727fcbf921e8e9f4E
+}
+{
+   <suppress_4122>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:g_closure_add_invalidate_notifier
+   fun:add_invalid_closure_notify
+   fun:g_signal_connect_closure
+}
+{
+   <f107>
+   Memcheck:Leak
+   ...
+   fun:g_variant_alloc
+   ...
+}
+{
+   <suppress_4174>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_region_create_rectangle
+   fun:update_opaque_region.part.0.lto_priv.0
+   fun:update_opaque_region
+   fun:update_realized_window_properties
+}
+{
+   <suppress_4230>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:dconf_engine_source_new_default
+   fun:dconf_engine_default_profile
+   fun:dconf_engine_profile_open
+}
+{
+   <f108>
+   Memcheck:Leak
+   ...
+   fun:_dbus_auth_new.constprop.0
+   ...
+}
+{
+   <f109>
+   Memcheck:Leak
+   ...
+   fun:_cairo_clip_create
+   ...
+}
+{
+   <suppress_4258>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:meta_journal_open
+   fun:meta_tree_init
+   fun:meta_tree_refresh
+}
+{
+   <suppress_4290>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN15async_broadcast25InactiveReceiver$LT$T$GT$15activate_cloned17h1ee639c7c8ff9467E
+   fun:_ZN4zbus5proxy5Proxy4call28_$u7b$$u7b$closure$u7d$$u7d$17h93a9c7df1099e11aE
+   fun:_ZN104_$LT$futures_util..future..future..shared..Shared$LT$Fut$GT$$u20$as$u20$core..future..future..Future$GT$4poll17hcd4c3e6c9c00b523E
+   fun:_ZN6glycin4dbus46RemoteProcess$LT$glycin..dbus..LoaderProxy$GT$4init28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17he77240b06ac765f2E
+}
+{
+   <suppress_4291>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN4zbus10connection10Connection4send28_$u7b$$u7b$closure$u7d$$u7d$17h1c88e14a4cc31a91E
+   fun:_ZN4zbus5proxy5Proxy4call28_$u7b$$u7b$closure$u7d$$u7d$17h93a9c7df1099e11aE
+   fun:_ZN104_$LT$futures_util..future..future..shared..Shared$LT$Fut$GT$$u20$as$u20$core..future..future..Future$GT$4poll17hcd4c3e6c9c00b523E
+   fun:_ZN6glycin4dbus46RemoteProcess$LT$glycin..dbus..LoaderProxy$GT$4init28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17he77240b06ac765f2E
+}
+{
+   <suppress_4293>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN5alloc5alloc15exchange_malloc17hdc261253de182727E.7537
+   fun:_ZN14event_listener14Event$LT$T$GT$5inner17h213584a65534535bE
+   fun:_ZN14event_listener14Event$LT$T$GT$6listen17h3c18b721df0ceab0E
+   fun:_ZN83_$LT$async_broadcast..Receiver$LT$T$GT$$u20$as$u20$futures_core..stream..Stream$GT$9poll_next17h3d181d450a8f7a9aE
+}
+{
+   <suppress_4294>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN5alloc5alloc15exchange_malloc17hdc261253de182727E.7537
+   fun:_ZN14event_listener14Event$LT$T$GT$5inner17h213584a65534535bE
+   fun:_ZN14event_listener14Event$LT$T$GT$6notify17hb1d93fc8a1319fb5E
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11receive_msg28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h951c4444d36ae1c5E
+}
+{
+   <suppress_4587>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_icon_source_copy
+   fun:gtk_icon_set_add_source
+   fun:register_bidi_stock_icon
+}
+{
+   <f110>
+   Memcheck:Leak
+   ...
+   fun:_dbus_counter_new
+   ...
+}
+{
+   <f111>
+   Memcheck:Leak
+   ...
+   fun:g_source_new
+   ...
+}
+{
+   <f112>
+   Memcheck:Leak
+   ...
+   fun:zalloc
+   ...
+}
+{
+   <f113>
+   Memcheck:Leak
+   ...
+   fun:g_type_module_register_type
+   ...
+}
+{
+   <suppress_5465>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_cairo_malloc_ab
+   fun:_cairo_path_create_internal.lto_priv.0
+   fun:append_arc
+   fun:_cairo_ellipsis
+}
+{
+   <f114>
+   Memcheck:Leak
+   ...
+   fun:FcEndElement
+   ...
+}
+{
+   <suppress_5547>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_icon_size_register_alias
+   fun:init_icon_sizes.part.0
+   fun:init_icon_sizes
+}
+{
+   <suppress_5549>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:g_malloc0
+   fun:g_rc_box_alloc_full
+   fun:pango_fc_patterns_new
+   fun:pango_fc_font_map_get_patterns
+}
+{
+   <suppress_5699>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:meta_tree_open
+   fun:meta_tree_lookup_by_name.constprop.0
+   fun:meta_lookup_cache_lookup_path.constprop.0
+}
+{
+   <suppress_5708>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:alloc_data
+   fun:pixman_rect_alloc.lto_priv.1
+   fun:pixman_op.lto_priv.1
+   fun:pixman_region32_subtract
+}
+{
+   <suppress_5722>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gdk_pixbuf_set_option
+   fun:gdk_pixbuf_loader_prepare
+   fun:gdk_pixbuf__glycin_image_stop_load
+}
+{
+   <suppress_5745>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_io_channel_unix_new
+   fun:connection_setup_add_watch.part.0
+   fun:connection_setup_add_watch
+}
+{
+   <f115>
+   Memcheck:Leak
+   ...
+   fun:g_string_expand
+   ...
+}
+{
+   <suppress_5778>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_string_copy
+   fun:boxed_proxy_value_copy
+   fun:gtk_settings_load_from_key_file
+}
+{
+   <suppress_5779>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:g_string_copy
+   fun:boxed_proxy_value_copy
+   fun:gtk_settings_set_property_value_internal
+}
+{
+   <f116>
+   Memcheck:Leak
+   ...
+   fun:FcConfigValues
+   ...
+}
+{
+   <f117>
+   Memcheck:Leak
+   ...
+   fun:_gdk_wayland_display_open
+   ...
+}
+{
+   <suppress_5863>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gdk_pixbuf_io_init_builtin
+   fun:gdk_pixbuf_io_init
+   fun:get_file_formats
+}
+{
+   <suppress_5904>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_pattern_create_for_surface
+   fun:cairo_pattern_create_for_surface
+   fun:css_image_value_query
+   fun:gtk_style_context_get_property
+}
+{
+   <suppress_5908>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_hb_ot_font_create
+   fun:hb_ot_font_set_funcs
+   fun:hb_font_set_funcs_using
+   fun:hb_font_create
+}
+{
+   <suppress_5931>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_ft_font_face_create
+   fun:cairo_ft_font_face_create_for_pattern
+   fun:_pango_cairo_font_private_get_scaled_font.part.0
+   fun:_pango_cairo_font_private_get_scaled_font
+}
+{
+   <suppress_5956>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN4zbus10connection6socket8ReadHalf15receive_message17h386616cc8bddac78E
+   fun:_ZN122_$LT$alloc..boxed..Box$LT$dyn$u20$zbus..connection..socket..ReadHalf$GT$$u20$as$u20$zbus..connection..socket..ReadHalf$GT$15receive_message28_$u7b$$u7b$closure$u7d$$u7d$17h411301bb6177803eE
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11read_socket28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h12ffb94f17f074a6E
+   fun:_ZN4zbus10connection13socket_reader12SocketReader11receive_msg28_$u7b$$u7b$closure$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$17h951c4444d36ae1c5E
+}
+{
+   <f118>
+   Memcheck:Leak
+   ...
+   fun:_cairo_pattern_create_solid
+   ...
+}
+{
+   <suppress_6004>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:init_icon_sizes.part.0
+   fun:init_icon_sizes
+   fun:icon_size_lookup_intern
+}
+{
+   <f119>
+   Memcheck:Leak
+   ...
+   fun:_g_param_spec_types_init
+   ...
+}
+{
+   <suppress_6040>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcConfigCreate
+   fun:FcInitLoadOwnConfig
+   fun:FcInitLoadOwnConfigAndFonts
+   fun:IA__FcInitLoadConfigAndFonts
+}
+{
+   <f120>
+   Memcheck:Leak
+   ...
+   fun:dbus_message_new_empty_header.lto_priv.0
+   ...
+}
+{
+   <f121>
+   Memcheck:Leak
+   ...
+   fun:_realloc
+   ...
+}
+{
+   <f122>
+   Memcheck:Leak
+   ...
+   fun:g_main_context_new_with_flags
+   ...
+}
+{
+   <suppress_6136>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_font_t>
+   fun:_ZL15_hb_font_createP9hb_face_t
+   fun:hb_font_create
+   fun:pango_fc_font_create_hb_font
+}
+{
+   <suppress_6138>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_font_funcs_t>
+   fun:hb_font_funcs_create
+   fun:pango_font_get_hb_font_for_context
+   fun:pango_hb_shape.isra.0
+}
+{
+   <suppress_6140>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_font_t>
+   fun:_ZL15_hb_font_createP9hb_face_t
+   fun:hb_font_create
+   fun:pango_fc_font_create_hb_font
+}
+{
+   <suppress_6161>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:AddLevelName
+   fun:SetLevelName
+   fun:SetKeyTypeField
+   fun:HandleKeyTypeBody
+}
+{
+   <suppress_6212>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gdk_pixbuf_io_init_modules
+   fun:gdk_pixbuf_io_init
+   fun:get_file_formats
+}
+{
+   <suppress_6217>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcStrMakeTriple
+   fun:FcStrSetAddTriple
+   fun:FcStrSetAddFilenamePairWithSalt
+   fun:FcConfigAddFontDir
+}
+{
+   <suppress_6222>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN68_$LT$glycin..pool..UsageTracker$u20$as$u20$core..ops..drop..Drop$GT$4drop17hd8fe9bb6b9c94e7bE
+   fun:_ZN5alloc4sync16Arc$LT$T$C$A$GT$9drop_slow17h58bee795762f914cE
+   fun:_ZN67_$LT$glycin..api_loader..Image$u20$as$u20$core..ops..drop..Drop$GT$4drop28_$u7b$$u7b$closure$u7d$$u7d$17h1a337c02bf3443edE
+   fun:_ZN10async_task3raw28RawTask$LT$F$C$T$C$S$C$M$GT$3run17h0c464c8890066e03E
+}
+{
+   <suppress_6264>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:allocate_subtree_object
+   fun:_dbus_object_subtree_new.constprop.0
+   fun:find_subtree_recurse.constprop.0
+   fun:ensure_subtree
+}
+{
+   <f123>
+   Memcheck:Leak
+   ...
+   fun:_pixman_image_allocate
+   ...
+}
+{
+   <suppress_6272>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_buffer_t>
+   fun:hb_buffer_create
+   fun:acquire_buffer
+   fun:pango_hb_shape.isra.0
+}
+{
+   <suppress_6290>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:cairo_pattern_create_linear
+   fun:gtk_css_image_linear_draw
+   fun:_gtk_css_image_draw
+   fun:_gtk_css_image_get_surface
+}
+{
+   <suppress_6299>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_shape_plan_t>
+   fun:hb_shape_plan_create2
+   fun:hb_shape_plan_create_cached2
+   fun:hb_shape_full
+}
+{
+   <suppress_6300>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_shape_plan_t>
+   fun:hb_shape_plan_create2
+   fun:hb_shape_plan_create_cached2
+   fun:hb_shape_full
+}
+{
+   <suppress_6308>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_ft_unscaled_font_create_internal
+   fun:_cairo_ft_unscaled_font_create_for_pattern
+   fun:cairo_ft_font_face_create_for_pattern
+   fun:_pango_cairo_font_private_get_scaled_font.part.0
+}
+{
+   <f124>
+   Memcheck:Leak
+   ...
+   fun:_cairo_hash_table_create
+   ...
+}
+{
+   <suppress_6359>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_stock_item_copy
+   fun:real_add.part.0
+   fun:real_add
+}
+{
+   <suppress_6422>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+}
+{
+   <suppress_6430>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dbus_mem_pool_alloc
+   fun:alloc_link
+   fun:_dbus_list_prepend
+   fun:_dbus_list_append
+}
+{
+   <suppress_6431>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dbus_mem_pool_alloc
+   fun:alloc_entry
+   fun:add_entry
+   fun:find_generic_function
+}
+{
+   <suppress_6432>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dbus_mem_pool_alloc
+   fun:alloc_entry
+   fun:add_entry
+   fun:find_generic_function
+}
+{
+   <f125>
+   Memcheck:Leak
+   ...
+   fun:_cairo_image_surface_create_with_pixman_format
+   ...
+}
+{
+   <suppress_6468>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:hb_object_create<hb_face_t>
+   fun:hb_face_create_for_tables
+   fun:hb_face_create
+   fun:pango_fc_font_map_get_hb_face
+}
+{
+   <suppress_6469>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN8async_io7reactor7Reactor14process_timers17hc1b37104eaccc017E
+   fun:_ZN8async_io7reactor11ReactorLock5react17hd94f5e43b75b67ceE
+   fun:_ZN3std3sys9backtrace28__rust_begin_short_backtrace17h6012e3b76c34eef4E
+   fun:_ZN4core3ops8function6FnOnce40call_once$u7b$$u7b$vtable.shim$u7d$$u7d$17h8ed9d4574bf8db0aE
+}
+{
+   <suppress_6500>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:external_cache_create
+   fun:external_cache_create<OT::Layout::GPOS_impl::PairPosFormat1_3<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::Layout::GPOS_impl::PairPosFormat1_3<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::hb_accelerate_subtables_context_t>
+}
+{
+   <f126>
+   Memcheck:Leak
+   ...
+   fun:proxy_create
+   ...
+}
+{
+   <suppress_6510>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:wl_array_add
+   fun:wl_map_reserve_new
+   fun:wl_connection_demarshal
+   fun:queue_event
+}
+{
+   <suppress_6511>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:array_resize
+   fun:g_memory_buffer_write.isra.0
+   fun:g_memory_buffer_put_string
+}
+{
+   <suppress_6513>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:array_resize
+   fun:g_memory_buffer_write.isra.0
+   fun:g_memory_buffer_put_string
+}
+{
+   <suppress_6545>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:ensure_faces
+   fun:pango_fc_font_map_get_face
+   fun:pango_fc_font_map_new_font
+}
+{
+   <suppress_6546>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:CopyKeyTypesToKeymap
+   fun:CompileKeyTypes
+   fun:CompileKeymap
+   fun:compile_keymap_file
+}
+{
+   <suppress_6552>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_ruleset_add
+   fun:parse_declaration
+   fun:parse_declarations
+}
+{
+   <suppress_6554>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:UpdateDerivedKeymapFields
+   fun:CompileKeymap
+   fun:compile_keymap_file
+   fun:text_v1_keymap_new_from_string
+}
+{
+   <f127>
+   Memcheck:Leak
+   ...
+   fun:_cairo_scaled_glyph_lookup
+   ...
+}
+{
+   <suppress_6557>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_clip_path_create
+   fun:_cairo_clip_intersect_path
+   fun:_cairo_gstate_clip
+   fun:_cairo_default_context_clip
+}
+{
+   <suppress_6559>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:FcCacheInsert
+   fun:FcDirCacheMapFd
+   fun:FcDirCacheMapHelper.lto_priv.0
+   fun:FcDirCacheProcess.lto_priv.0
+}
+{
+   <f128>
+   Memcheck:Leak
+   ...
+   fun:cairo_scaled_font_create
+   ...
+}
+{
+   <f129>
+   Memcheck:Leak
+   ...
+   fun:posix_memalign
+   ...
+}
+{
+   <suppress_6592>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:gdk_pixbuf_io_init_modules
+   fun:gdk_pixbuf_io_init
+   fun:get_file_formats
+}
+{
+   <suppress_6600>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:g_dbus_error_register_error
+   fun:g_dbus_error_register_error_domain
+   fun:g_dbus_error_quark
+}
+{
+   <suppress_6610>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dbus_mem_pool_alloc
+   fun:alloc_link
+   fun:_dbus_connection_preallocate_send_unlocked
+   fun:_dbus_connection_send_and_unlock
+}
+{
+   <suppress_6615>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:g_malloc
+   fun:gtk_css_node_declaration_make_writable_resize.lto_priv.0
+   fun:gtk_css_node_declaration_add_class
+   fun:gtk_css_node_add_class
+}
+{
+   <f130>
+   Memcheck:Leak
+   ...
+   fun:load_callback
+   ...
+}
+{
+   <suppress_6679>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create<OT::Layout::GSUB_impl::SubstLookup>
+   fun:get_accel
+   fun:_ZNK11hb_ot_map_t5applyI9GSUBProxyEEvRKT_PK18hb_ot_shape_plan_tP9hb_font_tP11hb_buffer_t
+   fun:substitute
+}
+{
+   <f131>
+   Memcheck:Leak
+   ...
+   fun:FcParseAlias
+   ...
+}
+{
+   <suppress_6732>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:AddMapEntry
+   fun:SetMapEntry
+   fun:SetKeyTypeField
+   fun:HandleKeyTypeBody
+}
+{
+   <suppress_6746>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:create<OT::Layout::GPOS_impl::PosLookup>
+   fun:_ZNK2OT8GSUBGPOS13accelerator_tINS_6Layout4GPOSEE9get_accelEj
+   fun:_ZNK11hb_ot_map_t5applyI9GPOSProxyEEvRKT_PK18hb_ot_shape_plan_tP9hb_font_tP11hb_buffer_t
+   fun:position
+}
+{
+   <suppress_6747>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_default_context_create
+   fun:gdk_window_clear_backing_region
+   fun:gdk_window_begin_paint_internal
+   fun:gdk_window_begin_paint_internal
+}
+{
+   <suppress_6748>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_cairo_default_context_create
+   fun:_gtk_css_image_get_surface
+   fun:css_image_value_query
+   fun:gtk_style_context_get_property
+}
+{
+   <suppress_6754>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_ZN11hb_buffer_t7enlargeEj
+   fun:ensure
+   fun:_ZN11hb_buffer_t3addEjj
+   fun:hb_buffer_add_utf<hb_utf8_t>
+}
+{
+   <suppress_6756>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:external_cache_create
+   fun:external_cache_create<OT::Layout::GSUB_impl::LigatureSubstFormat1_2<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::Layout::GSUB_impl::LigatureSubstFormat1_2<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::hb_accelerate_subtables_context_t>
+}
+{
+   <suppress_6810>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:pixman_glyph_cache_insert
+   fun:composite_glyphs
+   fun:clip_and_composite
+   fun:_cairo_traps_compositor_glyphs.lto_priv.0
+}
+{
+   <suppress_6811>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:CopyInterps
+   fun:CopyCompatToKeymap
+   fun:CompileCompatMap
+   fun:CompileKeymap
+}
+{
+   <suppress_6815>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+}
+{
+   <suppress_6825>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strndup
+   fun:atom_intern
+   fun:xkb_atom_intern
+   fun:_xkbcommon_lex
+}
+{
+   <suppress_6830>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:external_cache_create
+   fun:external_cache_create<OT::Layout::GPOS_impl::PairPosFormat2_4<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::Layout::GPOS_impl::PairPosFormat2_4<OT::Layout::SmallTypes> >
+   fun:dispatch<OT::hb_accelerate_subtables_context_t>
+}
+{
+   <suppress_6833>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_allocated_bitmask_resize
+   fun:gtk_allocated_bitmask_resize
+   fun:_gtk_allocated_bitmask_union
+}
+{
+   <suppress_6846>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:quark_strdup
+   fun:quark_from_string.part.0
+   fun:quark_from_string
+}
+{
+   <suppress_6847>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:quark_strdup
+   fun:quark_from_string.part.0
+   fun:quark_from_string
+}
+{
+   <suppress_6849>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:ring_buffer_allocate
+   fun:ring_buffer_ensure_space
+   fun:wl_connection_set_max_buffer_size
+   fun:wl_connection_create
+}
+{
+   <suppress_6852>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:_g_dbus_worker_do_read_unlocked
+   fun:_g_dbus_worker_do_initial_read
+   fun:g_idle_dispatch
+}
+{
+   <suppress_6855>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:atom_intern
+   fun:xkb_atom_intern
+   fun:_xkbcommon_lex
+   fun:_xkbcommon_parse
+}
+{
+   <suppress_6857>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:ring_buffer_allocate
+   fun:ring_buffer_ensure_space
+   fun:wl_connection_read
+   fun:read_events
+}
+{
+   <suppress_6858>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_ZN5alloc7raw_vec11finish_grow17h6a725ce0abd00635E
+   fun:_ZN5alloc7raw_vec20RawVecInner$LT$A$GT$7reserve21do_reserve_and_handle17h7803b0429151a864E
+   fun:_ZN58_$LT$alloc..string..String$u20$as$u20$core..fmt..Write$GT$9write_str17hab33d9ce9aa27a83E.3942
+   fun:_ZN67_$LT$std..sys..os_str..bytes..Slice$u20$as$u20$core..fmt..Debug$GT$3fmt17hb8f459a973ce5d90E
+}
+{
+   <suppress_6871>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:_gtk_css_selector_tree_builder_build
+   fun:gtk_css_provider_postprocess
+   fun:gtk_css_provider_load_internal
+}
+{
+   <suppress_6877>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:_pango_cairo_font_private_glyph_extents_cache_init
+   fun:_pango_cairo_font_private_get_glyph_extents
+   fun:pango_cairo_fc_font_get_glyph_extents
+}
+{
+   <suppress_6878>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:_pango_cairo_font_private_glyph_extents_cache_init
+   fun:_pango_cairo_font_private_get_glyph_extents
+   fun:pango_cairo_fc_font_get_glyph_extents
+}
+{
+   <f132>
+   Memcheck:Leak
+   ...
+   fun:FcPatternObjectAddWithBinding
+   ...
+}
+{
+   <f133>
+   Memcheck:Leak
+   ...
+   fun:_cairo_scaled_font_allocate_glyph
+   ...
+}
+{
+   <f134>
+   Memcheck:Leak
+   ...
+   fun:FcConfigAllocExpr
+   ...
+}
+{
+   <f135>
+   Memcheck:Leak
+   ...
+   fun:FcListAppend
+   ...
+}
+{
+   <suppress_6914>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:CopySymbolsDefToKeymap
+   fun:CopySymbolsToKeymap
+   fun:CompileSymbols
+   fun:CompileKeymap
+}
+{
+   <suppress_6916>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:FcFontSetAdd
+   fun:FcConfigAddCache
+   fun:FcConfigAddDirList
+   fun:FcConfigBuildFonts
+}
+{
+   <f136>
+   Memcheck:Leak
+   ...
+   fun:g_quark_init
+   ...
+}
+{
+   <suppress_6947>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:CopyKeyNamesToKeymap
+   fun:CopyKeyNamesInfoToKeymap
+   fun:CompileKeycodes
+   fun:CompileKeymap
+}
+{
+   <suppress_6951>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:gtk_css_ruleset_add
+   fun:parse_declaration
+   fun:parse_declarations
+}
+{
+   <suppress_6953>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN15crossbeam_epoch8internal5Local8finalize17h0c7f41c64d14879eE
+   fun:_ZN3std3sys12thread_local6native4lazy7destroy17h8ae8ecb9c892cfedE
+   fun:__call_tls_dtors
+   fun:start_thread
+}
+{
+   <suppress_6954>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:AddSymbolsToKey
+   fun:SetSymbolsField
+   fun:HandleSymbolsBody
+   fun:HandleSymbolsDef
+}
+{
+   <suppress_6958>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:pixman_glyph_cache_create
+   fun:get_glyph_cache
+   fun:composite_glyphs
+   fun:clip_and_composite
+}
+{
+   <suppress_6959>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:g_realloc
+   fun:_gtk_css_selector_tree_builder_build
+   fun:gtk_css_provider_postprocess
+   fun:gtk_css_provider_load_internal
+}
+{
+    <auto_4>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:g_malloc
+   fun:meta_tree_init
+   fun:meta_tree_open
+   fun:meta_tree_lookup_by_name.constprop.0
+}
+{
+   <f137>
+   Memcheck:Leak
+   ...
+   fun:_dl_map_new_object
+   ...
+}
+{
+   <f138>
+   Memcheck:Leak
+   ...
+   fun:_dl_new_object
+   ...
+}
+{
+    <auto_56>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:g_malloc0
+   fun:meta_journal_open
+   fun:meta_tree_init
+   fun:meta_tree_open
+}
+{
+    <auto_151>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+}
+{
+    <auto_152>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+}
+{
+    <auto_1>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_gdk_windowing_got_event
+   ...
+}
+{
+   <f139>
+   Memcheck:Leak
+   ...
+   fun:gtk_menu_popup_internal
+   ...
+}
+{
+   <f140>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:g_socket_set_option
+   ...
+}
+
+{
+   <libgssapi>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2.2
+   ...
+}
+
+{
+   <libpq>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libpq.so.5.17
+   ...
+}
+
+{
+   <ftxui_tcsetattr>
+   Memcheck:Param
+   ioctl(TCSET{S,SW,SF})
+   fun:tcsetattr
+   ...
+   fun:main
+}

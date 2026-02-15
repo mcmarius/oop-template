@@ -30,7 +30,7 @@ configure() {
         *) printf "Unknown option %s; available options: \n\
             -b (build dir)\n\
             -c (CMake config build type)\n\
-            -e (extra CMake options e.g. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON)\n\
+            -e (extra CMake options)\n\
             -g (generator)\n\
             -i (install dir prefix)\n\
             -s (source dir)\n"\
@@ -44,6 +44,7 @@ configure() {
           -S "${SOURCE_DIR}" \
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
           -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
           "${CMAKE_OPTS[@]}"
 }
 
@@ -131,4 +132,3 @@ case "$1" in
         install\n" "${opt}"
       exit 1
 esac
-
