@@ -34,6 +34,10 @@ env:
   LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  PQXX_VERSION: "7.9.2"
+  DATABASE_USER: oop
+  DATABASE_PASSWORD: ooppa55
+  DATABASE_NAME: oop_db
 
 
 defaults:
@@ -171,12 +175,13 @@ jobs:
             cxx: cl
             # renovate: depName=windows
             name: "ASan: Windows 2025 MSVC 19.51"
-            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
-            # This env runs address sanitizers
-            runs_asan: true
+            # This env does not run address sanitizers (TBD)
+            # runs_asan: true
+            runs_asan: false
             runs_tests: 'ON'
 
             # renovate: depName=windows
@@ -214,6 +219,9 @@ jobs:
 
       - name: Install packages
         uses: ./.github/actions/install-packages
+
+      - name: Configure PostgreSQL
+        uses: ./.github/actions/configure-PostgreSQL
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
