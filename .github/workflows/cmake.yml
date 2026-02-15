@@ -149,13 +149,13 @@ jobs:
             runs_asan: false
 
             # renovate: depName=macos
-          - os: macos-26
-            c: gcc-15
-            cxx: g++-15
-            # renovate: depName=macos
-            name: "macOS 26 GCC 15"
-            cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
-            cmake_generator: Ninja
+          # - os: macos-26
+          #   c: gcc-15
+          #   cxx: g++-15
+          #   # renovate: depName=macos
+          #   name: "macOS 26 GCC 15"
+          #   cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
+          #   cmake_generator: Ninja
 
             # renovate: depName=windows
           - os: windows-2025
