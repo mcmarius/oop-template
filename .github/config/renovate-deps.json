@@ -10,8 +10,6 @@
     "http-server",
     "llms",
     "main",
-    "sfml2",
-    "sfml2-imagini-externe-api",
     "sfml3",
     "sfml3-imagini-externe-api",
     "tests/Boost-ext-ut",
