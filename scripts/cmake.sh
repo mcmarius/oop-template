@@ -4,6 +4,12 @@ DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
 DEFAULT_INSTALL_DIR="install_dir"
 
+# Pentru a folosi biblioteci instalate deja local cu FetchContent:
+# ./scripts/cmake.sh configure -e "-DFETCHCONTENT_BASE_DIR=~/.local/fetchcontent-deps"
+# sau
+# mkdir -p ~/.local/fetchcontent-deps
+# export FETCHCONTENT_BASE_DIR=~/.local/fetchcontent-deps
+
 configure() {
     # cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
     #
@@ -30,12 +36,12 @@ configure() {
         *) printf "Unknown option %s; available options: \n\
             -b (build dir)\n\
             -c (CMake config build type)\n\
-            -e (extra CMake options e.g. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON)\n\
+            -e (extra CMake options)\n\
             -g (generator)\n\
             -i (install dir prefix)\n\
             -s (source dir)\n"\
             "${opt}"
-          exit 1
+           exit 1
         ;;
       esac
     done
@@ -44,6 +50,7 @@ configure() {
           -S "${SOURCE_DIR}" \
           -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
           -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
           "${CMAKE_OPTS[@]}"
 }
 
@@ -71,7 +78,7 @@ build() {
             -e (extra CMake options)\n\
             -j (number of jobs for parallel build)\n"\
             "${opt}"
-          exit 1
+           exit 1
         ;;
       esac
     done
@@ -101,7 +108,7 @@ install() {
             -c (CMake config build type)\n\
             -i (install dir prefix)\n"\
             "${opt}"
-          exit 1
+           exit 1
         ;;
       esac
     done
@@ -129,6 +136,5 @@ case "$1" in
         configure\n\
         build\n\
         install\n" "${opt}"
-      exit 1
+       exit 1
 esac
-
