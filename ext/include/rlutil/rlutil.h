@@ -43,23 +43,34 @@
 	#include <iostream>
 	#include <string>
 	#include <cstdio> // for getch()
+	#include <cstdlib> // for std::getenv
 	/// Namespace forward declarations
 	namespace rlutil {
 		RLUTIL_INLINE void locate(int x, int y);
 	}
 #else
 	#include <stdio.h> // for getch() / printf()
+	#include <stdlib.h> // for getenv()
 	#include <string.h> // for strlen()
 	RLUTIL_INLINE void locate(int x, int y); // Forward declare for C to avoid warnings
 #endif // __cplusplus
 
+int runs_on_ci() {
+	return
+	#ifdef __cplusplus
+	std::getenv("GITHUB_ACTIONS") != nullptr;
+	#else
+	getenv("GITHUB_ACTIONS") != NULL;
+	#endif
+}
+
 #ifdef _WIN32
 	#ifndef WIN32_LEAN_AND_MEAN
-		//#define WIN32_LEAN_AND_MEAN 1
+		#define WIN32_LEAN_AND_MEAN 1
 		#define LOCAL_WIN32_LEAN_AND_MEAN 1
 	#endif
 	#ifndef NOMINMAX 
-		//#define NOMINMAX  1
+		#define NOMINMAX  1
 		#define LOCAL_NOMINMAX 1
 	#endif
 	#include <windows.h>  // for WinAPI and Sleep()
@@ -86,6 +97,9 @@
 /// Get character without waiting for Return to be pressed.
 /// Windows has this in conio.h
 RLUTIL_INLINE int getch(void) {
+	if(runs_on_ci())
+		return getchar();
+
 	// Here be magic.
 	struct termios oldt, newt;
 	int ch;
@@ -102,6 +116,9 @@ RLUTIL_INLINE int getch(void) {
 /// Determines if keyboard has been hit.
 /// Windows has this in conio.h
 RLUTIL_INLINE int kbhit(void) {
+	if(runs_on_ci())
+		return 1;
+
 	// Here be dragons.
 	static struct termios oldt, newt;
 	int cnt = 0;
@@ -360,6 +377,9 @@ enum {
 /// Note:
 /// Only Arrows, Esc, Enter and Space are currently working properly.
 RLUTIL_INLINE int getkey(void) {
+	if(runs_on_ci())
+		return getchar();
+
 	#ifndef _WIN32
 	int cnt = kbhit(); // for ANSI escapes processing
 	#endif
@@ -544,6 +564,9 @@ RLUTIL_INLINE void resetColor(void) {
 /// Function: cls
 /// Clears screen, resets all attributes and moves cursor home.
 RLUTIL_INLINE void cls(void) {
+	if(runs_on_ci())
+		return;
+
 #if defined(_WIN32) && !defined(RLUTIL_USE_ANSI)
 	// Based on https://msdn.microsoft.com/en-us/library/windows/desktop/ms682022%28v=vs.85%29.aspx
 	const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
