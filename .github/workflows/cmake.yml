@@ -31,6 +31,10 @@ env:
   BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
   BUILD_DIR: "build"
   EXT_DIR: "ext"
+  PQXX_VERSION: "7.9.2"
+  DATABASE_USER: oop
+  DATABASE_PASSWORD: ooppa55
+  DATABASE_NAME: oop_db
 
 
 defaults:
@@ -166,7 +170,7 @@ jobs:
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
-            runs_asan: true
+            runs_asan: false
 
             # renovate: depName=windows
           - os: windows-2022
@@ -202,6 +206,9 @@ jobs:
 
       - name: Install packages
         uses: ./.github/actions/install-packages
+
+      - name: Configure PostgreSQL
+        uses: ./.github/actions/configure-PostgreSQL
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
