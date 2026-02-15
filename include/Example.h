@@ -11,7 +11,7 @@ public:
     void add(int delta);                      // throws, leaving the object untouched
     int value() const;                        // the only observer, what tests assert on
     void g() const;                           // display
-
+    void demo();
 private:
     int value_ = 0;
 };
