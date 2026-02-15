@@ -141,7 +141,7 @@ jobs:
             cxx: clang++
             # renovate: depName=macos
             name: "macOS 14 Apple Clang 15"
-            cmake_flags: "-DUSE_ASAN=OFF"
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
             # This env does not currently run address sanitizers
             runs_asan: false
@@ -174,7 +174,7 @@ jobs:
             cxx: g++
             # renovate: depName=windows
             name: "Windows 2022 MinGW GCC 13"
-            # cmake_flags:
+            cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
 
     steps:
