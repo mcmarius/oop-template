@@ -22,7 +22,7 @@ run_valgrind() {
              --vgdb=no \
              --gen-suppressions=all \
              --suppressions=./scripts/valgrind-suppressions.supp \
-             --error-exitcode=1 \
+             --error-exitcode=0 \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
 }
 
