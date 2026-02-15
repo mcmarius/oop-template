@@ -44,7 +44,7 @@ include(cmake/CopyHelper.cmake)
 
 # external dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 ###############################################################################
 
@@ -72,10 +72,15 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
 )
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
+    ext/include/digestpp
+    ext/include/rlutil
+    ext/include/random
+    ext/include/csv-parser
+    ext/include/date
 )
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} Threads::Threads)
 
 ###############################################################################
 
