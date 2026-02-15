@@ -35,11 +35,15 @@ LINUX_DEPS=(
     libfreetype6-dev
     libxi-dev
     xorg
+    openssl
+    libssl-dev
 )
 
 # ---------- 3. Map logical names → real package names ----------
 declare -A DEB_MAP=(
     [libxrandr-dev]=libxrandr-dev
+    [openssl]=openssl
+    [libssl-dev]=libssl-dev
     [libxcursor-dev]=libxcursor-dev
     [libudev-dev]=libudev-dev
     [libopenal-dev]=libopenal-dev
@@ -61,6 +65,8 @@ declare -A RPM_MAP=(
     [libopenal-dev]=openal-devel
     [libflac-dev]=flac-devel
     [libvorbis-dev]=libvorbis-devel
+    [openssl]=openssl
+    [libssl-dev]=libssl-dev
     [libgl1-mesa-dev]=mesa-libGL-devel
     [libegl1-mesa-dev]=mesa-dri-drivers   # provides EGL headers/libs
     [libdrm-dev]=libdrm-devel
@@ -77,6 +83,8 @@ declare -A SUSE_MAP=(
     [libopenal-dev]=openal-devel
     [libflac-dev]=flac-devel
     [libvorbis-dev]=libvorbis-devel
+    [openssl]=openssl
+    [libssl-dev]=libopenssl-devel
     [libgl1-mesa-dev]=Mesa-devel
     [libegl1-mesa-dev]=Mesa-devel
     [libdrm-dev]=libdrm-devel
@@ -100,6 +108,7 @@ declare -A ARCH_MAP=(
     [libfreetype6-dev]=freetype2
     [libxi-dev]=libxi
     [xorg]=xorg-x11-server
+    [libssl-dev]=libssl
 )
 
 # ---------- 4. Build the final package list for the detected OS ----------
