@@ -30,7 +30,12 @@ function(set_compiler_flags)
             target_compile_options(${TARGET_NAME} PRIVATE /W4 /Zc:__cplusplus /permissive- /wd4244
                 /wd4267 /wd4996 /external:anglebrackets /external:W0 /utf-8 /MP)
         else()
-            target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic -Wno-pre-c++2b-compat)
+            target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -pedantic)
+            if(APPLE)
+                # flag is no longer present on newer clang compilers
+                # and gcc does not complain about unknown flags
+                target_compile_options(${TARGET_NAME} PRIVATE -Wno-pre-c++2b-compat)
+            endif()
         endif()
 
         ###############################################################################
