@@ -1,6 +1,12 @@
 #include <iostream>
 #include <array>
+#include <cctype>
+
+#include <csv.hpp>
+#include <date.h>
+
 #include "Example.h"
+
 
 int main() {
     std::cout << "Hello, world!\n";
@@ -50,5 +56,52 @@ int main() {
     ///     fis >> v2[i];
     ///
     ///////////////////////////////////////////////////////////////////////////
+
+    std::cin.ignore(); // clear last \n
+
+    std::cout << "-----------------------------------------------\n";
+
+    e1.demo();
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///           Exemplu fișier CSV (comma separated value)                ///
+    ///////////////////////////////////////////////////////////////////////////
+    using namespace csv;
+    CSVReader reader{"assets/date.csv"};
+    for (CSVRow& row : reader) {
+        std::cout << "nume: " << row["nume"].get_sv() << "\n";
+        // std::cout << "nume: " << row["nume"].get<>() << "\n";
+    }
+
+    std::cout << "-----------------------------------------------\n";
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///              Exemplu de lucru cu date calendaristice                ///
+    ///////////////////////////////////////////////////////////////////////////
+    using namespace std::chrono;
+    using namespace date;
+    using date::sys_days;
+    using date::days;
+    using date::weeks;
+    using date::months;
+    auto d1 = 2022_y/10/01;
+    auto d2 = 2023_y/05/26;
+
+    auto dp1 = sys_days{d1};
+    auto dp2 = sys_days{d2};
+
+    std::cout << "Anul 2022-2023 are "
+              << duration<float, months::period>(dp2 - dp1).count() << " luni"
+              << " sau "
+              << duration<float, weeks::period>(dp2 - dp1).count() << " săptămâni"
+              << " sau "
+              << duration<float, days::period>(dp2 - dp1).count() << " zile"
+              << ", adică "
+              << floor<months>(dp2 - dp1).count() << " luni, "
+              << floor<weeks>(dp2 - dp1 - floor<months>(dp2 - dp1)).count() << " săptămâni, "
+              << floor<days>(dp2 - dp1 - floor<weeks>(dp2 - dp1)).count() - 1 << " zile."
+              << "\n";
+
+    std::cout << "-----------------------------------------------\n";
     return 0;
 }

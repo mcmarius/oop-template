@@ -52,7 +52,7 @@ include(cmake/RegisterTests.cmake)
 
 # External dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 ###############################################################################
 
@@ -91,10 +91,13 @@ target_include_directories(${MAIN_LIBRARY_NAME} PRIVATE
 # vendored external deps should be private by default
 # a public dep is an interface commitment, shared by app/ and tests/
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PUBLIC
-    ${EXT_PUBLIC_DIR}
+    ${EXT_PUBLIC_DIR}/csv-parser
+    ${EXT_PUBLIC_DIR}/date
 )
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
-    ${EXT_PRIVATE_DIR}
+    ${EXT_PRIVATE_DIR}/digestpp
+    ${EXT_PRIVATE_DIR}/rlutil
+    ${EXT_PRIVATE_DIR}/random
 )
 
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
@@ -103,10 +106,9 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE Threads::Threads ${MAIN_LIBRARY_NAME})
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
 
 ###############################################################################
 

@@ -206,4 +206,9 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 
 ## Resurse
 
+- [digestpp](https://github.com/kerukuro/digestpp/tree/4beae7541f5c280389898ae6e6111028852f466a) (Unlicense)
+- [random](https://github.com/ilqvya/random/tree/4271e1c82f1c954d128289b86fa068f76e3b9c76) (MIT)
+- [rlutil](https://github.com/tapio/rlutil/tree/821fdca0191b314ee07b0fad2abe4ea973e45575) (WTFPL)
+- [csv-parser](https://github.com/vincentlaucsb/csv-parser/tree/5a7cc8ff97d23f475adb220f6d268cfd4f843ea2) v5.4.0 (MIT)
+- [date](https://github.com/HowardHinnant/date/tree/95d2ec962ce8ce0e4a830eef8ac2a88460c2a9f2) (MIT)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
