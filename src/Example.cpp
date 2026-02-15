@@ -7,6 +7,7 @@ void Example::f() const {
     std::cout << "private function f: " << x << "\n";
 }
 
+// cppcheck-suppress unusedFunction // false positive, called in main
 void Example::g() {
     ++y;
     f();
