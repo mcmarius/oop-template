@@ -2,7 +2,7 @@
 
 # default values
 # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
-CPPCHECK_VER=2.18.3   # NOTE: consider updating this value in .github/workflows/cmake.yml:47 when changing this value
+CPPCHECK_VER=2.18.3
 CMAKE_BUILD_DIR=build
 CMAKE_OPTS=()         # example for CLI: -o "-DCMAKE_INSTALL_PREFIX=~/.local/ -DFILESDIR=~/.local/share/Cppcheck"
 
@@ -30,5 +30,5 @@ rm "${CPPCHECK_VER}.zip"
 mv "cppcheck-${CPPCHECK_VER}" cppcheck
 
 cd cppcheck || { echo "Eroare cd"; exit 1; }
-cmake -S . -B "${CMAKE_BUILD_DIR}" -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
+cmake -S . -B "${CMAKE_BUILD_DIR}" -G Ninja -DEXTERNALS_AS_SYSTEM=ON "${CMAKE_OPTS[@]}"
 cmake --build "${CMAKE_BUILD_DIR}" -j6

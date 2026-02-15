@@ -12,6 +12,9 @@ runs:
         path: cppcheck
         key: cppcheck-${{ env.CPPCHECK_VER }}
 
+    - name: Install packages
+      uses: ./.github/actions/install-packages
+
     - name: Build cppcheck
       shell: bash
       if: steps.cache-cppcheck.outputs.cache-hit != 'true'
@@ -33,12 +36,10 @@ runs:
         cd cppcheck
         sudo cmake --install build
 
-    # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-    # which is used by cppcheck and clang-tidy
     - name: Configure CMake
       uses: ./.github/actions/configure-cmake
       with:
-        custom_flags: '-DCMAKE_EXPORT_COMPILE_COMMANDS=ON'
+        custom_flags: '-GNinja'
         cache_key: 'cache-cppcheck'
 
     - name: Cppcheck
