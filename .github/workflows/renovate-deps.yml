@@ -10,11 +10,11 @@ jobs:
     steps:
       - name: Checkout
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
         
       - name: Run Renovate
         # renovate: datasource=github-tags depName=renovatebot/github-action versioning=loose
-        uses: renovatebot/github-action@v43.0.16
+        uses: renovatebot/github-action@v46.1.1
         env:
           LOG_LEVEL: debug
           RENOVATE_REPOSITORIES: ${{ github.repository }}
