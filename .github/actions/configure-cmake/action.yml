@@ -52,7 +52,7 @@ runs:
 
     - name: Download toolchain (MinGW)
       # renovate: datasource=github-tags depName=suisei-cn/actions-download-file versioning=loose
-      uses: suisei-cn/actions-download-file@v1.6.0
+      uses: suisei-cn/actions-download-file@v1.6.1
       id: download-mingw-gcc
       if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
       with:
