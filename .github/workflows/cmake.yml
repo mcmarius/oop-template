@@ -52,7 +52,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: Run cppcheck
         uses: ./.github/actions/cppcheck
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: Run clang-tidy
         uses: ./.github/actions/clang-tidy
@@ -180,7 +180,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.2
 
       - name: Set timestamp, zip name, repo visibility
         env:
