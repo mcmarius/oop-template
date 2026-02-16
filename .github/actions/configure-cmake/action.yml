@@ -19,7 +19,7 @@ runs:
     # Uncomment when using external dependencies, so they will be cached
     # - name: Cache deps
     #   # renovate: datasource=github-tags depName=actions/cache versioning=loose
-    #   uses: actions/cache@v4.3.0
+    #   uses: actions/cache@v5.0.3
     #   id: cache-deps
     #   # make the key depend on the dependency version
     #   with:
@@ -32,7 +32,7 @@ runs:
     # Since this cache is small, it should not fill the cache too much
     - name: Cache Ninja deps
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache@v4.3.0
+      uses: actions/cache@v5.0.3
       if: matrix.cmake_generator == 'Ninja'
       id: cache-deps-ninja
       with:
@@ -44,7 +44,7 @@ runs:
 
     - name: Cache MinGW
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache@v4.3.0
+      uses: actions/cache@v5.0.3
       id: cache-mingw
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
       with:
@@ -53,7 +53,7 @@ runs:
 
     - name: Download toolchain (MinGW)
       # renovate: datasource=github-tags depName=suisei-cn/actions-download-file versioning=loose
-      uses: suisei-cn/actions-download-file@v1.6.0
+      uses: suisei-cn/actions-download-file@v1.6.1
       id: download-mingw-gcc
       if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
       with:
