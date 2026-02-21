@@ -36,3 +36,10 @@ endif()
 set(is_debug "$<CONFIG:Debug>")
 set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
 set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
+
+# CPR options to make CI work
+set(CPR_USE_SYSTEM_CURL OFF CACHE BOOL "If enabled we will use the curl lib already installed on this system." FORCE)
+set(CPR_CURL_USE_LIBPSL OFF CACHE BOOL "Since curl 8.13 curl depends on libpsl (https://everything.curl.dev/build/deps.html#libpsl). By default cpr keeps this as a secure default enabled which in turn requires meson as build dependency. If set to OFF, psl support inside curl will be disabled." FORCE)
+set(CPR_USE_SYSTEM_LIB_PSL ${CPR_USE_SYSTEM_CURL} CACHE BOOL "If enabled we will use the psl lib already installed on this system. Else meson is required as build dependency. Only relevant in case 'CPR_CURL_USE_LIBPSL' is set to ON." FORCE)
+set(CPR_ENABLE_CURL_HTTP_ONLY ON "If enabled we will only use the HTTP/HTTPS protocols from CURL. If disabled, all the CURL protocols are enabled. This is useful if your project uses libcurl and you need support for other CURL features e.g. sending emails." FORCE)
+set(CURL_USE_LIBPSL ${CPR_CURL_USE_LIBPSL} CACHE INTERNAL "" FORCE)
