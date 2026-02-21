@@ -189,7 +189,7 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 
 - cpr
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
-  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0) (MIT)
+  - Versiune: [1.14.2](https://github.com/libcpr/cpr/releases/tag/1.14.2) (MIT)
 - json
   - Versiune: [v3.11.3](https://github.com/nlohmann/json/releases/tag/v3.11.3) (MIT)
 - [GitHub API](https://docs.github.com/en/rest)
