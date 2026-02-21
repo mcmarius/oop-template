@@ -202,5 +202,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 - [Cat API](https://cataas.com/)
 - [cpr](https://github.com/libcpr/cpr)
   <!-- renovate: datasource=github-tags depName=libcpr/cpr versioning=loose -->
-  - Versiune: [1.11.0](https://github.com/libcpr/cpr/releases/tag/1.11.0)
+  - Versiune: [1.14.2](https://github.com/libcpr/cpr/releases/tag/1.14.2) (MIT)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
