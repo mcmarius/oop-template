@@ -193,16 +193,16 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 Dacă folosim docker sau podman, creăm baza de date astfel:
 ```shell
-podman create --name postgres-container14 \
+podman create --name postgres-container18 \
            -e "POSTGRES_PASSWORD=pg-password" \
-           -v pg-14-oop-volume:/var/lib/postgresql/data \
+           -v pg-18-oop-volume:/var/lib/postgresql/data \
            -p 5432:5432 \
-           postgres:14.17-alpine
+           postgres:18.2-alpine
 ```
 
 Apoi pornim baza de date (scoatem flag-urile `-ia` dacă nu dorim logs și blocarea terminalului):
 ```shell
-podman start -ia postgres-container14
+podman start -ia postgres-container18
 ```
 
 Creăm userul și introducem parola pentru un user existent al bazei de date (în acest caz, `pg-password` de mai sus):
@@ -237,7 +237,8 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 
 - PostgreSQL
   - Documentație: https://www.postgresql.org/
-  - Versiune folosită pe pipeline: 14.17 (martie 2025)
+  - Ultima versiune disponibilă: 18.2 (februarie 2026)
+    - Pe CI sunt versiunile 14.21 pe Windows, 18.1 pe Linux și respectiv 17.8 pe macOS
 - PQXX
   - Github: https://github.com/jtv/libpqxx
   - Documentație: https://pqxx.org/development/libpqxx/
