@@ -16,8 +16,9 @@ runs:
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        brew install postgresql
-        brew services start postgresql@14
+        brew install postgresql@17 libpq@17
+        brew link postgresql@17
+        brew services start postgresql@17
         sleep 5
         psql postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '${DATABASE_PASSWORD}';"
         bash ./scripts/configure_postgres.sh
@@ -26,10 +27,12 @@ runs:
       shell: bash
       if: runner.os == 'windows'
       run: |
-        serviceName="postgresql-x64-14"
-        sc config $serviceName start= demand
-        net start $serviceName
+        serviceName=$(powershell -Command "Get-Service -Name 'postgresql-x64-*' | Select-Object -ExpandProperty Name" | tr -d '\r')
+        echo "Detected service: $serviceName"
+        sc config "$serviceName" start= demand
+        net start "$serviceName"
+        pgVersion=$(echo "$serviceName" | grep -oP '\d+$')
         export PGPASSWORD="root"
-        export PATH="$PATH:/c/Program Files/PostgreSQL/14/bin:/c/Program Files/PostgreSQL/14/lib"
+        export PATH="/c/Program Files/PostgreSQL/$pgVersion/bin:$PATH"
         psql -h 127.0.0.1 -U postgres -c "CREATE USER $DATABASE_USER WITH CREATEDB PASSWORD '$DATABASE_PASSWORD';"
         bash ./scripts/configure_postgres.sh
