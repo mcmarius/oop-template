@@ -42,11 +42,18 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 
 FetchContent_Declare(
     sqlite3
-    URL      https://www.sqlite.org/2024/sqlite-autoconf-3470200.tar.gz
-    URL_HASH SHA256=f1b2ee412c28d7472bc95ba996368d6f0cdcf00362affdadb27ed286c179540b
+    URL      https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz
+    URL_HASH SHA256=fbd89f866b1403bb66a143065440089dd76100f2238314d92274a082d4f2b7bb
 )
+FetchContent_GetProperties(sqlite3)
+if(NOT sqlite3_POPULATED)
+    FetchContent_Populate(sqlite3)
 
-FetchContent_MakeAvailable(sqlite3)
+    # Fix build on macOS where the version file incorrectly gets interpreted as a header
+    # See https://github.com/journeyapps/node-sqlcipher/issues/83#issuecomment-829765387
+    file(REMOVE ${sqlite3_SOURCE_DIR}/VERSION)
+endif()
+
 ###############################################################################
 
 # external dependencies with find_package
