@@ -50,26 +50,16 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 
-FetchContent_MakeAvailable(cpr)
-
-
 FetchContent_Declare(
     simsimd
     GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
     # renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose
-    GIT_TAG        v6.5.3
+    GIT_TAG        v6.5.13
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )
-FetchContent_GetProperties(simsimd)
-if(NOT simsimd_POPULATED)
-    FetchContent_Populate(simsimd)
 
-    # Copy an additional/replacement file into the populated source
-    # we override this because it has "/usr/include" hardcoded; we want a custom install location
-    file(COPY cmake/simsimd-patches/CMakeLists.txt DESTINATION ${simsimd_SOURCE_DIR})
-endif()
-
+FetchContent_MakeAvailable(cpr simsimd)
 
 ###############################################################################
 
