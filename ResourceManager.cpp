@@ -34,8 +34,8 @@ ResourceManager::ResourceManager()
         loadTexture("images", "airplane.png"); // va accesa folderul `images` din directorul curent al programului (./images/airplane.png)
     */
 
-    loadTexture("assets", "images", "airplane.png");
-    loadFont("assets", "fonts", "FiraSans-Regular.ttf");
+    loadTexture("assets/images", "airplane.png");
+    loadFont("assets/fonts", "FiraSans-Regular.ttf");
 }
 
 void ResourceManager::loadTexture(const std::string& path, const std::string& texture_name)
