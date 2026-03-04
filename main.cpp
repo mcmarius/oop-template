@@ -3,7 +3,7 @@
 #include <chrono>
 #include <thread>
 
-#include <SFML/Graphics.hpp>
+#include <raylib-cpp.hpp>
 
 #include "include/Example.h"
 // This also works if you do not want `include/`, but some editors might not like it
@@ -74,51 +74,62 @@ int main() {
     std::cout << c << "\n";
     delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
 
-    sf::RenderWindow window;
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
-    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
-    std::cout << "Fereastra a fost creată\n";
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                                    ///
-    /// window.setFramerateLimit(60);                                       ///
-    ///////////////////////////////////////////////////////////////////////////
+// Dimensiunile ferestrei
+    int screenWidth = 800;
+    int screenHeight = 700;
 
-    while(window.isOpen()) {
+    // Crearea ferestrei (constructorul raylib::Window o inițializează automat)
+    // NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
+    raylib::Window window(screenWidth, screenHeight, "My Window");
+
+    std::cout << "Fereastra a fost creată\n";
+
+    // NOTE: mandatory use one of vsync or FPS limit (not both)
+    // În Raylib, setarea FPS limitează automat și consumul GPU
+    window.SetTargetFPS(60); 
+    // Dacă preferi VSync: SetConfigFlags(FLAG_VSYNC_HINT); înainte de init
+
+    // Loop-ul principal
+    while (!window.ShouldClose()) { // ShouldClose verifică automat butonul de închidere (X)
         bool shouldExit = false;
 
-        while(const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-                std::cout << "Fereastra a fost închisă\n";
-            }
-            else if (event->is<sf::Event::Resized>()) {
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-            }
-            else if (event->is<sf::Event::KeyPressed>()) {
-                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
-                if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-                    shouldExit = true;
-                }
-            }
+        // Gestionarea evenimentelor (Raylib verifică starea în fiecare frame)
+        
+        // Verificare Resize
+        if (window.IsResized()) {
+            std::cout << "New width: " << window.GetWidth() << '\n'
+                      << "New height: " << window.GetHeight() << '\n';
         }
-        if(shouldExit) {
-            window.close();
+
+        // Verificare Taste
+        if (IsKeyPressed(KEY_X)) {
+            std::cout << "Received key X\n";
+        }
+
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            shouldExit = true;
+        }
+
+        if (shouldExit) {
             std::cout << "Fereastra a fost închisă (shouldExit == true)\n";
-            break;
+            break; // Ieșim din loop, fereastra se închide la distrugerea obiectului
         }
+
+        // Simulare delay din exemplul tău (atenție: strică fluiditatea ferestrei)
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(300ms);
 
-        window.clear();
-        window.display();
+        // Randare
+        BeginDrawing();
+            window.ClearBackground(RAYWHITE); // Echivalentul lui window.clear()
+            
+            // Aici poți desena chestii
+            
+        EndDrawing(); // Echivalentul lui window.display()
     }
 
+    std::cout << "Fereastra a fost închisă\n";
     std::cout << "Programul a terminat execuția\n";
+
     return 0;
 }
