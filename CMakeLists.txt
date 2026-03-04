@@ -32,18 +32,29 @@ set(SFML_WARNINGS_AS_ERRORS OFF)
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
 FetchContent_Declare(
-    SFML
+    raylib
     SYSTEM
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-    GIT_TAG        3.1.0
-    # renovate: depName=SFML/SFML
-    # GIT_TAG        8835b6b955c96fa1ad1278a8dae6f05c4143effc # 3.1.0
+    GIT_REPOSITORY https://github.com/raysan5/raylib.git
+    # renovate: datasource=github-tags depName=raysan5/raylib versioning=loose
+    GIT_TAG        5.5
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS   ON
 )
 
-FetchContent_MakeAvailable(SFML)
+FetchContent_Declare(
+    raylib-cpp
+    SYSTEM
+    GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp.git
+    # renovate: datasource=github-tags depName=RobLoach/raylib-cpp versioning=loose
+    GIT_TAG        v5.5.0
+    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+    GIT_PROGRESS   ON
+)
+
+
+FetchContent_MakeAvailable(raylib raylib-cpp)
+
+
 
 ###############################################################################
 
@@ -81,9 +92,11 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
 )
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
+    ${raylib_SOURCE_DIR}/src
+    ${raylib-cpp_SOURCE_DIR}/include
 )
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
-    SFML::Graphics SFML::Window SFML::System Threads::Threads
+    raylib Threads::Threads
 )
 
 if(APPLE)
