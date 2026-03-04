@@ -3,40 +3,43 @@
 # Unified dependency installer for Debian/Ubuntu,
 # Fedora/RHEL/CentOS, openSUSE, and ArchLinux.
 #
-# Tested only on Debian/Ubuntu and openSUSE.
-#
-# Generated with Nemotron-3-Nano-30B-A3B. Please report any issues.
+# Contributors: Nemotron-3-Nano-30B-A3B, Gemini 3 Flash
 # ------------------------------------------------------------
 set -euo pipefail
 
 # ---------- 1. Detect distro ----------
-. /etc/os-release               # defines ID, ID_LIKE, etc.
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+else
+    echo "Error: /etc/os-release not found." >&2
+    exit 1
+fi
+
 case "$ID" in
-    debian|ubuntu)      PM="apt-get"   ;;
-    rhel|centos|fedora|rocky|alma)   PM="dnf"   ;;
-    suse|opensuse* )    PM="zypper"  ;;
-    arch)               PM="pacman"  ;;
-    *)  echo "Unsupported or unknown Linux distribution: $ID" >&2; exit 1 ;;
+    debian|ubuntu|pop|linuxmint)   PM="apt-get" ;;
+    rhel|centos|fedora|rocky|alma) PM="dnf"     ;;
+    suse|opensuse* )               PM="zypper"  ;;
+    arch|manjaro)                  PM="pacman"  ;;
+    *)  echo "Unsupported distribution: $ID" >&2; exit 1 ;;
 esac
 
 # ---------- 2. Common list of dev packages ----------
-# We keep the *logical* names (as you wrote them) and map them later.
+# Strictly using your provided list
 LINUX_DEPS=(
     libxrandr-dev
     libxcursor-dev
     libudev-dev
-    libopenal-dev
-    libflac-dev
-    libvorbis-dev
     libgl1-mesa-dev
     libegl1-mesa-dev
-    libdrm-dev
-    libgbm-dev
     libfreetype6-dev
     libxi-dev
     libmbedtls-dev
     libssh2-dev
     libharfbuzz-dev
+    libxinerama-dev
+    libasound2-dev
+    libx11-dev
+    libglu1-mesa-dev
     xorg
 )
 
@@ -45,110 +48,101 @@ declare -A DEB_MAP=(
     [libxrandr-dev]=libxrandr-dev
     [libxcursor-dev]=libxcursor-dev
     [libudev-dev]=libudev-dev
-    [libopenal-dev]=libopenal-dev
-    [libflac-dev]=libflac-dev
-    [libvorbis-dev]=libvorbis-dev
     [libgl1-mesa-dev]=libgl1-mesa-dev
     [libegl1-mesa-dev]=libegl1-mesa-dev
-    [libdrm-dev]=libdrm-dev
-    [libgbm-dev]=libgbm-dev
     [libfreetype6-dev]=libfreetype6-dev
     [libxi-dev]=libxi-dev
     [libmbedtls-dev]=libmbedtls-dev
     [libssh2-dev]=libssh2-1-dev
     [libharfbuzz-dev]=libharfbuzz-dev
+    [libxinerama-dev]=libxinerama-dev
+    [libasound2-dev]=libasound2-dev
+    [libx11-dev]=libx11-dev
+    [libglu1-mesa-dev]=libglu1-mesa-dev
     [xorg]=xorg
 )
 
 declare -A RPM_MAP=(
     [libxrandr-dev]=libXrandr-devel
     [libxcursor-dev]=libXcursor-devel
-    [libudev-dev]=libudev-devel
-    [libopenal-dev]=openal-devel
-    [libflac-dev]=flac-devel
-    [libvorbis-dev]=libvorbis-devel
+    [libudev-dev]=systemd-devel
     [libgl1-mesa-dev]=mesa-libGL-devel
-    [libegl1-mesa-dev]=mesa-dri-drivers   # provides EGL headers/libs
-    [libdrm-dev]=libdrm-devel
-    [libgbm-dev]=libgbm-devel
+    [libegl1-mesa-dev]=mesa-libEGL-devel
     [libfreetype6-dev]=freetype-devel
     [libxi-dev]=libXi-devel
     [libmbedtls-dev]=mbedtls-devel
     [libssh2-dev]=libssh2-devel
     [libharfbuzz-dev]=harfbuzz-devel
     [xorg]=xorg-x11-server-Xorg           # meta‑package that pulls the whole X server stack
+    [libxinerama-dev]=libXinerama-devel
+    [libasound2-dev]=alsa-lib-devel
+    [libx11-dev]=libX11-devel
+    [libglu1-mesa-dev]=mesa-libGLU-devel
 )
 
 declare -A SUSE_MAP=(
     [libxrandr-dev]=libXrandr-devel
     [libxcursor-dev]=libXcursor-devel
     [libudev-dev]=libudev-devel
-    [libopenal-dev]=openal-devel
-    [libflac-dev]=flac-devel
-    [libvorbis-dev]=libvorbis-devel
-    [libgl1-mesa-dev]=Mesa-devel
-    [libegl1-mesa-dev]=Mesa-devel
-    [libdrm-dev]=libdrm-devel
-    [libgbm-dev]=libgbm-devel
-    [libfreetype6-dev]=freetype-devel
+    [libgl1-mesa-dev]=Mesa-libGL-devel
+    [libegl1-mesa-dev]=Mesa-libEGL-devel
+    [libfreetype6-dev]=freetype2-devel
     [libxi-dev]=libXi-devel
     [libmbedtls-dev]=mbedtls-devel
     [libssh2-dev]=libssh2-devel
     [libharfbuzz-dev]=harfbuzz-devel
+    [libxinerama-dev]=libXinerama-devel
+    [libasound2-dev]=alsa-devel
+    [libx11-dev]=libX11-devel
+    [libglu1-mesa-dev]=libGLU-devel
     [xorg]=xorg-x11-server
 )
 
 declare -A ARCH_MAP=(
     [libxrandr-dev]=libxrandr
     [libxcursor-dev]=libxcursor
-    [libudev-dev]=libudev
-    [libopenal-dev]=openal
-    [libflac-dev]=flac
-    [libvorbis-dev]=vorbis
+    [libudev-dev]=libsystemd
     [libgl1-mesa-dev]=mesa
     [libegl1-mesa-dev]=mesa
-    [libdrm-dev]=drm
-    [libgbm-dev]=gbm
     [libfreetype6-dev]=freetype2
     [libxi-dev]=libxi
     [libmbedtls-dev]=mbedtls
     [libssh2-dev]=libssh2
     [libharfbuzz-dev]=harfbuzz
-    [xorg]=xorg-x11-server
+    [libxinerama-dev]=libxinerama
+    [libasound2-dev]=alsa-lib
+    [libx11-dev]=libx11
+    [libglu1-mesa-dev]=glu
+    [xorg]=xorg-server
 )
 
-# ---------- 4. Build the final package list for the detected OS ----------
+# ---------- 4. Build the final package list ----------
 install_pkgs=()
 for dep in "${LINUX_DEPS[@]}"; do
     case "$PM" in
-        apt-get) pkg="${DEB_MAP[$dep]:-$dep}" ;;               # Debian/Ubuntu keep the same name
-        dnf|yum) pkg="${RPM_MAP[$dep]:-$dep}" ;;               # Fedora/RHEL family
-        zypper)  pkg="${SUSE_MAP[$dep]:-$dep}" ;;              # openSUSE
-        pacman)  pkg="${ARCH_MAP[$dep]:-$dep}" ;;              # Arch
-        *)       pkg="$dep" ;;                                 # fallback – should never happen
+        apt-get) pkg="${DEB_MAP[$dep]:-}" ;;
+        dnf)     pkg="${RPM_MAP[$dep]:-}" ;;
+        zypper)  pkg="${SUSE_MAP[$dep]:-}" ;;
+        pacman)  pkg="${ARCH_MAP[$dep]:-}" ;;
     esac
-    install_pkgs+=("$pkg")
+    
+    [[ -n "$pkg" ]] && install_pkgs+=("$pkg")
 done
 
-# Join the array into a space‑separated string
-PKGSTRING="${install_pkgs[*]}"
+# Deduplicate (especially important for Arch/Mesa)
+unique_pkgs=($(printf "%s\n" "${install_pkgs[@]}" | sort -u))
 
 # ---------- 5. Install ----------
 case "$PM" in
     apt-get)
         sudo "$PM" update
-        sudo "$PM" install --no-install-recommends "${install_pkgs[@]}"
+        sudo "$PM" install -y --no-install-recommends "${unique_pkgs[@]}"
         ;;
-    dnf|yum)
-        sudo "$PM" install -y "${install_pkgs[@]}"
-        ;;
-    zypper)
-        sudo "$PM" install -y "${install_pkgs[@]}"
+    dnf|zypper)
+        sudo "$PM" install -y "${unique_pkgs[@]}"
         ;;
     pacman)
-        # Arch’s pacman does not have a direct “--no-install-recommends” flag.
-        # We simply install the packages we need.
-        sudo "$PM" -Sy --noconfirm "${install_pkgs[@]}"
+        sudo "$PM" -Syu --noconfirm --needed "${unique_pkgs[@]}"
         ;;
 esac
 
