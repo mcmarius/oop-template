@@ -193,6 +193,8 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-<!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.0.2) (Zlib)
+<!-- renovate: datasource=github-tags depName=raysan5/raylib versioning=loose -->
+- [raylib](https://github.com/raysan5/raylib/tree/5.5) (Zlib)
+<!-- renovate: datasource=github-tags depName=RobLoach/raylib-cpp versioning=loose -->
+- [raylib-cpp](https://github.com/RobLoach/raylib-cpp/tree/v5.5.0) (Zlib)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
