@@ -34,9 +34,9 @@ FetchContent_Declare(
     wx
     GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
     # renovate: datasource=github-tags depName=wxWidgets/wxWidgets versioning=loose
-    GIT_TAG        v3.3.1
+    GIT_TAG        v3.3.3.1
     # renovate: depName=wxWidgets/wxWidgets
-    # GIT_TAG        1f9535fbb666c6e89820eb36c38c7143f534cb38 # v3.3.1
+    # GIT_TAG        565553ee980e925bbd8b3cdaeea0eb9f453d7dfd # v3.3.3.1
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS   ON
 )
