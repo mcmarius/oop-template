@@ -92,8 +92,10 @@ jobs:
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or
       # https://github.com/brechtsanders/winlibs_mingw/releases/
-      MINGW_VER: "13.3.0posix-11.0.1-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64msvcrt-11.0.1-r1.7z"
+      MINGW_VER: "16.2.0posix-14.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64ucrt-14.0.0-r1.7z"
       # Example:
+      # MINGW_VER: "16.2.0posix-14.0.0-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64msvcrt-14.0.0-r1.7z"
+      # MINGW_VER: "13.3.0posix-11.0.1-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64msvcrt-11.0.1-r1.7z"
       # MINGW_VER: "13.3.0posix-11.0.1-ucrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64ucrt-11.0.1-r1.7z"
       # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64ucrt-12.0.0-r2.7z"
       # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64msvcrt-12.0.0-r2.7z"
@@ -156,11 +158,11 @@ jobs:
             cmake_generator: Ninja
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: cl
             cxx: cl
             # renovate: depName=windows
-            name: "ASan: Windows 2022 MSVC 19.44"
+            name: "ASan: Windows 2025 MSVC 19.51"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -169,11 +171,11 @@ jobs:
             runs_asan: true
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: gcc
             cxx: g++
             # renovate: depName=windows
-            name: "Windows 2022 MinGW GCC 13"
+            name: "Windows 2025 MinGW GCC 16"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
 
