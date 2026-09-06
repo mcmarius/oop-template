@@ -47,8 +47,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
-      # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
-      CPPCHECK_VER: "2.19.1"
+      # renovate: datasource=github-tags depName=cppcheck-opensource/cppcheck versioning=loose
+      CPPCHECK_VER: "2.21.1"
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
