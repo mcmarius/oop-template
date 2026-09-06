@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # default values
-# renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
+# renovate: datasource=github-tags depName=cppcheck-opensource/cppcheck versioning=loose
 CPPCHECK_VER=2.21.1
 CMAKE_BUILD_DIR=build
 CMAKE_OPTS=()         # example for CLI: -o "-DCMAKE_INSTALL_PREFIX=~/.local/ -DFILESDIR=~/.local/share/Cppcheck"
@@ -24,7 +24,7 @@ while getopts ":b:o:v:" opt; do
 done
 
 
-wget "https://github.com/danmar/cppcheck/archive/${CPPCHECK_VER}.zip"
+wget "https://github.com/cppcheck-opensource/cppcheck/archive/${CPPCHECK_VER}.zip"
 unzip -q "${CPPCHECK_VER}.zip"
 rm "${CPPCHECK_VER}.zip"
 mv "cppcheck-${CPPCHECK_VER}" cppcheck
