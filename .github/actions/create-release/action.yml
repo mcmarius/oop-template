@@ -27,15 +27,15 @@ runs:
         filename: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
     - name: Generate artifact attestation
-      # renovate: datasource=github-tags depName=actions/attest-build-provenance versioning=loose
-      uses: actions/attest-build-provenance@v3.2.0
+      # renovate: datasource=github-tags depName=actions/attest versioning=loose
+      uses: actions/attest@v4.2.2
       if: ${{ startsWith(github.ref, 'refs/tags/') && ! env.PRIVATE_REPO }}
       with:
         subject-path: ${{ env.ZIP_NAME }}_${{ env.TAG_NAME }}.zip
 
     - name: Release
       # renovate: datasource=github-tags depName=softprops/action-gh-release versioning=loose
-      uses: softprops/action-gh-release@v2.5.1
+      uses: softprops/action-gh-release@v3.0.3
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
