@@ -156,11 +156,11 @@ jobs:
             cmake_generator: Ninja
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: cl
             cxx: cl
             # renovate: depName=windows
-            name: "ASan: Windows 2022 MSVC 19.44"
+            name: "ASan: Windows 2025 MSVC 19.44"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -169,11 +169,11 @@ jobs:
             runs_asan: true
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: gcc
             cxx: g++
             # renovate: depName=windows
-            name: "Windows 2022 MinGW GCC 13"
+            name: "Windows 2025 MinGW GCC 13"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
 
