@@ -44,7 +44,7 @@ jobs:
   cppcheck:
     name: "Cppcheck"
     # renovate: depName=ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
@@ -112,11 +112,11 @@ jobs:
             cmake_generator: Ninja
 
             # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: gcc-12
-            cxx: g++-12
+          - os: ubuntu-24.04
+            c: gcc-14
+            cxx: g++-14
             # renovate: depName=ubuntu
-            name: "ASan: Ubuntu 22.04 GCC 12"
+            name: "ASan: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs address sanitizers
@@ -125,11 +125,11 @@ jobs:
             asan_name: "-asan"
 
             # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: gcc-12
-            cxx: g++-12
+          - os: ubuntu-24.04
+            c: gcc-14
+            cxx: g++-14
             # renovate: depName=ubuntu
-            name: "Valgrind: Ubuntu 22.04 GCC 12"
+            name: "Valgrind: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs valgrind
