@@ -32,7 +32,7 @@ runs:
     # Since this cache is small, it should not fill the cache too much
     - name: Cache Ninja deps
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache@v5.0.3
+      uses: actions/cache@v5.1.0
       if: matrix.cmake_generator == 'Ninja'
       id: cache-deps-ninja
       with:
@@ -44,7 +44,7 @@ runs:
 
     - name: Cache MinGW
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache@v5.0.3
+      uses: actions/cache@v5.1.0
       id: cache-mingw
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
       with:
