@@ -19,11 +19,12 @@ runs:
       run: |
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
           mkdir -p "${{ env.ZIP_NAME }}/lib"
-          # cp /Library/Developer/CommandLineTools/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/lib"
+          # cp /Library/Developer/CommandLineTools/usr/lib/clang/17/lib/darwin/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/lib"
           # for exe in "${EXECUTABLE_NAME}" "${TESTS_EXECUTABLE_NAME}"; do
           #   install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/${exe}"
           # done
         fi
+
         # Nu exista framework in artifacts/lib (?)
         # ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% cp artifacts/lib/%.framework/% "${{ env.ZIP_NAME }}/lib"
         # ls -1 artifacts/lib | grep framework | xargs -I% ls artifacts/lib/%/Versions/A | grep -v "Resources" | xargs -I% install_name_tool -change @rpath/../Frameworks/%.framework/Versions/A/% @executable_path/lib/% ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
