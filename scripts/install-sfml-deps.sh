@@ -34,6 +34,8 @@ LINUX_DEPS=(
     libgbm-dev
     libfreetype6-dev
     libxi-dev
+    libmbedtls-dev
+    libssh2-dev
     xorg
 )
 
@@ -51,6 +53,8 @@ declare -A DEB_MAP=(
     [libgbm-dev]=libgbm-dev
     [libfreetype6-dev]=libfreetype6-dev
     [libxi-dev]=libxi-dev
+    [libmbedtls-dev]=libmbedtls-dev
+    [libssh2-dev]=libssh2-1-dev
     [xorg]=xorg
 )
 
@@ -67,6 +71,8 @@ declare -A RPM_MAP=(
     [libgbm-dev]=libgbm-devel
     [libfreetype6-dev]=freetype-devel
     [libxi-dev]=libXi-devel
+    [libmbedtls-dev]=mbedtls-devel
+    [libssh2-dev]=libssh2-devel
     [xorg]=xorg-x11-server-Xorg           # meta‑package that pulls the whole X server stack
 )
 
@@ -83,6 +89,8 @@ declare -A SUSE_MAP=(
     [libgbm-dev]=libgbm-devel
     [libfreetype6-dev]=freetype-devel
     [libxi-dev]=libXi-devel
+    [libmbedtls-dev]=mbedtls-devel
+    [libssh2-dev]=libssh2-devel
     [xorg]=xorg-x11-server
 )
 
@@ -99,6 +107,8 @@ declare -A ARCH_MAP=(
     [libgbm-dev]=gbm
     [libfreetype6-dev]=freetype2
     [libxi-dev]=libxi
+    [libmbedtls-dev]=mbedtls
+    [libssh2-dev]=libssh2
     [xorg]=xorg-x11-server
 )
 
