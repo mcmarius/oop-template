@@ -47,15 +47,15 @@ jobs:
   cppcheck:
     name: "Cppcheck"
     # renovate: depName=ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
-      # renovate: datasource=github-tags depName=danmar/cppcheck versioning=loose
-      CPPCHECK_VER: "2.19.1"
+      # renovate: datasource=github-tags depName=cppcheck-opensource/cppcheck versioning=loose
+      CPPCHECK_VER: "2.21.1"
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
 
       - name: Run cppcheck
         uses: ./.github/actions/cppcheck
@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
 
       - name: Run clang-tidy
         uses: ./.github/actions/clang-tidy
@@ -95,8 +95,10 @@ jobs:
       # NOTE: replace with another version if this one does not work
       # For more versions, see https://winlibs.com or
       # https://github.com/brechtsanders/winlibs_mingw/releases/
-      MINGW_VER: "13.3.0posix-11.0.1-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64msvcrt-11.0.1-r1.7z"
+      MINGW_VER: "16.2.0posix-14.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64ucrt-14.0.0-r1.7z"
       # Example:
+      # MINGW_VER: "16.2.0posix-14.0.0-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64msvcrt-14.0.0-r1.7z"
+      # MINGW_VER: "13.3.0posix-11.0.1-msvcrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64msvcrt-11.0.1-r1.7z"
       # MINGW_VER: "13.3.0posix-11.0.1-ucrt-r1/winlibs-x86_64-posix-seh-gcc-13.3.0-mingw-w64ucrt-11.0.1-r1.7z"
       # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64ucrt-12.0.0-r2.7z"
       # MINGW_VER: "14.1.0posix-18.1.7-12.0.0-msvcrt-r2/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64msvcrt-12.0.0-r2.7z"
@@ -115,11 +117,11 @@ jobs:
             cmake_generator: Ninja
 
             # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: gcc-12
-            cxx: g++-12
+          - os: ubuntu-24.04
+            c: gcc-14
+            cxx: g++-14
             # renovate: depName=ubuntu
-            name: "ASan: Ubuntu 22.04 GCC 12"
+            name: "ASan: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs address sanitizers
@@ -128,42 +130,42 @@ jobs:
             asan_name: "-asan"
 
             # renovate: depName=ubuntu
-          - os: ubuntu-22.04
-            c: gcc-12
-            cxx: g++-12
+          - os: ubuntu-24.04
+            c: gcc-14
+            cxx: g++-14
             # renovate: depName=ubuntu
-            name: "Valgrind: Ubuntu 22.04 GCC 12"
+            name: "Valgrind: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
 
             # renovate: depName=macos
-          - os: macos-14
+          - os: macos-15
             c: clang
             cxx: clang++
             # renovate: depName=macos
-            name: "macOS 14 Apple Clang 15"
+            name: "macOS 15 Apple Clang 17"
             cmake_flags: "-DUSE_ASAN=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             # This env does not currently run address sanitizers
             # runs_asan: false
 
           #   # renovate: depName=macos
-          # - os: macos-14
-          #   c: gcc-13
-          #   cxx: g++-13
+          # - os: macos-26
+          #   c: gcc-15
+          #   cxx: g++-15
           #   # renovate: depName=macos
-          #   name: "macOS 14 GCC 13"
+          #   name: "macOS 26 GCC 15"
           #   cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
           #   cmake_generator: Ninja
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: cl
             cxx: cl
             # renovate: depName=windows
-            name: "ASan: Windows 2022 MSVC 19.44"
+            name: "ASan: Windows 2025 MSVC 19.51"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -172,18 +174,18 @@ jobs:
             # runs_asan: true
 
             # renovate: depName=windows
-          - os: windows-2022
+          - os: windows-2025
             c: gcc
             cxx: g++
             # renovate: depName=windows
-            name: "Windows 2022 MinGW GCC 13"
+            name: "Windows 2025 MinGW GCC 16"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
 
     steps:
       - name: Checkout repo
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
 
       - name: Set timestamp, zip name, repo visibility
         env:
@@ -233,7 +235,7 @@ jobs:
 
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: ${{ env.ZIP_NAME }}_${{ env.TIMESTAMP }}
           include-hidden-files: true
