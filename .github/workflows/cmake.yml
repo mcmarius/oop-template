@@ -147,11 +147,11 @@ jobs:
             runs_tests: 'ON'
 
             # renovate: depName=macos
-          - os: macos-26
+          - os: macos-15
             c: clang
             cxx: clang++
             # renovate: depName=macos
-            name: "macOS 26 Apple Clang 21"
+            name: "macOS 15 Apple Clang 17"
             # This env does not currently run address sanitizers
             cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts "
             cmake_generator: Ninja
