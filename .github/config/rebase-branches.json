@@ -1,5 +1,6 @@
 {
   "llms": "descarcare-date-api",
+  "raylib-cpp": "sfml3",
   "sfml3-resurse-locale": "sfml3",
   "sfml3-imagini-externe-api": "sfml3",
   "wxwidgets": "sfml3"
