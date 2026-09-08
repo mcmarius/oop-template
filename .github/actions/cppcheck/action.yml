@@ -48,7 +48,7 @@ runs:
 
     - name: Cppcheck run cache
       # renovate: datasource=github-tags depName=actions/cache versioning=loose
-      uses: actions/cache@v4.3.0
+      uses: actions/cache@v6.1.0
       with:
         path: cppcheck-scan-dir
         key: cppcheck-scan-${{ env.CPPCHECK_VER }}-${{ hashFiles('CMakeLists.txt') }}
