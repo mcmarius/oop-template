@@ -44,6 +44,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 # NOTE: Also update PQXX_VERSION env var in .github/workflows/cmake.yml:31
 FetchContent_Declare(
     pqxx
+    SYSTEM
     GIT_REPOSITORY https://github.com/jtv/libpqxx.git
     # renovate: datasource=github-tags depName=jtv/libpqxx versioning=loose
     GIT_TAG        7.10.5
