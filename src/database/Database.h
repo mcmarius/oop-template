@@ -7,7 +7,7 @@ class Database {
     std::unique_ptr<pqxx::connection> connection;
     std::string connString;
 
-    Database (const bool&);
+    explicit Database (const bool&);
 
     ~Database ();
 

@@ -71,7 +71,6 @@ std::vector<std::tuple<std::string,std::string>> Database::showAllUsers() {
 
 std::tuple<std::string,std::string> Database::showUser(const std::string& name) {
     pqxx::work transaction(*connection);
-    std::vector<std::tuple<std::string,std::string>> result;
     const auto queryResult = transaction.exec("SELECT * FROM USERS WHERE name = $1", pqxx::params{name});
     return {queryResult[0][1].as<std::string>(),queryResult[0][2].as<std::string>()};
 }
