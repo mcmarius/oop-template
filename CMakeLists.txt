@@ -58,6 +58,8 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 
+include(cmake/MinGWLibpq.cmake)
+
 FetchContent_MakeAvailable(pqxx)
 
 ###############################################################################
