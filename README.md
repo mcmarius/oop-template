@@ -194,5 +194,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 
 ## Resurse
 <!-- renovate: datasource=github-tags depName=wxWidgets/wxWidgets versioning=loose -->
-- [wxWidgets](https://github.com/wxWidgets/wxWidgets/tree/v3.3.1) (wxWindows Library Licence ~ LGPL)
+- [wxWidgets](https://github.com/wxWidgets/wxWidgets/tree/v3.3.3.1) (wxWindows Library Licence ~ LGPL)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
