@@ -2,7 +2,7 @@
 
 # default values
 # renovate: datasource=github-tags depName=cppcheck-opensource/cppcheck versioning=loose
-CPPCHECK_VER=2.21.1
+CPPCHECK_VER=2.22.0
 CMAKE_BUILD_DIR=build
 CMAKE_OPTS=()         # example for CLI: -o "-DCMAKE_INSTALL_PREFIX=~/.local/ -DFILESDIR=~/.local/share/Cppcheck"
 
