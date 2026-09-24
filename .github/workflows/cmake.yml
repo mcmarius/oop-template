@@ -32,7 +32,7 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   # renovate: datasource=github-tags depName=ArthurSonzogni/ftxui versioning=loose
-  FTXUI_VERSION: "v6.1.9"
+  FTXUI_VERSION: "v7.0.3"
 
 
 defaults:
