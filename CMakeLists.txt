@@ -53,16 +53,16 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-    simsimd
+    numkong
     SYSTEM
-    GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
-    # renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose
+    GIT_REPOSITORY https://github.com/ashvardanian/NumKong.git
+    # renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose
     GIT_TAG        v7.8.2
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )
 
-FetchContent_MakeAvailable(cpr simsimd)
+FetchContent_MakeAvailable(cpr numkong)
 
 ###############################################################################
 
@@ -98,7 +98,7 @@ target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
     ext/include/json
     ${cpr_SOURCE_DIR}/include
-    ${simsimd_SOURCE_DIR}/include
+    ${numkong_SOURCE_DIR}/include
 )
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
