@@ -1,6 +1,10 @@
+#include <chrono>   // for seconds
+#include <string>   // for to_string
+#include <thread>   // for thread
+
+#include <ftxui/component/app.hpp>       // for App (renamed from ScreenInteractive in FTXUI v7)
 #include <ftxui/component/component.hpp>       // for Slider, Renderer, Vertical
 #include <ftxui/component/component_base.hpp>  // for ComponentBase
-#include <ftxui/component/screen_interactive.hpp>  // for ScreenInteractive
 #include <ftxui/dom/elements.hpp>  // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
 #include <ftxui/screen/color.hpp>  // for Color
 
@@ -55,7 +59,9 @@ int main() {
     ///
     ///////////////////////////////////////////////////////////////////////////
 
-    ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::TerminalOutput();
+    // FTXUI v7: `ScreenInteractive` a fost redenumit `App` (numele vechi există
+    // în continuare ca alias de compatibilitate în <ftxui/component/screen_interactive.hpp>).
+    ftxui::App app = ftxui::App::TerminalOutput();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ///                                    Exemplu culori RGB                                           ///
@@ -99,11 +105,11 @@ int main() {
     ///           Programul se va opri automat dupa 5 secunde           //
     std::thread auto_close([&] {                                //
         std::this_thread::sleep_for(std::chrono::seconds(5));  //
-        screen.Exit();                                                  //
+        app.Exit();                                                     //
     });                                                                 //
     //////////////////////////////////////////////////////////////////////
 
-    screen.Loop(renderer);
+    app.Loop(renderer);
 
     auto_close.join();
 
