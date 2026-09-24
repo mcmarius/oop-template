@@ -37,7 +37,7 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
+        if(ARG_RUN_SANITIZERS)
             if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
             else()
                 set_custom_stdlib_and_sanitizers(cpr false)
