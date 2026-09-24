@@ -57,7 +57,7 @@ FetchContent_Declare(
     SYSTEM
     GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
     # renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose
-    GIT_TAG        v6.5.13
+    GIT_TAG        v7.8.2
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )
