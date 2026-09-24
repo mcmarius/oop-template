@@ -35,7 +35,9 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
+        # NOTE: this must be a boolean test and not a string comparison, so that
+        # callers can pass `RUN_SANITIZERS ${USE_ASAN}` (which expands to ON/OFF)
+        if(ARG_RUN_SANITIZERS)
             set_custom_stdlib_and_sanitizers(${TARGET_NAME} true)
             set_custom_stdlib_and_sanitizers(screen true) # ftxui::screen
             set_custom_stdlib_and_sanitizers(dom true) # ftxui::dom
