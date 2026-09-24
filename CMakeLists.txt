@@ -52,6 +52,7 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 
+# NOTE: Also update NUMKONG_VERSION in .github/workflows/cmake.yml
 FetchContent_Declare(
     numkong
     SYSTEM
