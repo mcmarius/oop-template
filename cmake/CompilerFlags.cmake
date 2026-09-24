@@ -17,8 +17,8 @@ function(set_compiler_flags)
             message("NOTE: GITHUB_ACTIONS defined")
             target_compile_definitions(${TARGET_NAME} PRIVATE GITHUB_ACTIONS)
         endif()
-        target_compile_definitions(${TARGET_NAME} PRIVATE SIMSIMD_NATIVE_F16=0)
-        target_compile_definitions(${TARGET_NAME} PRIVATE SIMSIMD_NATIVE_BF16=0)
+        target_compile_definitions(${TARGET_NAME} PRIVATE NK_NATIVE_F16=0)
+        target_compile_definitions(${TARGET_NAME} PRIVATE NK_NATIVE_BF16=0)
 
         ###############################################################################
 
@@ -37,7 +37,7 @@ function(set_compiler_flags)
         ###############################################################################
 
         # sanitizers
-        if("${ARG_RUN_SANITIZERS}" STREQUAL "TRUE")
+        if(ARG_RUN_SANITIZERS)
             if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
             else()
                 set_custom_stdlib_and_sanitizers(cpr false)
