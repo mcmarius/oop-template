@@ -42,7 +42,8 @@ runs:
         custom_flags: '-GNinja'
         cache_key: 'cache-cppcheck'
 
-    - name: Cppcheck
+    - name: Cppcheck and friends
       shell: bash
       run: |
+        bash ./scripts/audit_ext_libs.sh
         bash ./scripts/run_cppcheck.sh
