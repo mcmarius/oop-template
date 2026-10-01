@@ -34,7 +34,8 @@ env:
   # NOTE: also update in CMakeLists FetchContent
   # renovate: datasource=github-tags depName=libcpr/cpr versioning=loose
   CPR_VERSION: "1.14.2"
-
+  # renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose
+  NUMKONG_VERSION: "v7.8.2"
 
 defaults:
   run:
