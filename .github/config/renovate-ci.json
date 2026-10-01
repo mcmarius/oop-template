@@ -6,7 +6,7 @@
       "customType": "regex",
       "managerFilePatterns": [".github/workflows/*.yml", ".github/actions/**/*.yml"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+uses: \\S*@(?<currentValue>\\S*)"
+        "# renovate: datasource=(?<datasource>\\S+?) depName=(?<depName>\\S+?) versioning=(?<versioning>\\S+?)\\s+(?:#\\s*)?uses: \\S*@(?<currentValue>\\S*)"
       ],
       "datasourceTemplate": "{{{datasource}}}",
       "depNameTemplate": "{{{depName}}}",

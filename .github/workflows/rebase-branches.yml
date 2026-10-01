@@ -20,11 +20,11 @@ defaults:
 jobs:
   rebase:
     # renovate: depName=ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -56,7 +56,7 @@ jobs:
       - name: Read custom base branches
         run: |
           # citesc config-ul cu base-uri custom din JSON
-          echo "BASE_BRANCHES=$(jq -c . .github/rebase-branches.json)" >> $GITHUB_ENV 
+          echo "BASE_BRANCHES=$(jq -c . .github/config/rebase-branches.json)" >> $GITHUB_ENV
 
       - name: Rebase branches
         continue-on-error: true # in caz de conflict sa nu se opreasca
