@@ -7,8 +7,8 @@
 // #include "Example.h"
 
 ///////////////////////////////////////////////////////////////////
-//// Vom folosi simsimd pentru a calcula similaritatea cosinus ////
-#include <simsimd/simsimd.h>                                   ////
+//// Vom folosi numkong pentru a calcula similaritatea cosinus ////
+#include <numkong/numkong.h>                                   ////
 ///////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@
 
 const std::string API_URL = "http://127.0.0.1:8080";
 
-std::vector<simsimd_f32_t> getEmbeddings(const std::string& word)
+std::vector<nk_f32_t> getEmbeddings(const std::string& word)
 {
     std::string api_url = API_URL;
     if(const auto* url = std::getenv("LLM_URL")) {
@@ -79,7 +79,7 @@ std::vector<simsimd_f32_t> getEmbeddings(const std::string& word)
     }
 
     json json_resp = json::parse(res.text); // Parsăm răspunsul primit
-    std::vector<simsimd_f32_t> embedding = json_resp["embedding"];
+    std::vector<nk_f32_t> embedding = json_resp["embedding"];
     // std::cout << json_resp["embedding"].size() << std::endl;
     return embedding;
 }
@@ -161,9 +161,11 @@ int main()
 
         auto emb1 = getEmbeddings(word1);
         auto emb2 = getEmbeddings(word2);
-        simsimd_distance_t distance;
-        simsimd_cos_f32(emb1.data(), emb2.data(), emb1.size(), &distance);
-        std::cout << "similarity " << word1 << " - " << word2 << ": " << distance << "\n";
+        // distanța angulară (1 - cosinusul unghiului dintre vectori):
+        // cu cât vectorii sunt mai similari, cu cât distanța e mai aproape de 0
+        nk_f64_t distance{};
+        nk_angular_f32(emb1.data(), emb2.data(), emb1.size(), &distance);
+        std::cout << "angular distance (1 - cos) " << word1 << " - " << word2 << ": " << distance << "\n";
 
         // not very reliable, varies too much, not deterministic
         // std::cout << "score: " << getScore(word1, word2) << "\n";
