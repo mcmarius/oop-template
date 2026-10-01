@@ -1,13 +1,9 @@
 #!/usr/bin/bash
 
-# Include directories of the dependencies must be passed with -isystem. cppcheck
-# reports inside a directory given with -I and, worse, abandons the file that
-# includes from it at the first construct its preprocessor cannot parse, which
-# turns the whole-program checks into false positives and leaves the rest of the
-# file unchecked. The flag that matters is the one on the command line, so the
-# compilation database is audited rather than CMakeLists.txt: a dependency can
-# also be pulled in by a target of this project, where the SYSTEM keyword of
-# FetchContent_Declare never reaches it.
+# Include directories of dependencies must use -isystem. Otherwise, cppcheck abandons
+# a file including from it at the first unparsed preprocessor construct, which turns
+# checks into false positives and leaves the rest unchecked. The compilation database
+# is audited, not CMakeLists.txt, since deps can be resolved from many places.
 
 # Fails when a directory below one of the dependency roots is given with -I.
 # Directories of system packages given with -I are only reported, as they come

@@ -29,14 +29,9 @@ rc_all=$?
 echo "Cppcheck pass 2 (unusedFunction)"
 # Pass 2: the whole-program 'unusedFunction' check on its own.
 # 'unusedFunction' aggregates call sites across all translation units, and
-# cppcheck only evaluates that whole-program view correctly in a single
-# in-process pass. The options otherwise available are all wrong:
-#   * -j >1 without --cppcheck-build-dir: cppcheck DISABLES unusedFunction
-#     ("unusedFunction check requires --cppcheck-build-dir to be active with -j").
-#   * --cppcheck-build-dir (any -j): the verdict is cached/replayed per
-#     translation unit and cross-TU call sites are dropped, so a function
-#     called only from another TU is falsely reported "never used".
-# The only correct configuration is single threaded with NO build cache.
+# this only works when running with -j1. Alternatives don't work:
+# * -j >1: "unusedFunction check requires --cppcheck-build-dir to be active with -j"
+# * --cppcheck-build-dir (any -j): verdict cached per TU, no cross TU agg, creates FP
 cppcheck --enable=unusedFunction \
     -j 1 \
     "${COMMON_ARGS[@]}"
