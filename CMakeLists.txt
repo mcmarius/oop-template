@@ -59,17 +59,18 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 
+# NOTE: Also update NUMKONG_VERSION in .github/workflows/cmake.yml
 FetchContent_Declare(
-    simsimd
+    numkong
     SYSTEM
-    GIT_REPOSITORY https://github.com/ashvardanian/simsimd.git
-    # renovate: datasource=github-tags depName=ashvardanian/simsimd versioning=loose
-    GIT_TAG        v6.5.13
+    GIT_REPOSITORY https://github.com/ashvardanian/NumKong.git
+    # renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose
+    GIT_TAG        v7.8.2
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )
 
-FetchContent_MakeAvailable(cpr simsimd)
+FetchContent_MakeAvailable(cpr numkong)
 
 ###############################################################################
 
@@ -115,11 +116,11 @@ target_include_directories(${MAIN_LIBRARY_NAME} PRIVATE
 # a public dep is an interface commitment, shared by app/ and tests/
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PUBLIC
     ${EXT_PUBLIC_DIR}
+    ${numkong_SOURCE_DIR}/include
+    ${cpr_SOURCE_DIR}/include
 )
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
     ${EXT_PRIVATE_DIR}
-    ${cpr_SOURCE_DIR}/include
-    ${simsimd_SOURCE_DIR}/include
 )
 
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
