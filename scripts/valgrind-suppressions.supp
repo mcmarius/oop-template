@@ -3327,5 +3327,25 @@
    ioctl(TCSET{S,SW,SF})
    fun:tcsetattr
    ...
-   fun:main
+}
+
+{
+   <ftxui_tcsetattr_uninit_param>
+   Memcheck:Param
+   ioctl(TCSETS)
+   fun:tcsetattr
+   ...
+}
+{
+   <ftxui_tcsetattr_uninit_param_generic>
+   Memcheck:Param
+   ioctl(generic)
+   fun:tcsetattr
+   ...
+}
+{
+   <ftxui_tcsetattr_uninit_speed>
+   Memcheck:Value8
+   fun:*cbaud_to_speed*
+   ...
 }

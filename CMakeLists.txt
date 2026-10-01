@@ -32,6 +32,7 @@ include(cmake/CopyHelper.cmake)
 #     - .github/workflows/cmake.yml
 # FetchContent_Declare(
 #     SomeLib
+#     SYSTEM         # keeps ext libs out of static code analysis
 #     GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
 #     GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
 #     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes

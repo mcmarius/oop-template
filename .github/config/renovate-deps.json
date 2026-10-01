@@ -10,6 +10,7 @@
     "http-server",
     "llms",
     "main",
+    "raylib-cpp",
     "sfml3",
     "sfml3-imagini-externe-api",
     "tests/Boost-ext-ut",
@@ -40,15 +41,27 @@
     },
     {
       "customType": "regex",
-      "description": "Update SFML commented SHA",
+      "description": "Keep the commented '# GIT_TAG <sha> # <tag>' pin in sync with the newest tag",
       "managerFilePatterns": ["CMakeLists.txt"],
       "matchStrings": [
         "# renovate: depName=(?<depName>\\S+)\\s+# GIT_TAG\\s+(?<currentDigest>[a-z0-9]{40}) # (?<currentValue>\\S+)"
       ],
-      "datasourceTemplate": "git-refs",
+      "datasourceTemplate": "git-tags",
       "depNameTemplate": "{{{depName}}}",
       "packageNameTemplate": "https://github.com/{{{depName}}}",
       "versioningTemplate": "loose"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["wxWidgets/wxWidgets"],
+      "description": "Keep the wx tag bump and the commented # GIT_TAG SHA in a single PR (Renovate otherwise splits digest updates onto their own <name>-digest branch)",
+      "groupName": "Update wxWidgets"
+    },
+    {
+      "matchDepNames": ["SFML/SFML"],
+      "description": "Keep the SFML tag bump and the commented # GIT_TAG SHA in a single PR (Renovate otherwise splits digest updates onto their own <name>-digest branch)",
+      "groupName": "Update SFML"
     }
   ],
   "prConcurrentLimit": 0,
