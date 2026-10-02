@@ -36,7 +36,7 @@ FetchContent_Declare(
     SYSTEM
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     # renovate: datasource=github-tags depName=raysan5/raylib versioning=loose
-    GIT_TAG        5.5
+    GIT_TAG        6.0
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS   ON
 )
@@ -46,7 +46,7 @@ FetchContent_Declare(
     SYSTEM
     GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp.git
     # renovate: datasource=github-tags depName=RobLoach/raylib-cpp versioning=loose
-    GIT_TAG        v5.5.0
+    GIT_TAG        v6.0.3
     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
     GIT_PROGRESS   ON
 )
