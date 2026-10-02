@@ -58,7 +58,7 @@ FetchContent_Declare(
     SYSTEM
     GIT_REPOSITORY https://github.com/ashvardanian/NumKong.git
     # renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose
-    GIT_TAG        v7.8.2
+    GIT_TAG        v7.8.4
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )

@@ -205,6 +205,6 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
   - Versiune: [v0.9.1](https://github.com/Mozilla-Ocho/llamafile) (Apache 2.0)
 - [NumKong](https://github.com/ashvardanian/NumKong)
   <!-- renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose -->
-  - Versiune: [v7.8.2](https://github.com/ashvardanian/NumKong) (Apache 2.0)
+  - Versiune: [v7.8.4](https://github.com/ashvardanian/NumKong) (Apache 2.0)
   - pentru similaritate cosinus
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
