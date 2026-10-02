@@ -3,6 +3,7 @@ option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
+option(USE_NUMKONG_SIMD "Use the NumKong SIMD kernels; the CPU must support them when the program runs" OFF)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
