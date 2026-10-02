@@ -119,6 +119,15 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
 ```
 
 
+Pentru nucleii SIMD ai NumKong (distanța unghiulară din `main.cpp`), avem opțiunea `-DUSE_NUMKONG_SIMD=ON`. Pe Windows cu MSVC, NumKong alege nucleii SIMD după versiunea compilatorului, deci executabilul ar cere instrucțiuni pe care unele procesoare nu le au; implicit folosim nucleii portabili.
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_NUMKONG_SIMD=ON
+# sau ./scripts/cmake.sh configure -e "-DUSE_NUMKONG_SIMD=ON"
+```
+
+Pe GCC și Clang, NumKong alege nucleii SIMD după flagurile de ISA, deci e nevoie și de `-DCMAKE_CXX_FLAGS="-march=native"` (sau `-march=haswell`, `-march=skylake-avx512`, …), tot cu aceeași restricție asupra procesorului.
+
+
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
 
 
