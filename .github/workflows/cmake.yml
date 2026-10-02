@@ -33,7 +33,7 @@ env:
   EXT_DIR: "ext"
   # NOTE: keep in sync with GIT_TAG in CMakeLists.txt; only used to invalidate the _deps cache
   # renovate: datasource=github-tags depName=ashvardanian/NumKong versioning=loose
-  NUMKONG_VERSION: "v7.8.2"
+  NUMKONG_VERSION: "v7.8.4"
 
 
 defaults:
