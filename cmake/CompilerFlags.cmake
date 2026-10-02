@@ -20,6 +20,26 @@ function(set_compiler_flags)
         target_compile_definitions(${TARGET_NAME} PRIVATE NK_NATIVE_F16=0)
         target_compile_definitions(${TARGET_NAME} PRIVATE NK_NATIVE_BF16=0)
 
+        # On MSVC, NumKong turns on the AVX2/AVX-512/AMX kernels based only on the
+        # toolset version, so the binary demands those CPU extensions and dies with an
+        # illegal instruction where they are missing (CI runners, older laptops).
+        # Keep the portable kernels (as GCC/Clang do) unless -DUSE_NUMKONG_SIMD=ON.
+        if(MSVC AND NOT USE_NUMKONG_SIMD)
+            target_compile_definitions(${TARGET_NAME} PRIVATE
+                NK_TARGET_HASWELL=0     # AVX2 + FMA + F16C
+                NK_TARGET_ALDER=0       # AVX-VNNI
+                NK_TARGET_SKYLAKE=0     # AVX-512F/CD/BW/DQ/VL
+                NK_TARGET_ICELAKE=0     # AVX-512 VNNI/VBMI/VBMI2/BITALG/POPCNTDQ/IFMA
+                NK_TARGET_GENOA=0       # AVX-512 BF16
+                NK_TARGET_SAPPHIRE=0    # AVX-512 FP16
+                NK_TARGET_TURIN=0       # AVX-VNNI-INT8
+                NK_TARGET_SIERRA=0      # AVX-512 VP2INTERSECT
+                NK_TARGET_SAPPHIREAMX=0 # AMX tile + BF16 + INT8
+                NK_TARGET_GRANITEAMX=0  # AMX tile + FP16
+                NK_TARGET_DIAMOND=0     # AVX10.2
+            )
+        endif()
+
         ###############################################################################
 
         if(PROJECT_WARNINGS_AS_ERRORS)
