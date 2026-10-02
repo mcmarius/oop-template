@@ -69,11 +69,8 @@ runs:
              "$(which VCRUNTIME140.dll)" \
              ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
         # fi
-        # cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv ${GITHUB_WORKSPACE}/artifacts/lib/vc_x64_dll/*.dll .
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib/vc_x64_dll || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib/vc_x64_dll/*.dll || true)
+        # glob relative to cd to avoid mixed slashes paths which interact badly with glob
+        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv ../artifacts/lib/vc_x64_dll/*.dll .
 
     - name: Copy stdlib (MinGW)
       shell: bash
@@ -84,8 +81,4 @@ runs:
           gcc/mingw64/bin/libgcc_s_seh-1.dll \
           gcc/mingw64/bin/libwinpthread-1.dll \
           ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
-        # cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv ${GITHUB_WORKSPACE}/artifacts/lib/gcc_x64_dll/*.dll .
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib/gcc_x64_dll || true)
-        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && (ls -la ${GITHUB_WORKSPACE}/artifacts/lib/gcc_x64_dll/*.dll || true)
+        cd ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }} && mv ../artifacts/lib/gcc_x64_dll/*.dll .
