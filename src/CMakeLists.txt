@@ -47,11 +47,19 @@ target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PRIVATE
-    ${CMAKE_SOURCE_DIR}/ext
+# Vendored dependencies are declared on the library, per dependency, not as one line over
+# the whole ext/ directory:
+#   PUBLIC  - a header in include/ names it, so it is part of the interface and both the
+#             executable and the tests must see it (they inherit it by linking oop_lib)
+#   PRIVATE - used only inside src/*.cpp: keep it out of the interface (forward declare,
+#             pass std types across the boundary, parse inside the .cpp)
+# Promoting a dependency to PUBLIC is a commitment; say in the comment which public header
+# needs it. SYSTEM on both, so cppcheck and clang-tidy ignore them.
+target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PUBLIC
+    ${EXT_PUBLIC_DIR}
 )
-target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
-    ${CMAKE_SOURCE_DIR}/ext
+target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PRIVATE
+    ${EXT_PRIVATE_DIR}
 )
 
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
@@ -66,7 +74,7 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
 ###############################################################################
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
-# DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
+# DESTINATION_DIR is set as "bin" in cmake/Options.cmake
 
 install(TARGETS ${MAIN_PROJECT_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
