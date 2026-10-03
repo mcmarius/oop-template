@@ -28,4 +28,16 @@ target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME} 
 
 set_compiler_flags(TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
 
-add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
+# one CTest entry per Google Test case, so a failure names the test that failed.
+# PRE_TEST discovery lists the tests when ctest runs them instead of after the build: the
+# build step must never execute the binary (cross builds, sanitizers, Windows/MSVC).
+# WORKING_DIRECTORY: the default (build/tests) breaks any test opening assets/...;
+# TIMEOUT: a suite spinning on EOF from std::cin would eat the whole job budget.
+# WORKING_DIRECTORY is a keyword of gtest_discover_tests() itself - writing it after
+# PROPERTIES makes CMake stop collecting them and the TIMEOUT is silently dropped.
+include(GoogleTest)
+gtest_discover_tests(${TESTS_EXECUTABLE_NAME}
+    DISCOVERY_MODE PRE_TEST
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    PROPERTIES TIMEOUT 60
+)
