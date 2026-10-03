@@ -209,5 +209,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 - SQLite
   - Site: https://www.sqlite.org/index.html
   - Github: https://github.com/sqlite/sqlite
-  - Versiune: version-3.51.2
+  - Versiune: version-3.53.4
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
