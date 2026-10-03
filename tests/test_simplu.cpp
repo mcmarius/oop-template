@@ -4,7 +4,7 @@ int sum(const int a, const int b) {
     return a + b;
 }
 
-boost::ut::suite simplu_test_suite = [] {
+boost::ut::suite<"simplu"> simplu_test_suite = [] {
     using namespace boost::ut;
 
     "sum of positive numbers"_test = [] {

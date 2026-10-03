@@ -2,7 +2,7 @@
 #include <ut.hpp>
 #include <stdexcept>
 
-boost::ut::suite oop_test_suite = [] {
+boost::ut::suite<"oop"> oop_test_suite = [] {
     using namespace boost::ut;
 
     "Initial Balance Is Set Correctly"_test = [] {

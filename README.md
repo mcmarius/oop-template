@@ -196,5 +196,5 @@ The [template repository](https://github.com/mcmarius/oop-template) itself is li
 ## Resurse
 - Boost-ext/ut:
   - Link documentație: https://github.com/boost-ext/ut
-  - Link versiune/tag folosit: https://github.com/boost-ext/ut/releases/tag/v1.1.9 (v1.1.9 -> următoarele versiuni nu puteau fi folosite cu Clang)
+  - Link versiune folosită: https://github.com/boost-ext/ut/tree/59a9beba0763dbb45b3cc68e4cf484c659319a97 (v2.3.1 este ultimul tag din 2 aprilie 2025; acest commit este din 14 februarie 2026, ultimul pe care sunt toate bifele)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
