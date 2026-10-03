@@ -106,6 +106,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # runs_tests gates the "Run tests" step only. Every row configures and builds the
+        # test target (BUILD_TESTING is ON by default), so the framework cannot silently
+        # rot on a platform where we only skip executing the suites.
         include:
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -176,6 +179,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
+            # the tests are still compiled here, only the run is skipped
             runs_tests: 'OFF'
 
             # renovate: depName=windows
@@ -219,16 +223,17 @@ jobs:
         with:
           custom_flags: ${{ matrix.cmake_flags }}
           warnings_as_errors: 'ON'
-          run_tests: ${{ matrix.runs_tests }}
 
       - name: Build
         run: |
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
 
       - name: Run tests
+        # every row compiles the test target (BUILD_TESTING is ON by default); only the
+        # run is gated per row. -r: zero registered tests is a failure, not a green step.
         if: ${{ matrix.runs_tests == 'ON' }}
         run: |
-          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }}
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
 
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory

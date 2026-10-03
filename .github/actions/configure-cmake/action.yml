@@ -12,10 +12,6 @@ inputs:
     description: 'Deps cache key'
     required: false
     default: 'cache-deps'
-  run_tests:
-    description: 'Enable or disable tests'
-    required: false
-    default: 'OFF'
 
 runs:
   using: "composite"
@@ -73,6 +69,7 @@ runs:
       shell: bash
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
       run: |
+        # no -t here either: tests are configured on every row (BUILD_TESTING defaults to ON)
         PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
         # because GH Actions does not properly prepend to $PATH and still chooses VM gcc
         # CMake generator not passed as option to script since it might not be defined
@@ -82,21 +79,21 @@ runs:
           -c ${{ env.BUILD_TYPE }} \
           -e "-DPROJECT_WARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} -DGITHUB_ACTIONS=${GITHUB_ACTIONS} ${{ inputs.custom_flags }}" \
           -i ${GITHUB_WORKSPACE}/artifacts \
-          -s ${GITHUB_WORKSPACE} \
-          -t "${{ inputs.run_tests }}"
+          -s ${GITHUB_WORKSPACE}
 
     - name: Configure CMake
       shell: bash
       if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
       run: |
         export CMAKE_GENERATOR=${{ matrix.cmake_generator }}
+        # no -t here either: tests are configured on every row (BUILD_TESTING defaults to ON),
+        # which is what lets cppcheck and clang-tidy lint them too
         bash ./scripts/cmake.sh configure \
           -b ${{ env.BUILD_DIR }} \
           -c ${{ env.BUILD_TYPE }} \
           -e "-DPROJECT_WARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} -DGITHUB_ACTIONS=${GITHUB_ACTIONS} ${{ inputs.custom_flags }}" \
           -i ${GITHUB_WORKSPACE}/artifacts \
-          -s ${GITHUB_WORKSPACE} \
-          -t "${{ inputs.run_tests }}"
+          -s ${GITHUB_WORKSPACE}
 
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
 # https://github.com/GuillaumeFalourd/poc-github-actions/blob/main/.github/workflows/36-local-action.yml

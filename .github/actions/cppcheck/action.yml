@@ -41,7 +41,7 @@ runs:
       with:
         custom_flags: '-GNinja'
         cache_key: 'cache-cppcheck'
-        run_tests: 'ON'
+        # tests are configured by default (BUILD_TESTING=ON), so cppcheck checks them too
 
     - name: Cppcheck and friends
       shell: bash
