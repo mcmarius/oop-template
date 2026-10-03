@@ -26,9 +26,8 @@ include(FetchContent)
 
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-set(SFML_WARNINGS_AS_ERRORS OFF)
 
-# NOTE: Also update SFML_VERSION and other env vars used for caching in
+# NOTE: Also update RAYLIB_VERSION, RAYLIB_CPP_VERSION and other env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
 FetchContent_Declare(
