@@ -36,8 +36,10 @@ env:
   EXT_DIR: "ext"
   APP_WINDOW: "My Window"
   # NOTE: also update in CMakeLists FetchContent
-  # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-  SFML_VERSION: "3.1.0"
+  # renovate: datasource=github-tags depName=raysan5/raylib versioning=loose
+  RAYLIB_VERSION: "6.0"
+  # renovate: datasource=github-tags depName=RobLoach/raylib-cpp versioning=loose
+  RAYLIB_CPP_VERSION: "6.0.3"
 
 defaults:
   run:
@@ -153,7 +155,7 @@ jobs:
             # renovate: depName=macos
             name: "macOS 15 Apple Clang 17"
             # This env does not currently run address sanitizers
-            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts "
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             runs_asan: false
             runs_tests: 'ON'
