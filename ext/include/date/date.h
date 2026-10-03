@@ -158,7 +158,11 @@ namespace date
 #endif  // HAS_VOID_T
 
 #ifndef HAS_TM_ZONE
-#  if defined(__GLIBC__) || defined(__ANDROID__) || (defined(__GNUC__) && __GNUC__ > 4)
+// PATCH (oop-template): do not assume the POSIX tm_zone/tm_gmtoff extensions just because
+// __GNUC__ is defined: MinGW-w64/UCRT (and MSVC) `struct tm` has only the 9 standard fields,
+// so `tm.tm_zone = ...` below is a hard compile error on Windows (CI: Windows MinGW GCC 16).
+// Cygwin is not affected by this check (_WIN32 is not defined there) and does have the fields.
+#  if (defined(__GLIBC__) || defined(__ANDROID__) || (defined(__GNUC__) && __GNUC__ > 4)) && !defined(_WIN32)
 #    define HAS_TM_ZONE 1
 #  else
 #    define HAS_TM_ZONE 0
