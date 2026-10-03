@@ -1,5 +1,7 @@
 #include <iostream>
 // #include <array>
+#include <chrono>
+#include <cstdlib>
 #include <thread>
 #include <csignal>
 #include <semaphore>
@@ -44,9 +46,22 @@ int main() {
         res.set_content("Not found", "text/plain");
     });
 
+    // tests only: server stops after SERVER_RUN_LIMIT_SEC seconds (0 = never)
+    int run_limit_sec = 0;
+    if (const char *env = std::getenv("SERVER_RUN_LIMIT_SEC")) {
+        run_limit_sec = std::atoi(env);
+    }
+
     // thread used for graceful shutdown
     std::thread stopper([&]() {
-        quit_semaphore.acquire();  // this is a blocking call
+        bool stop_requested = true;
+        if (run_limit_sec > 0) {
+            // blocking call, but with a deadline
+            stop_requested = quit_semaphore.try_acquire_for(std::chrono::seconds(run_limit_sec));
+        } else {
+            quit_semaphore.acquire();  // this is a blocking call
+        }
+        std::cout << "[server] Stop requested: " << stop_requested << "\n";
         server.stop();
     });
     stopper.detach();

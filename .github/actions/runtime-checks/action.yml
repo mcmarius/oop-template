@@ -24,13 +24,17 @@ runs:
       # run one sanitizer for each OS to avoid building extra binaries
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
+      # kill -TERM cannot stop an MSVC binary gracefully
+      env:
+        SERVER_RUN_LIMIT_SEC: 10
       run: |
         # run server in background
         ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}".exe &
+        server_pid=$!
         # run client in foreground
         cat "${INPUT_FILENAME}" | ./${{ env.ZIP_NAME }}/"${EXECUTABLE_NAME}-client".exe
         # server shutdown
-        kill -TERM $(jobs -p)
+        wait "${server_pid}"
 
     - name: Valgrind
       shell: bash

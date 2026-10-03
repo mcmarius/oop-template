@@ -186,6 +186,6 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-- [cpp-httplib v0.33.1](https://github.com/yhirose/cpp-httplib/tree/e61a8bcec7119f0eaa63fc2642344b6c182aa9b0) (MIT)
+- [cpp-httplib v0.58.0](https://github.com/yhirose/cpp-httplib/tree/4f3f9ef19be83ae97a5d9a059432dc00e445b7ab) (MIT)
   - schimbări: `poll` definită ca funcție în loc de macro
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit
