@@ -22,7 +22,10 @@
 
 ###############################################################################
 
-add_library(${MAIN_PROJECT_LIB_NAME})
+# STATIC on purpose: BUILD_SHARED_LIBS is the knob for *external* dependencies, it must not
+# change the shape of student code. A shared oop_lib would have to be shipped next to the
+# executable and installed with an INSTALL_RPATH, and it silently breaks the artifact.
+add_library(${MAIN_PROJECT_LIB_NAME} STATIC)
 target_sources(${MAIN_PROJECT_LIB_NAME}
     PRIVATE
         exemplu_test_oop/BankAccount.cpp

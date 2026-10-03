@@ -3,6 +3,7 @@ option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
+# Applies to external dependencies only; the student library is STATIC (src/CMakeLists.txt)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
 option(RUN_TESTS "Builds and runs the test suites" OFF)
 
