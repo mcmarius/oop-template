@@ -29,9 +29,12 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
 
+# include(CTest) declares the BUILD_TESTING option (default ON) and calls enable_testing();
+# tests/ is added only when it is ON. This is the only test switch: scripts/cmake.sh -t is
+# the user-facing spelling of -DBUILD_TESTING and the CI matrix gates just the *run* step.
+include(CTest)
+
 add_subdirectory(src)
-if(RUN_TESTS)
-    include(CTest)
-    enable_testing()
+if(BUILD_TESTING)
     add_subdirectory(tests)
 endif ()
