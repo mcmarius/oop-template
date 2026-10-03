@@ -100,27 +100,34 @@ build() {
 }
 
 test() {
-    # ctest --test-dir build -C Debug --verbose --no-compress-output
+    # bash ./scripts/run_tests.sh -b build -c Debug -r
     #
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
-    BUILD_TYPE="${DCMAKE_BUILD_TYPE}"
+    BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
+    RUN_TESTS_OPTS=()    # -r: zero registered tests is an error, see scripts/run_tests.sh
 
-    while getopts ":b:c:" opt; do
+    while getopts ":b:c:r" opt; do
         case "${opt}" in
           b) BUILD_DIR="${OPTARG}"
           ;;
           c) BUILD_TYPE="${OPTARG}"
           ;;
+          r) RUN_TESTS_OPTS+=("-r")
+          ;;
           *) printf "Unknown option %s; available options: \n\
               -b (build dir)\n\
-              -c (CMake config build type)\n"\
+              -c (CMake config build type)\n\
+              -r (fail when no test is registered)\n"\
               "${opt}"
             exit 1
           ;;
         esac
     done
 
-    ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" --verbose --no-compress-output
+    bash "$(dirname "${BASH_SOURCE[0]}")/run_tests.sh" \
+          -b "${BUILD_DIR}" \
+          -c "${BUILD_TYPE}" \
+          "${RUN_TESTS_OPTS[@]}"
 }
 
 install() {
