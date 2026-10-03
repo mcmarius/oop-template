@@ -1,4 +1,5 @@
-project(${TESTS_PROJECT_NAME})
+# no project() here: a nested one changes nothing about CMAKE_SOURCE_DIR and only resets
+# PROJECT_SOURCE_DIR / PROJECT_NAME in this scope; the tests belong to the oop project
 
 # NOTE: Also update GTEST_VERSION env var in .github/workflows/cmake.yml:31
 # EXCLUDE_FROM_ALL: only the gtest pieces we link are built (no gmock, no install rules);
