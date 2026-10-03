@@ -22,7 +22,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
-set(PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 
 # external dependencies with FetchContent
 include(FetchContent)
