@@ -5,11 +5,8 @@ function(copy_files)
     set(multiValueArgs FILES DIRECTORY)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
-    # paths are relative to the top-level source dir, which is what the caller means by
-    # "FILES tastatura.txt DIRECTORY assets"; CMAKE_SOURCE_DIR is the top level even when
-    # this function is called from a subdirectory (src/CMakeLists.txt)
-
-    # copy files to build dir
+    # copy files to build dir (paths are relative to CMAKE_SOURCE_DIR, which is the top level
+    # even when this is called from src/CMakeLists.txt)
     foreach(file ${ARG_FILES})
         add_custom_command(
             TARGET ${ARG_TARGET_NAME} POST_BUILD
@@ -31,8 +28,7 @@ function(copy_files)
 
     if(ARG_COPY_TO_DESTINATION)
         # copy files and folders to install dir
-        # install() would resolve a relative path against the *caller's* source dir (src/),
-        # so the paths are made absolute against the top level here
+        # install() would resolve these against the caller's dir (src/), not the top level
         set(copy_files_files ${ARG_FILES})
         set(copy_files_dirs ${ARG_DIRECTORY})
         list(TRANSFORM copy_files_files PREPEND "${CMAKE_SOURCE_DIR}/")

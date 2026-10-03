@@ -15,8 +15,7 @@ runs:
       with:
         custom_flags: '-GNinja'
         cache_key: 'cache-clang-tidy'
-        # same configure as the cppcheck job: tests are built by default (BUILD_TESTING=ON),
-        # so clang-tidy checks the test sources too; _deps/ and ext/ are filtered out below
+        # tests are configured by default, so clang-tidy checks them too
 
     - name: Clang-Tidy
       continue-on-error: true

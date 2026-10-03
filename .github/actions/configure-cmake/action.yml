@@ -69,7 +69,6 @@ runs:
       shell: bash
       if: runner.os == 'Windows' && matrix.cxx == 'g++'
       run: |
-        # no -t here either: tests are configured on every row (BUILD_TESTING defaults to ON)
         PATH="$(pwd)/gcc/mingw64/bin:${PATH}"
         # because GH Actions does not properly prepend to $PATH and still chooses VM gcc
         # CMake generator not passed as option to script since it might not be defined
@@ -86,8 +85,7 @@ runs:
       if: ${{ !(runner.os == 'Windows' && matrix.cxx == 'g++') }}
       run: |
         export CMAKE_GENERATOR=${{ matrix.cmake_generator }}
-        # no -t here either: tests are configured on every row (BUILD_TESTING defaults to ON),
-        # which is what lets cppcheck and clang-tidy lint them too
+        # no -t: every row configures and builds the tests (BUILD_TESTING defaults to ON)
         bash ./scripts/cmake.sh configure \
           -b ${{ env.BUILD_DIR }} \
           -c ${{ env.BUILD_TYPE }} \

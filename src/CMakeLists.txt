@@ -22,9 +22,8 @@
 
 ###############################################################################
 
-# STATIC on purpose: BUILD_SHARED_LIBS is the knob for *external* dependencies, it must not
-# change the shape of student code. A shared oop_lib would have to be shipped next to the
-# executable and installed with an INSTALL_RPATH, and it silently breaks the artifact.
+# always STATIC: shared student code is never installed next to the exe, so the artifact
+# would not start; BUILD_SHARED_LIBS is for external dependencies only
 add_library(${MAIN_PROJECT_LIB_NAME} STATIC)
 target_sources(${MAIN_PROJECT_LIB_NAME}
     PRIVATE
@@ -47,14 +46,9 @@ target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-# Vendored dependencies are declared on the library, per dependency, not as one line over
-# the whole ext/ directory:
-#   PUBLIC  - a header in include/ names it, so it is part of the interface and both the
-#             executable and the tests must see it (they inherit it by linking oop_lib)
-#   PRIVATE - used only inside src/*.cpp: keep it out of the interface (forward declare,
-#             pass std types across the boundary, parse inside the .cpp)
-# Promoting a dependency to PUBLIC is a commitment; say in the comment which public header
-# needs it. SYSTEM on both, so cppcheck and clang-tidy ignore them.
+# ext/include is PUBLIC only when a header in include/ names that dependency - the app and
+# the tests inherit it by linking; ext/private stays invisible to both. Promoting a
+# dependency is an interface commitment, so name the public header that needs it.
 target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PUBLIC
     ${EXT_PUBLIC_DIR}
 )

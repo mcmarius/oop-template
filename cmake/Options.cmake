@@ -3,21 +3,19 @@ option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
-# BUILD_SHARED_LIBS applies to external dependencies only: the student library is always
-# STATIC (see src/CMakeLists.txt)
+# external dependencies only; the student library is always STATIC (src/CMakeLists.txt)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
 
-# There is deliberately no test option here: the test switch is BUILD_TESTING, declared by
-# include(CTest) in CMakeLists.txt. Two knobs for one thing is a trap.
+# no test option here: BUILD_TESTING, declared by include(CTest) in CMakeLists.txt, is the
+# only switch; two knobs for one thing is a trap
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")
 
-# Vendored dependencies in ext/, split by whether they belong to the interface of oop_lib:
-#   ext/include - named by a header in include/  -> SYSTEM PUBLIC,  part of the contract
-#   ext/private - used only inside src/*.cpp     -> SYSTEM PRIVATE, invisible to app/ and tests/
-# Default every dependency to private and promote it only when a public header names its
-# type; both stay SYSTEM, so static analysis ignores them.
+# vendored dependencies, split by whether include/ names them:
+#   ext/include -> SYSTEM PUBLIC   part of the interface, visible to the app and to tests
+#   ext/private -> SYSTEM PRIVATE  used only inside src/*.cpp
+# both stay SYSTEM, so static analysis ignores them
 set(EXT_PUBLIC_DIR "${CMAKE_SOURCE_DIR}/ext/include")
 set(EXT_PRIVATE_DIR "${CMAKE_SOURCE_DIR}/ext/private")
 
