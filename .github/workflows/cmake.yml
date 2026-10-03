@@ -178,8 +178,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
-            # tests are still compiled here, only the run is skipped
-            runs_tests: 'OFF'
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2025
