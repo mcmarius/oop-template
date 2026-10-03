@@ -43,9 +43,9 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 
 FetchContent_Declare(
     sqlite3
-    # FIXME: add renovate
-    URL      https://www.sqlite.org/2026/sqlite-autoconf-3510200.tar.gz
-    URL_HASH SHA256=fbd89f866b1403bb66a143065440089dd76100f2238314d92274a082d4f2b7bb
+    # FIXME: add renovate, figure out how hash is computed; it does not match the one on sqlite.org
+    URL      https://www.sqlite.org/2026/sqlite-autoconf-3530400.tar.gz
+    URL_HASH SHA256=0e9483900e92cd5de8fd48d16bf9200145a61f7fd5be542a5ac81d8a9516eb9c
 )
 FetchContent_GetProperties(sqlite3)
 if(NOT sqlite3_POPULATED)
