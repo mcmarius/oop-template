@@ -102,7 +102,7 @@ Instrucțiuni pentru terminal:
 
 0. Biblioteci necesare pe Linux (ar trebui să meargă pe sisteme bazate pe Debian/Arch/Fedora/OpenSUSE, necesită `sudo`)
 ```sh
-bash ./scripts/install-sfml-deps.sh
+bash ./scripts/install-linux-deps.sh
 ```
 
 Dacă lipsesc și alte biblioteci, ștergeți folder-ul de build de la pasul 1 și reconfigurați proiectul după ce ați instalat ce lipsea.
