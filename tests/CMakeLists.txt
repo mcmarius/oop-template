@@ -1,23 +1,29 @@
-# no project() here: a nested one changes nothing about CMAKE_SOURCE_DIR and only resets
-# PROJECT_SOURCE_DIR / PROJECT_NAME in this scope; the tests belong to the oop project
+# no project() here: a nested one would only reset PROJECT_SOURCE_DIR / PROJECT_NAME
 
 # NOTE: Also update GTEST_VERSION env var in .github/workflows/cmake.yml:31
-# EXCLUDE_FROM_ALL: only the gtest pieces we link are built (no gmock, no install rules);
-# needs CMake >= 3.28 (cmake_minimum_required in the top-level CMakeLists.txt)
 FetchContent_Declare(
     gtest
     SYSTEM
-    EXCLUDE_FROM_ALL
+    EXCLUDE_FROM_ALL   # build only what we link; needs CMake >= 3.28
     GIT_REPOSITORY https://github.com/google/googletest.git
     # renovate: datasource=github-tags depName=google/googletest versioning=loose
     GIT_TAG        v1.18.0
     GIT_SHALLOW    1
     GIT_PROGRESS   ON
 )
-# googletest installs its own headers/libs unless told not to; they are a build-time
-# dependency of the test binary and must never reach the artifacts
-set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)   # build-time dep, never part of the artifacts
 FetchContent_MakeAvailable(gtest)
+
+# the MSVC STL records /fsanitize=address in the objects (#pragma detect_mismatch of
+# annotate_string / annotate_vector / annotate_optional), so an un-sanitized gtest.lib fails
+# to link into a sanitized tests.exe with LNK2038/LNK1319. Other toolchains allow the mix.
+if(MSVC)
+    foreach(gtest_target IN ITEMS gtest gtest_main gmock gmock_main)
+        if(TARGET ${gtest_target})
+            set_custom_stdlib_and_sanitizers(${gtest_target} true)
+        endif()
+    endforeach()
+endif()
 
 add_executable(${TESTS_EXECUTABLE_NAME}
     main.cpp
@@ -30,15 +36,12 @@ target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME} 
 set_compiler_flags(TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
 
 # one CTest entry per Google Test case, so a failure names the test that failed.
-# PRE_TEST discovery lists the tests when ctest runs them instead of after the build: the
-# build step must never execute the binary (cross builds, sanitizers, Windows/MSVC).
-# WORKING_DIRECTORY: the default (build/tests) breaks any test opening assets/...;
-# TIMEOUT: a suite spinning on EOF from std::cin would eat the whole job budget.
-# WORKING_DIRECTORY is a keyword of gtest_discover_tests() itself - writing it after
-# PROPERTIES makes CMake stop collecting them and the TIMEOUT is silently dropped.
+# WORKING_DIRECTORY is a keyword of this function: after PROPERTIES it would stop the
+# property list and silently drop TIMEOUT.
 include(GoogleTest)
 gtest_discover_tests(${TESTS_EXECUTABLE_NAME}
-    DISCOVERY_MODE PRE_TEST
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    PROPERTIES TIMEOUT 60
+    DISCOVERY_MODE PRE_TEST      # the build step must never run the binary
+    DISCOVERY_TIMEOUT 60         # first run after linking exceeds the default 5s on Windows/ASan
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}   # default build/tests breaks tests opening assets/
+    PROPERTIES TIMEOUT 60        # a suite stuck on std::cin would eat the whole job budget
 )
