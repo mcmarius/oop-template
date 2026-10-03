@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.26)
+# 3.28 for FetchContent_Declare(... EXCLUDE_FROM_ALL), used in tests/CMakeLists.txt
+cmake_minimum_required(VERSION 3.28)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
 # for now, the project name is used as the executable name
