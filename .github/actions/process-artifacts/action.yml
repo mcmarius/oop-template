@@ -51,6 +51,9 @@ runs:
           cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
              "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
              ${GITHUB_WORKSPACE}/${{ env.ZIP_NAME }}
+          cp "${vcbindir}/clang_rt.asan_dynamic-x86_64.dll" \
+             "${vcbindir}/clang_rt.asan_dbg_dynamic-x86_64.dll" \
+             ${GITHUB_WORKSPACE}/${{ env.BUILD_DIR }}/tests/${{ env.BUILD_TYPE }}
         fi
 
         # runtime release DLLs

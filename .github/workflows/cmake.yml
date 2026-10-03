@@ -226,26 +226,26 @@ jobs:
         run: |
           bash ./scripts/cmake.sh build -c ${{ env.BUILD_TYPE }}
 
-      - name: Run tests
-        # -r: zero registered tests is a failure, not a green step
-        if: ${{ matrix.runs_tests == 'ON' }}
-        run: |
-          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
-
       - name: Install
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: |
           bash ./scripts/cmake.sh install -c ${{ env.BUILD_TYPE }} -i artifacts
 
-      - name: Move artifacts
+      - name: Copy artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
-          mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          cp -r artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts
         uses: ./.github/actions/process-artifacts
+
+      - name: Run tests
+        # -r: zero registered tests is a failure, not a green step
+        if: ${{ matrix.runs_tests == 'ON' }}
+        run: |
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
 
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
