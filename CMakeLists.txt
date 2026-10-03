@@ -41,7 +41,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strateg
 #
 # FetchContent_MakeAvailable(SomeLib)
 
-# NOTE: Also update CPR_VERSION env var in .github/workflows/cmake.yml:31
+# NOTE: Also update CPR_VERSION env var in .github/workflows/cmake.yml:35
 FetchContent_Declare(
     cpr
     SYSTEM
