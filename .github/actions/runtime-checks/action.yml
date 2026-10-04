@@ -14,7 +14,7 @@ runs:
       run: |
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
-          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${TESTS_EXECUTABLE_NAME}"
+          ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -24,7 +24,7 @@ runs:
       run: |
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}".exe && \
-          cat "${INPUT_FILENAME}" | ./"${TESTS_EXECUTABLE_NAME}".exe
+          ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
 
     - name: Valgrind
       shell: bash
