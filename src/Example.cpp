@@ -1,14 +1,38 @@
-#include <iostream>
-#include "../include/Example.h"
-// This also works if you do not want `../`, but some editors might not like it
-// #include "Example.h"
+#include "Example.h"
 
-void Example::f() const {
-    std::cout << "private function f: " << x << "\n";
+#include <iostream>
+#include <stdexcept>
+
+#include "internal/Detail.h"   // not visible to app/ and tests/
+
+namespace {
+// no header declares this, so it is tested through the public interface, never directly
+bool allowed(int value) {
+    return value >= 0 && value <= Example::limit;
+}
+} // namespace
+
+Example::Example(int initial) {
+    if (!allowed(initial)) {
+        throw std::invalid_argument("Example: initial value must be in [0, limit]");
+    }
+    value_ = initial;
 }
 
-void Example::g() {
-    ++y;
-    f();
-    std::cout << "public function g: " << y << "\n";
+int Example::value() const {
+    return value_;
+}
+
+void Example::add(int delta) {
+    const int next = value_ + delta;
+    if (!allowed(next)) {
+        throw std::invalid_argument("Example::add: the value must stay in [0, limit]");
+    }
+    value_ = next;
+}
+
+void Example::g() const {
+    Detail d;
+    d.g();
+    std::cout << "value: " << value_ << "\n";
 }

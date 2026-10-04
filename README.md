@@ -26,6 +26,11 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - **Obligatoriu** fișiere cu date mai multe din care să citiți, obligatoriu cu biblioteci externe: fișiere (local sau server) sau baze de date
 - obligatoriu (TBD) să integrați cel puțin două biblioteci externe pe lângă cele pentru stocare
 
+**NOU!** Livrabile pentru toate temele:
+- aplicație
+- bibliotecă
+- interfața publică pentru bibliotecă
+
 ### Tema 0
 
 - [ ] Nume proiect (poate fi schimbat ulterior)
@@ -131,8 +136,18 @@ cmake --build build --config Debug --parallel 6
 
 Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
 
+3. Pasul de testare
+```sh
+ctest --test-dir build -C Debug --output-on-failure
+# sau ./scripts/cmake.sh test
+```
 
-3. Pasul de instalare (opțional)
+Testele sunt **condiție, nu punctaj**: CI verde include și testele. Nu se punctează nici numărul
+lor, nici acoperirea (coverage). Testați logica de domeniu din `src/`, prin interfața publică din
+`include/`, fără `std::cin` și fără căi absolute. Ce e greu de testat — UI complex, evenimente
+aleatoare, un server real — rămâne în `app/` și se verifică prin smoke tests și la demo.
+
+4. Pasul de instalare (opțional)
 ```sh
 cmake --install build --config Debug --prefix install_dir
 # sau ./scripts/cmake.sh install
@@ -143,21 +158,20 @@ Vezi și [`scripts/cmake.sh`](scripts/cmake.sh).
 Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul `.gitignore` deoarece
 conțin fișiere generate și nu ne ajută să le versionăm.
 
-
 ## Instrucțiuni pentru a rula executabilul
 
 Există mai multe variante:
 
-1. Din directorul de build (implicit `build`). Executabilul se află la locația `./build/oop` după ce a fost rulat pasul de compilare al proiectului (`./scripts/cmake.sh build` - pasul 2 de mai sus).
+1. Din directorul de build (implicit `build`). Executabilul se află la locația `./build/oop_main` după ce a fost rulat pasul de compilare al proiectului (`./scripts/cmake.sh build` - pasul 2 de mai sus).
 
 ```sh
-./build/oop
+./build/oop_main
 ```
 
-2. Din directorul `install_dir`. Executabilul se află la locația `./install_dir/bin/oop` după ce a fost rulat pasul de instalare (`./scripts/cmake.sh install` - pasul 3 de mai sus).
+2. Din directorul `install_dir`. Executabilul se află la locația `./install_dir/bin/oop_main` după ce a fost rulat pasul de instalare (`./scripts/cmake.sh install` - pasul 4 de mai sus).
 
 ```sh
-./install_dir/bin/oop
+./install_dir/bin/oop_main
 ```
 
 3. Rularea programului folosind Valgrind se poate face executând script-ul `./scripts/run_valgrind.sh` din rădăcina proiectului. Pe Windows acest script se poate rula folosind WSL (Windows Subsystem for Linux). Valgrind se poate rula în modul interactiv folosind: `RUN_INTERACTIVE=true ./scripts/run_valgrind.sh`
@@ -170,14 +184,18 @@ RUN_INTERACTIVE=true ./scripts/run_valgrind.sh
 ./scripts/run_valgrind.sh
 ```
 
+Valgrind rulează și testele.
+
 4. Pentru a rula executabilul folosind ASan, este nevoie ca la pasul de configurare (vezi mai sus) să fie activat acest sanitizer. Ar trebui să meargă pe macOS și Linux. Pentru Windows, ar merge doar cu MSVC (nerecomandat).
 
 Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ```sh
-./build/oop
+./build/oop_main
+./build/oop_test
 # sau
-./install_dir/bin/oop
+./install_dir/bin/oop_main
+./install_dir/bin/oop_test
 ```
 
 ## License

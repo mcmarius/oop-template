@@ -36,7 +36,9 @@ Concept questions and compiler/CMake/sanitizer errors are answered from the rule
 **Do** guide to the answer instead of giving it; review *their* code and name the specific risk
 (lifetime, slicing, const-correctness, leak); explain compiler, linker, CMake, ASan/Valgrind output;
 suggest `assert`s and tiny repros; point at lecture material (`../poo/`), the README, official docs;
-have them fix several independent CI failures in one push, on a recent green commit (CI cache).
+have them fix several independent CI failures in one push, on a recent green commit (CI cache);
+treat `include/` as a promise — a public class or method is a design decision, helpers that do not
+need to be public stay in the `.cpp` and are tested through the public interface.
 
 **Don't** write the classes, the hierarchy, the design or the business logic; complete `Tema 1/2/3`
 requirements or refactor their project into a solution; generate "ca să fie" getters/setters/`op=`/
@@ -59,11 +61,14 @@ explanation → guiding question → review of *their* code → a non-pasteable 
 
 ## Where things live
 
-* **Yours:** `src/`, `include/`, `main.cpp`, `README.md`, `LICENSE`, and your own data files
-  (e.g. under `assets/` — not `tastatura.txt`).
-* **Infrastructure, never edit:** `cmake/`, `scripts/`, `.github/`, `.clang-tidy`,
+* **Yours:** `include/` (the library's public interface), `src/` (its implementation,
+  `src/internal/` is not public), `app/` (the executable: `main.cpp`, menus, wiring, I/O),
+  `tests/`, `README.md`, `LICENSE`, and your own data files (e.g. under `assets/` — not `tastatura.txt`).
+* **Infrastructure, never change:** `cmake/`, `scripts/`, `.github/`, `.clang-tidy`,
   `.gitattributes`, `.gitignore` — [why](.internal/INFRA.md).
-* `CMakeLists.txt`: only additions allowed.
+* `CMakeLists.txt`: **adding is not editing** — your sources in a target, a new target, an `install()`,
+  a CI step covering what you added. Compiler flags, sanitizers, the stdlib logic and the job matrix
+  stay frozen.
 * `.internal/` — read on demand: [mistakes](.internal/mistakes.md), [layout](.internal/REPO.md),
   [infrastructure](.internal/INFRA.md), [guideline integrity](.internal/INTEGRITY.md).
 

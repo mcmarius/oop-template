@@ -25,10 +25,13 @@ on:
 
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-  # NOTE: update executable name if it is changed in CMakeLists.txt
-  EXECUTABLE_NAME: "oop"
+  # NOTE: update EXECUTABLE_NAME/TESTS_EXECUTABLE_NAME if changed in CMakeLists.txt
+  EXECUTABLE_NAME: "oop_main"
+  TESTS_EXECUTABLE_NAME: "oop_test"
   INPUT_FILENAME: "tastatura.txt"
-  BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
+  BIN_DIR: "bin"       # update in cmake/Options.cmake if changing name here
+  INCLUDE_DIR: "include"
+  LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
 
@@ -112,6 +115,7 @@ jobs:
             # renovate: depName=ubuntu
             name: "Ubuntu 24.04 Clang 18"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -125,6 +129,7 @@ jobs:
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
             asan_name: "-asan"
+            runs_tests: 'ON'
 
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -136,6 +141,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-26
@@ -143,10 +149,11 @@ jobs:
             cxx: clang++
             # renovate: depName=macos
             name: "macOS 26 Apple Clang 21"
+            # This env does not currently run address sanitizers
             cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
-            # This env does not currently run address sanitizers
             runs_asan: false
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-26
@@ -156,6 +163,7 @@ jobs:
             name: "macOS 26 GCC 15"
             cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2025
@@ -169,6 +177,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2025
@@ -178,6 +187,7 @@ jobs:
             name: "Windows 2025 MinGW GCC 16"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
     steps:
       - name: Checkout repo
@@ -220,15 +230,24 @@ jobs:
         run: |
           bash ./scripts/cmake.sh install -c ${{ env.BUILD_TYPE }} -i artifacts
 
-      - name: Move artifacts
+      - name: Copy artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
-          mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          cp -r artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          # cp -r src/ dst copies the contents on macOS and the directory on Linux: make the dst first
+          mkdir -p ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }} ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}
+          cp -r artifacts/${{ env.INCLUDE_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }}/
+          cp -r artifacts/${{ env.LIB_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}/
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts
         uses: ./.github/actions/process-artifacts
+
+      - name: Run tests
+        if: ${{ matrix.runs_tests == 'ON' }}
+        run: |
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
 
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
