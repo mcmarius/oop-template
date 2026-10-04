@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_main")
 set(MAIN_LIBRARY_NAME "${MAIN_PROJECT_NAME}")
+set(TESTS_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_test")
 
 
 project(${MAIN_PROJECT_NAME})
@@ -20,6 +21,9 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
+
+include(CTest)
+include(cmake/RegisterTests.cmake)
 
 ###############################################################################
 
@@ -126,3 +130,11 @@ endif()
 copy_files(FILES tastatura.txt DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+
+###############################################################################
+
+# Tests; BUILD_TESTING comes from include(CTest) above. No framework on main
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

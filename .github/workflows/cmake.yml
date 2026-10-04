@@ -114,6 +114,7 @@ jobs:
             # renovate: depName=ubuntu
             name: "Ubuntu 24.04 Clang 18"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -127,6 +128,7 @@ jobs:
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
             asan_name: "-asan"
+            runs_tests: 'ON'
 
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -138,6 +140,7 @@ jobs:
             cmake_generator: Ninja
             # This env runs valgrind
             runs_valgrind: true
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-26
@@ -148,6 +151,7 @@ jobs:
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
             runs_asan: true
+            runs_tests: 'ON'
 
             # renovate: depName=macos
           - os: macos-26
@@ -157,6 +161,7 @@ jobs:
             name: "macOS 26 GCC 15"
             cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2025
@@ -170,6 +175,7 @@ jobs:
             # cmake_generator: "Ninja Multi-Config"
             # This env runs address sanitizers
             runs_asan: true
+            runs_tests: 'ON'
 
             # renovate: depName=windows
           - os: windows-2025
@@ -179,6 +185,7 @@ jobs:
             name: "Windows 2025 MinGW GCC 16"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
+            runs_tests: 'ON'
 
     steps:
       - name: Checkout repo
@@ -233,6 +240,11 @@ jobs:
       - name: Process artifacts
         uses: ./.github/actions/process-artifacts
 
+      - name: Run tests
+        if: ${{ matrix.runs_tests == 'ON' }}
+        run: |
+          bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
+
       - name: Upload Artifacts
         # renovate: datasource=github-tags depName=actions/upload-artifact versioning=loose
         uses: actions/upload-artifact@v7.0.1
@@ -241,11 +253,6 @@ jobs:
           include-hidden-files: true
           path: ${{ env.ZIP_NAME }}
           retention-days: 30
-
-      # - name: Run tests
-      #   if: ${{ matrix.runs_tests == 'ON' }}
-      #   run: |
-      #     bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
 
       - name: Runtime checks
         uses: ./.github/actions/runtime-checks
