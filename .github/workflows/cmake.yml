@@ -25,8 +25,9 @@ on:
 
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
-  # NOTE: update executable name if it is changed in CMakeLists.txt
+  # NOTE: update EXECUTABLE_NAME/TESTS_EXECUTABLE_NAME if changed in CMakeLists.txt
   EXECUTABLE_NAME: "oop_main"
+  TESTS_EXECUTABLE_NAME: "oop_test"
   INPUT_FILENAME: "tastatura.txt"
   BIN_DIR: "bin"       # update in cmake/Options.cmake if changing name here
   INCLUDE_DIR: "include"

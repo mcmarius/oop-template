@@ -22,6 +22,8 @@ runs:
       run: |
         cd "${{ env.ZIP_NAME }}" && cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}".exe
 
+    # Check this claim: The ASan rows need no equivalent list: their `Run tests` step already runs the
+    # sanitizer-instrumented test binary built by the same job.
     - name: Valgrind
       shell: bash
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
