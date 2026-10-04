@@ -148,7 +148,7 @@ jobs:
             c: clang
             cxx: clang++
             # renovate: depName=macos
-            name: "ASan: macOS 26 Apple Clang 21"
+            name: "macOS 26 Apple Clang 21"
             # This env does not currently run address sanitizers
             cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
@@ -235,8 +235,10 @@ jobs:
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
           cp -r artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
-          cp -r artifacts/${{ env.INCLUDE_DIR }}/ ${{ env.ZIP_NAME }}
-          cp -r artifacts/${{ env.LIB_DIR }}/ ${{ env.ZIP_NAME }}
+          # cp -r src/ dst copies the contents on macOS and the directory on Linux: make the dst first
+          mkdir -p ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }} ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}
+          cp -r artifacts/${{ env.INCLUDE_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }}/
+          cp -r artifacts/${{ env.LIB_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}/
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts

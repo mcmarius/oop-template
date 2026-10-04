@@ -6,21 +6,48 @@
 // Keep the checks on in every build type.
 #undef NDEBUG
 #include <cassert>
-#include <type_traits>
+#include <stdexcept>
 
 #include "Example.h"      // the library under test; include/ comes from oop
 
-// a check the compiler makes, in every build type
-static_assert(std::is_default_constructible_v<Example>, "app/ and tests/ do Example e;");
+static_assert(Example::limit > 0, "the invariant below assumes a positive limit");
 
-// Replace this with your own classes from src/. The example library only prints
-// to std::cout, so there is no state here to assert on yet.
-int sum(int a, int b) {
-    return a + b;
-}
-
+// checked through the public interface only: the helper behind the invariant is
+// file-local in src/Example.cpp and cannot even be named here
 int main() {
-    assert(sum(2, 3) == 5);
-    assert(sum(-2, -3) == -5);
+    Example e;
+    assert(e.value() == 0);
+
+    e.add(7);
+    assert(e.value() == 7);
+    e.add(-7);
+    assert(e.value() == 0);
+
+    bool threw = false;
+    try {
+        e.add(-1);
+    } catch (const std::invalid_argument&) {
+        threw = true;
+    }
+    assert(threw && "add() must refuse to go below 0");
+    assert(e.value() == 0 && "a failed call leaves the object untouched");
+
+    threw = false;
+    try {
+        e.add(Example::limit + 1);
+    } catch (const std::invalid_argument&) {
+        threw = true;
+    }
+    assert(threw && "add() must refuse to go above limit");
+
+    threw = false;
+    try {
+        Example broken{Example::limit + 1};
+        (void) broken;
+    } catch (const std::invalid_argument&) {
+        threw = true;
+    }
+    assert(threw && "the constructor must not hand out a broken object either");
+
     return 0;
 }

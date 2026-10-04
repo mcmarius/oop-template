@@ -104,7 +104,12 @@ This is the part no script can grade for you, and the part the oral is about.
 * 🟠 A tag per homework/stage (`v0.1`, `v0.2`, `v0.3`) with optional patch versions, placed on the commit where everything for that part is done.
 * 🟠 External libraries, datasets and resources not cited in the **Resurse** section of the README.
 * ⚪ Everything in one giant commit. Commit per feature, so a history exists to review and code review #1–#3 has something to discuss.
-* 🟠 **A test that hangs or reads `std::cin`.** CTest kills it after 60 s (the `TIMEOUT` of `register_tests`) and reddens the test row, but the ASan steps and the Valgrind step run the same test binary directly, with **no timeout**: the job sits there until the workflow timeout and takes the ASan, Valgrind and artifact rows down with it. Tests take their data from files/fixtures — `tastatura.txt` is for the app, and at EOF a "read until the input is valid" loop spins forever.
+* 🟠 **A test that hangs or reads `std::cin`.** CTest kills it after 60 s, but the ASan, Valgrind and smoke steps run the same test binary directly, with **no timeout**, and eat the whole job. Tests take data from fixtures, never from `std::cin`; at EOF a "read until the input is valid" loop spins forever.
+* 🟠 **A test with no assertion.** It runs code, it verifies nothing.
+* 🟠 **Making a member public so it can be tested.** Widen nothing for a check — test through the public interface.
+* 🔴 **`tests/` written to raise the C++ share.** The percentage is measured without `tests/`, and filler is penalised anyway.
+* ⚪ **Library code whose only effect is `std::cout`.** Catalog C2, visible now that the library is separate from `app/`.
+* 🟠 **A vendored type in a public header that could have stayed private.** Parse in the `.cpp`, hand out std types, keep that dep `SYSTEM PRIVATE`.
 
 ## 6. Checking your own work
 

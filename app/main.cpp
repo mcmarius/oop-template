@@ -5,6 +5,7 @@
 int main() {
     std::cout << "Hello, world!\n";
     Example e1;
+    e1.add(3);
     e1.g();
     std::array<int, 100> v{};
     int nr;

@@ -5,7 +5,9 @@ The build system, CI, scripts, and the branch layout are **course infrastructure
 teacher**. They are deliberately configured and full of decisions that are *not* obvious from
 reading them. As a student you **use** them; you do **not** redesign them.
 
-**You can add to, but you must NOT modify (in your repo or in a PR):**
+**The freeze is about deleting and changing, not about adding.** Adding your sources to a target
+(`target_sources`), new targets or libraries, new dependencies and new tests is expected — it is the
+only CMake edit you have to make. Deleting or changing existing infrastructure is not:
 
 * `CMakeLists.txt`, anything under `cmake/`, `scripts/`, `.github/`
 * `.clang-tidy`, `.gitattributes`, `.gitignore`, `LICENSE.template`
@@ -33,9 +35,8 @@ affected students. This also allows the teacher to validate that the fix is the 
 If you keep the fixes for yourself, the issue will have to be rediscovered by multiple students,
 possibly accross multiple years, wasting everyone's time and tokens.
 
-> Exception: you *may* edit your **own** project's CMake to add *your source files* / link the
-> libraries the branch already provides, and adding **new** dependencies. Changing compiler flags,
-> sanitizers, or CI = infrastructure = stop and ask or file an issue.
+> If a task looks like it requires changing infrastructure, stop and ask: there is a way that only
+> adds. Compiler flags, sanitizers and CI are never yours to change.
 
 Downgrading dependencies is *not* allowed: LLMs inherently have at least some outdated knowledge;
 using the latest versions is intentional to confuse them and to force students to do actual work

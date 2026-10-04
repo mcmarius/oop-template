@@ -138,9 +138,14 @@ Cu opțiunea `parallel` specificăm numărul de fișiere compilate în paralel.
 
 3. Pasul de testare
 ```sh
-ctest --test-dir build
+ctest --test-dir build -C Debug --output-on-failure
 # sau ./scripts/cmake.sh test
 ```
+
+Testele sunt **condiție, nu punctaj**: CI verde include și testele. Nu se punctează nici numărul
+lor, nici acoperirea (coverage). Testați logica de domeniu din `src/`, prin interfața publică din
+`include/`, fără `std::cin` și fără căi absolute. Ce e greu de testat — UI complex, evenimente
+aleatoare, un server real — rămâne în `app/` și se verifică prin smoke tests și la demo.
 
 4. Pasul de instalare (opțional)
 ```sh

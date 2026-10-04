@@ -8,7 +8,8 @@ runs:
       shell: bash
       if: runner.os == 'macOS'
       run: |
-        sed -i '' -e "s/oop/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
+        # replace default executable name with *current* executable name (if customized); else, no-op
+        sed -i '' -e "s/oop_main/${EXECUTABLE_NAME}/" "${{ env.ZIP_NAME }}/launcher.command"
         chmod +x "${{ env.ZIP_NAME }}/launcher.command"
 
     - name: Copy missing dylibs
@@ -17,21 +18,24 @@ runs:
       # FIXME: temp disable asan for macOS due to github issues
       run: |
         if [[ "${BUILD_TYPE}" =~ "Deb" ]]; then
-          mkdir lib
-          # cp /Library/Developer/CommandLineTools/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib lib
-          # install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-          mv lib ${{ env.ZIP_NAME }}/
+          mkdir -p "${{ env.ZIP_NAME }}/lib"
+          # cp /Library/Developer/CommandLineTools/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/lib"
+          # for exe in "${EXECUTABLE_NAME}" "${TESTS_EXECUTABLE_NAME}"; do
+          #   install_name_tool -change @rpath/libclang_rt.asan_osx_dynamic.dylib @executable_path/lib/libclang_rt.asan_osx_dynamic.dylib "${{ env.ZIP_NAME }}/${exe}"
+          # done
         fi
 
     - name: Copy missing dylibs (g++)
       shell: bash
       if: runner.os == 'macOS' && startsWith(matrix.cxx, 'g++')
       run: |
-        mkdir lib
-        cp /opt/homebrew/lib/gcc/15/libstdc++.6.dylib /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib lib
-        install_name_tool -change /opt/homebrew/lib/gcc/15/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-        install_name_tool -change /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib ${{ env.ZIP_NAME }}/${{ env.EXECUTABLE_NAME }}
-        mv lib ${{ env.ZIP_NAME }}/
+        mkdir -p "${{ env.ZIP_NAME }}/lib"
+        cp /opt/homebrew/lib/gcc/15/libstdc++.6.dylib /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/lib"
+        # both executables ship in the zip and need them
+        for exe in "${EXECUTABLE_NAME}" "${TESTS_EXECUTABLE_NAME}"; do
+          install_name_tool -change /opt/homebrew/lib/gcc/15/libstdc++.6.dylib @executable_path/lib/libstdc++.6.dylib "${{ env.ZIP_NAME }}/${exe}"
+          install_name_tool -change /opt/homebrew/lib/gcc/15/libgcc_s.1.1.dylib @executable_path/lib/libgcc_s.1.1.dylib "${{ env.ZIP_NAME }}/${exe}"
+        done
 
     - name: Copy missing dlls
       shell: bash

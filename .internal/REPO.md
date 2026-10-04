@@ -14,13 +14,16 @@ Checked against `main` and all template branches (`main`, `common-libs`, `descar
 | `scripts/` | `cmake.sh`, `run_cppcheck.sh`, `build_cppcheck.sh`, `run_valgrind.sh` (+ suppressions), `audit_ext_libs.sh`. Same checks CI runs. |
 | `.github/` | GitHub Actions: workflows, composite actions, Renovate configs. Infrastructure — and the CI your project requires. |
 | `.clang-tidy`, `.gitattributes`, `.gitignore`, `disable_modules.props` | Static analysis + linguist/VCS/MSBuild setup. Infrastructure. |
-| `src/`, `include/`, `app/main.cpp` | Your code. Starter example: `include/Example.h` + `src/Example.cpp`. Your deliverables: an app, a library and public headers. |
+| `include/` | Public headers of the library — this directory **is** your public interface. Starter example: `Example.h`. |
+| `src/` | Library implementation, compiled once. Adding a file means adding it to `target_sources` in `CMakeLists.txt` (an addition, allowed). `src/internal/` is implementation-only: not shipped, not visible to `app/` or `tests/`. |
+| `app/` | The executable: `main.cpp`, menus, wiring, I/O. Not reachable from `tests/` — by design. |
+| `tests/` | Test suites. `assert` / `static_assert` on `main`; framework examples on `tests/gtest` and `tests/Boost-ext-ut`. |
 | `assets/` | Your data/images/fonts (empty `.keep` on most branches). Document precisely where you got these from. |
-| `ext/` | Vendored third-party *lightweight* code (e.g. header-only libs), marked `linguist-vendored` in `.gitattributes`. On most branches it only contains `.keep`. |
+| `ext/` | Vendored third-party *lightweight* code (e.g. header-only libs), marked `linguist-vendored` in `.gitattributes`. `ext/include` is on your public interface (`SYSTEM PUBLIC`), `ext/private` stays inside `src/`; keep it private unless a header in `include/` names its type. On most branches it only contains `.keep`. |
 | `tastatura.txt` | Keyboard input only (`std::cin`); file data goes in your own files under `assets/`. |
 | `README.md` | Project description + the homework checkboxes. Yours to edit. |
 | `LICENSE`, `LICENSE.template` | AGPLv3 for your code / Unlicense for the template. You can edit the one for your code. |
-| `launcher.command` | Double-click launcher template for the built `./oop` binary. Do not edit. Infrastructure. |
+| `launcher.command` | Double-click launcher template for the built `./oop_main` binary. Do not edit. Infrastructure. |
 
 ## Extras that exist only on some branches
 
@@ -31,7 +34,7 @@ Checked against `main` and all template branches (`main`, `common-libs`, `descar
 | `common-libs` | header-only libs under `ext/include/` (`date`, `csv-parser`, `digestpp`, `random`, `rlutil`), `assets/date.csv` |
 | `descarcare-date-api`, `llms` | `ext/include/json/` (nlohmann/json) |
 | `sfml3-resurse-locale` | `assets/fonts/`, `assets/images/`, `include/ResourceManager.hpp`, `src/ResourceManager.cpp` |
-| `tests/gtest` | `tests/` test project, `src/main.cpp` instead of a root `main.cpp`, `include/BankAccount.h`, `src/exemplu_test_oop/` |
+| `tests/gtest` | googletest in `tests/`, `include/BankAccount.h`, `src/exemplu_test_oop/` |
 | `tests/Boost-ext-ut` | `ext/include/boost/ut.hpp`, `include/BankAccount.h`, `src/exemplu_test_oop/` |
 
 ## Generated — never commit

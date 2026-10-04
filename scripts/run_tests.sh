@@ -29,6 +29,12 @@ if [[ "${REQUIRE_TESTS}" = true ]]; then
     # report separately an empty list as "nothing registered" or "the binary will not start"
     list_output="$(ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" -N 2>&1)"
     list_rc=$?
+    # a target that was never built registers <name>_NOT_BUILT, which is not a test
+    if printf '%s' "${list_output}" | grep -q '_NOT_BUILT'; then
+        printf '%s\n' "${list_output}"
+        echo "Error: no test executable in ${BUILD_DIR}; build it before running the tests."
+        exit 1
+    fi
     if ! printf '%s' "${list_output}" | grep -q 'Test #1'; then
         printf '%s\n' "${list_output}"
         if [[ "${list_rc}" -ne 0 ]]; then
