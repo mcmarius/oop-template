@@ -5,7 +5,10 @@ option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
 
-# update name in .github/workflows/cmake.yml:27 when changing "bin" name here
+set(EXT_PUBLIC_DIR "${CMAKE_SOURCE_DIR}/ext/include")
+set(EXT_PRIVATE_DIR "${CMAKE_SOURCE_DIR}/ext/private")
+
+# update name in .github/workflows/cmake.yml when changing "bin" name here
 set(DESTINATION_DIR "bin")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
