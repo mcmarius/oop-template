@@ -61,22 +61,10 @@ add_library(${MAIN_LIBRARY_NAME} STATIC)
 add_executable(${MAIN_EXECUTABLE_NAME}
     app/main.cpp
 )
-# include/ holds the PUBLIC API only; private headers live next to the sources in src/internal/.
 target_sources(${MAIN_LIBRARY_NAME}
-    PUBLIC
-        FILE_SET HEADERS
-            BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
-            FILES
-                include/Example.h
     PRIVATE
         src/Example.cpp
         src/internal/Detail.cpp
-    PRIVATE
-        FILE_SET detail_headers
-            TYPE HEADERS
-            BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
-            FILES
-                src/internal/Detail.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -87,11 +75,13 @@ set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAM
 
 # Configure includes
 
-target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
+# app/ needs no include dir of its own: it inherits include/ by linking the library
+target_include_directories(${MAIN_LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-
-# NOTE: no target_include_directories() for the library's own headers
+target_include_directories(${MAIN_LIBRARY_NAME} PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+)
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
@@ -122,10 +112,12 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # DESTINATION_DIR is set as "bin" in cmake/Options.cmake
 install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
-# Export only public headers; FILE_SET HEADERS keeps structure relative to BASE_DIRS
-install(TARGETS ${MAIN_LIBRARY_NAME}
-    ARCHIVE DESTINATION lib
-    FILE_SET HEADERS DESTINATION include
+install(TARGETS ${MAIN_LIBRARY_NAME} ARCHIVE DESTINATION lib)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION include
+    FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "*.hpp"
 )
 if(APPLE)
     install(FILES ${CMAKE_SOURCE_DIR}/launcher.command DESTINATION ${DESTINATION_DIR})

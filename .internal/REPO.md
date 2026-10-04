@@ -45,3 +45,7 @@ output (models, exports, downloads), add it to `.gitignore` too — but **never*
 Maintainer-only material (the private maintainer guide, the grading/automation setup). What *is* in
 your repo and must stay untouched: `.github/`, `cmake/`, `scripts/`, the config files above. See
 [INFRA.md](INFRA.md).
+
+## Misc
+
+Inspired by [PFL](https://joholl.github.io/pitchfork-website/)
