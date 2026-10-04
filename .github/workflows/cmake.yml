@@ -26,7 +26,7 @@ on:
 env:
   BUILD_TYPE: ${{ inputs.build_type || 'Debug' }}
   # NOTE: update executable name if it is changed in CMakeLists.txt
-  EXECUTABLE_NAME: "oop"
+  EXECUTABLE_NAME: "oop_main"
   INPUT_FILENAME: "tastatura.txt"
   BIN_DIR: "bin"       # update in cmake/Options.cmake if changing name here
   INCLUDE_DIR: "include"
@@ -144,11 +144,10 @@ jobs:
             c: clang
             cxx: clang++
             # renovate: depName=macos
-            name: "macOS 26 Apple Clang 21"
-            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
+            name: "ASan: macOS 26 Apple Clang 21"
+            cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
-            # This env does not currently run address sanitizers
-            runs_asan: false
+            runs_asan: true
 
             # renovate: depName=macos
           - os: macos-26
