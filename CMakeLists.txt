@@ -130,7 +130,7 @@ copy_files(FILES tastatura.txt DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME 
 
 ###############################################################################
 
-# Tests; BUILD_TESTING comes from include(CTest) above. No framework on main
+# Tests; BUILD_TESTING is declared in cmake/Options.cmake, include(CTest) enables it. No framework on main
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

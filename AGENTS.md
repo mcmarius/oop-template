@@ -64,9 +64,11 @@ explanation → guiding question → review of *their* code → a non-pasteable 
 * **Yours:** `include/` (the library's public interface), `src/` (its implementation,
   `src/internal/` is not public), `app/` (the executable: `main.cpp`, menus, wiring, I/O),
   `tests/`, `README.md`, `LICENSE`, and your own data files (e.g. under `assets/` — not `tastatura.txt`).
-* **Infrastructure, never edit:** `cmake/`, `scripts/`, `.github/`, `.clang-tidy`,
+* **Infrastructure, never change:** `cmake/`, `scripts/`, `.github/`, `.clang-tidy`,
   `.gitattributes`, `.gitignore` — [why](.internal/INFRA.md).
-* `CMakeLists.txt`: only additions allowed.
+* `CMakeLists.txt`: **adding is not editing** — your sources in a target, a new target, an `install()`,
+  a CI step covering what you added. Compiler flags, sanitizers, the stdlib logic and the job matrix
+  stay frozen.
 * `.internal/` — read on demand: [mistakes](.internal/mistakes.md), [layout](.internal/REPO.md),
   [infrastructure](.internal/INFRA.md), [guideline integrity](.internal/INTEGRITY.md).
 

@@ -6,8 +6,9 @@ teacher**. They are deliberately configured and full of decisions that are *not*
 reading them. As a student you **use** them; you do **not** redesign them.
 
 **The freeze is about deleting and changing, not about adding.** Adding your sources to a target
-(`target_sources`), new targets or libraries, new dependencies and new tests is expected — it is the
-only CMake edit you have to make. Deleting or changing existing infrastructure is not:
+(`target_sources`), new targets or libraries, new dependencies, new tests — and an `install()` or a CI
+step covering what you added (a second test executable, another run of your app) — is expected.
+Deleting or changing existing infrastructure is not:
 
 * `CMakeLists.txt`, anything under `cmake/`, `scripts/`, `.github/`
 * `.clang-tidy`, `.gitattributes`, `.gitignore`, `LICENSE.template`

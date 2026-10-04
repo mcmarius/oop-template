@@ -11,7 +11,7 @@ Checked against `main` and all template branches (`main`, `common-libs`, `descar
 | Path | What it is |
 |---|---|
 | `CMakeLists.txt`, `cmake/` | CMake project: options, compiler flags, sanitizers, helpers. Infrastructure. |
-| `scripts/` | `cmake.sh`, `run_cppcheck.sh`, `build_cppcheck.sh`, `run_valgrind.sh` (+ suppressions), `audit_ext_libs.sh`. Same checks CI runs. |
+| `scripts/` | `cmake.sh`, `run_cppcheck.sh`, `build_cppcheck.sh`, `run_tests.sh`, `run_valgrind.sh` (+ suppressions), `audit_ext_libs.sh`. Same checks CI runs. |
 | `.github/` | GitHub Actions: workflows, composite actions, Renovate configs. Infrastructure — and the CI your project requires. |
 | `.clang-tidy`, `.gitattributes`, `.gitignore`, `disable_modules.props` | Static analysis + linguist/VCS/MSBuild setup. Infrastructure. |
 | `include/` | Public headers of the library — this directory **is** your public interface. Starter example: `Example.h`. |
