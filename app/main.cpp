@@ -1,8 +1,6 @@
 #include <iostream>
 #include <array>
-#include "include/Example.h"
-// This also works if you do not want `include/`, but some editors might not like it
-// #include "Example.h"
+#include "Example.h"
 
 int main() {
     std::cout << "Hello, world!\n";
