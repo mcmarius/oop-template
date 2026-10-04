@@ -106,8 +106,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # runs_tests gates the "Run tests" step only: every row builds the test target
-        # (BUILD_TESTING defaults to ON), so the framework cannot rot on one platform
         include:
             # renovate: depName=ubuntu
           - os: ubuntu-24.04
@@ -242,7 +240,6 @@ jobs:
         uses: ./.github/actions/process-artifacts
 
       - name: Run tests
-        # -r: zero registered tests is a failure, not a green step
         if: ${{ matrix.runs_tests == 'ON' }}
         run: |
           bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r

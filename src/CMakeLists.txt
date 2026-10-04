@@ -22,8 +22,7 @@
 
 ###############################################################################
 
-# always STATIC: shared student code is never installed next to the exe, so the artifact
-# would not start; BUILD_SHARED_LIBS is for external dependencies only
+# always STATIC (simpler); TBD if we ever want dynamic for this; BUILD_SHARED_LIBS is for ext deps
 add_library(${MAIN_PROJECT_LIB_NAME} STATIC)
 target_sources(${MAIN_PROJECT_LIB_NAME}
     PRIVATE
@@ -46,9 +45,8 @@ target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-# ext/include is PUBLIC only when a header in include/ names that dependency - the app and
-# the tests inherit it by linking; ext/private stays invisible to both. Promoting a
-# dependency is an interface commitment, so name the public header that needs it.
+# vendored external deps should be private by default
+# a public dep is an interface commitment, shared by app/ and tests/
 target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PUBLIC
     ${EXT_PUBLIC_DIR}
 )

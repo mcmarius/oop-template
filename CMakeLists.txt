@@ -1,4 +1,3 @@
-# 3.28: FetchContent_Declare(... EXCLUDE_FROM_ALL) in tests/CMakeLists.txt
 cmake_minimum_required(VERSION 3.28)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
@@ -29,8 +28,7 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
 
-# include(CTest) declares BUILD_TESTING (default ON) and calls enable_testing(); it is the
-# only test switch, scripts/cmake.sh -t is its user-facing spelling
+# include(CTest) declares BUILD_TESTING (default ON)
 include(CTest)
 
 add_subdirectory(src)

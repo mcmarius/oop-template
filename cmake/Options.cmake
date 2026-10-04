@@ -3,11 +3,7 @@ option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
-# external dependencies only; the student library is always STATIC (src/CMakeLists.txt)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
-
-# no test option here: BUILD_TESTING, declared by include(CTest) in CMakeLists.txt, is the
-# only switch; two knobs for one thing is a trap
 
 # update name in .github/workflows/cmake.yml:27 when changing "bin" name here
 set(DESTINATION_DIR "bin")

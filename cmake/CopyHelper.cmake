@@ -5,8 +5,7 @@ function(copy_files)
     set(multiValueArgs FILES DIRECTORY)
     cmake_parse_arguments(PARSE_ARGV 0 ARG "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
-    # copy files to build dir (paths are relative to CMAKE_SOURCE_DIR, which is the top level
-    # even when this is called from src/CMakeLists.txt)
+    # copy files to build dir relative to CMAKE_SOURCE_DIR, which is always the top level
     foreach(file ${ARG_FILES})
         add_custom_command(
             TARGET ${ARG_TARGET_NAME} POST_BUILD

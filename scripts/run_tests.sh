@@ -1,8 +1,7 @@
 #!/usr/bin/bash
 
-# Runs the tests CTest registered in an already configured build directory.
-# ctest exits 0 when it finds no test at all ("No tests were found!!!"), so -r (CI uses it)
-# is what turns "zero registered tests" into a failure.
+# Runs the tests CTest registered in a configured build dir.
+# ctest exits 0 when it finds no tests, so -r makes 0 tests fail.
 
 BUILD_DIR=${BUILD_DIR:-build}
 BUILD_TYPE=${BUILD_TYPE:-Debug}
@@ -26,8 +25,8 @@ while getopts ":b:c:r" opt; do
 done
 
 if [[ "${REQUIRE_TESTS}" = true ]]; then
-    # PRE_TEST discovery runs the test binary to produce the list, so an empty listing means
-    # either "nothing registered" or "the binary will not start"; report them apart
+    # PRE_TEST discovery runs the test binary to produce the list
+    # report separately an empty list as "nothing registered" or "the binary will not start"
     list_output="$(ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" -N 2>&1)"
     list_rc=$?
     if ! printf '%s' "${list_output}" | grep -q 'Test #1'; then
