@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.28)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
+# NOTE: update executable name in .github/workflows/cmake.yml when changing executable name in this file
 # for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
 set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
-set(MAIN_PROJECT_LIB_NAME "${MAIN_PROJECT_NAME}_lib")
-set(MAIN_PROJECT_NO_SAN_LIB_NAME "${MAIN_PROJECT_NAME}_nslib")
+set(MAIN_LIBRARY_NAME "${MAIN_PROJECT_NAME}_lib")
+set(MAIN_LIBRARY_NO_SAN_NAME "${MAIN_PROJECT_NAME}_nslib")
 set(TESTS_PROJECT_NAME "${MAIN_PROJECT_NAME}_test")
 set(TESTS_EXECUTABLE_NAME "${TESTS_PROJECT_NAME}")
 
@@ -22,9 +22,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(cmake/Options.cmake)
 include(cmake/CompilerFlags.cmake)
 include(cmake/CopyHelper.cmake)
+include(cmake/RegisterTests.cmake)
 
+# include(CTest) declares BUILD_TESTING (default ON)
 include(CTest)
-enable_testing()
 ###############################################################################
 
 # external dependencies with FetchContent
@@ -55,15 +56,15 @@ enable_testing()
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_library(${MAIN_PROJECT_LIB_NAME})
-target_sources(${MAIN_PROJECT_LIB_NAME}
+# NOTE: update executable name in .github/workflows/cmake.yml when changing name here
+add_library(${MAIN_LIBRARY_NAME} STATIC)
+target_sources(${MAIN_LIBRARY_NAME}
     PRIVATE
         src/exemplu_test_oop/BankAccount.cpp
 )
 
-add_library(${MAIN_PROJECT_NO_SAN_LIB_NAME})
-target_sources(${MAIN_PROJECT_NO_SAN_LIB_NAME}
+add_library(${MAIN_LIBRARY_NO_SAN_NAME} STATIC)
+target_sources(${MAIN_LIBRARY_NO_SAN_NAME}
     PRIVATE
         src/exemplu_test_oop/BankAccount.cpp
 )
@@ -80,34 +81,34 @@ target_sources(${MAIN_EXECUTABLE_NAME}
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
-set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_PROJECT_LIB_NAME})
-set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${MAIN_PROJECT_NO_SAN_LIB_NAME})
+set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_LIBRARY_NAME})
+set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${MAIN_LIBRARY_NO_SAN_NAME})
 # set_compiler_flags(TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${FOO} ${BAR})
 # where ${FOO} and ${BAR} represent additional executables or libraries
 # you want to compile with the set compiler flags
 
 ###############################################################################
 
-target_include_directories(${MAIN_PROJECT_LIB_NAME} PUBLIC
+target_include_directories(${MAIN_LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-target_include_directories(${MAIN_PROJECT_NO_SAN_LIB_NAME} PUBLIC
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-target_include_directories(${MAIN_PROJECT_LIB_NAME} SYSTEM PRIVATE
+target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
     ${CMAKE_SOURCE_DIR}/ext
 )
-target_include_directories(${MAIN_PROJECT_NO_SAN_LIB_NAME} SYSTEM PRIVATE
+target_include_directories(${MAIN_LIBRARY_NO_SAN_NAME} SYSTEM PRIVATE
     ${CMAKE_SOURCE_DIR}/ext
 )
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ${CMAKE_SOURCE_DIR}/ext
 )
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
 
 ###############################################################################
 
@@ -119,26 +120,14 @@ target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_LIB_NAME})
 
 ###############################################################################
 
-set(TEST_SOURCES_DIR ${CMAKE_SOURCE_DIR}/tests)
-set(BOOST_UT_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/ext/include/boost")
-
-add_executable(${TESTS_EXECUTABLE_NAME}
-    ${TEST_SOURCES_DIR}/main.cpp
-    ${TEST_SOURCES_DIR}/test_oop.cpp
-    ${TEST_SOURCES_DIR}/test_simplu.cpp
-)
-
-target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_PROJECT_NO_SAN_LIB_NAME})
-target_include_directories(${TESTS_EXECUTABLE_NAME} SYSTEM PRIVATE ${BOOST_UT_INCLUDE_DIR})
-
-set_compiler_flags(RUN_SANITIZERS FALSE TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
-
-add_test(NAME ${TESTS_EXECUTABLE_NAME} COMMAND ${TESTS_PROJECT_NAME})
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif ()
 
 ###############################################################################
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
-# DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
+# DESTINATION_DIR is set as "bin" in cmake/Options.cmake
 install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
 if(APPLE)
     install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
