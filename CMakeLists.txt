@@ -1,10 +1,10 @@
-# 3.28 for FetchContent_Declare(... EXCLUDE_FROM_ALL), used in tests/CMakeLists.txt
 cmake_minimum_required(VERSION 3.28)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
+# NOTE: update EXECUTABLE_NAME in .github/workflows/cmake.yml when changing executable name in this file
 # for now, the project name is used as the executable name
 set(MAIN_PROJECT_NAME "oop")
-set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}")
+set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_main")
+set(MAIN_LIBRARY_NAME "${MAIN_PROJECT_NAME}")
 
 
 project(${MAIN_PROJECT_NAME})
@@ -22,7 +22,8 @@ include(cmake/CopyHelper.cmake)
 
 ###############################################################################
 
-# external dependencies with FetchContent
+# External dependencies with FetchContent
+
 # include(FetchContent)
 #
 # set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
@@ -44,17 +45,22 @@ include(cmake/CopyHelper.cmake)
 
 ###############################################################################
 
-# external dependencies with find_package
+# External dependencies with find_package
 
 # find_package(Threads REQUIRED)
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
+# Configure sources
+
+# always STATIC (simpler); TBD if we ever want dynamic for this; BUILD_SHARED_LIBS is for ext deps
+add_library(${MAIN_LIBRARY_NAME} STATIC)
+
+# NOTE: update EXECUTABLE_NAME in .github/workflows/cmake.yml when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     app/main.cpp
 )
-target_sources(${MAIN_EXECUTABLE_NAME}
+target_sources(${MAIN_LIBRARY_NAME}
     PRIVATE
         src/Example.cpp
 )
@@ -68,24 +74,44 @@ set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAM
 
 ###############################################################################
 
-# use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
+# Configure includes
+
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+
+# use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
     ext
 )
+# vendored external deps should be private by default
+# a public dep is an interface commitment, shared by app/ and tests/
+target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PUBLIC
+    ${EXT_PUBLIC_DIR}
+)
+target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
+    ${EXT_PRIVATE_DIR}
+)
+
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
+
+###############################################################################
+
+# Link libraries
+
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
+
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
 
 ###############################################################################
 
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
-# DESTINATION_DIR is set as "bin" in cmake/Options.cmake:6
+# DESTINATION_DIR is set as "bin" in cmake/Options.cmake
 install(TARGETS ${MAIN_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
+install(TARGETS ${MAIN_LIBRARY_NAME} DESTINATION ${DESTINATION_DIR}/lib)
 if(APPLE)
-    install(FILES launcher.command DESTINATION ${DESTINATION_DIR})
+    install(FILES ${CMAKE_SOURCE_DIR}/launcher.command DESTINATION ${DESTINATION_DIR})
 endif()
 
 copy_files(FILES tastatura.txt DIRECTORY assets COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
