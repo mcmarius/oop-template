@@ -31,3 +31,12 @@ runs:
       if: runner.os == 'Linux' && matrix.runs_valgrind == true
       run: |
         cd "${{ env.ZIP_NAME }}" && bash ../scripts/run_valgrind.sh .
+
+    - name: Smoke test
+      # until we have a proper test env, we cannot fix ASan reliably
+      shell: bash
+      if: runner.os == 'macOS'
+      run: |
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
+          ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
