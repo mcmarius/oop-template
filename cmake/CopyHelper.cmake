@@ -26,8 +26,8 @@ function(copy_files)
     endforeach()
 
     if(ARG_COPY_TO_DESTINATION)
-        # copy files and folders to install dir
-        # install() would resolve these against the caller's dir (src/), not the top level
+        # copy files and folders to install dir, always resolved from top level
+        # future-proof so it works even if called from e.g. src/
         set(copy_files_files ${ARG_FILES})
         set(copy_files_dirs ${ARG_DIRECTORY})
         list(TRANSFORM copy_files_files PREPEND "${CMAKE_SOURCE_DIR}/")
