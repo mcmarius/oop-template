@@ -742,10 +742,16 @@ struct cfg {
       // clang-format on
   };
 
+  // LOCAL PATCH: options were matched as substrings, so an unknown option
+  // matched nothing, became a test name pattern and reported success
   static std::optional<cfg::option> find_arg(std::string_view arg) {
     for (const auto& option : cfg::options) {
-      if (std::get<0>(option).find(arg) != std::string::npos) {
-        return option;
+      for (const auto name : utility::split(std::get<0>(option), ' ')) {
+        const auto token =
+            name.ends_with(',') ? name.substr(0, name.size() - 1) : name;
+        if (token == arg) {
+          return option;
+        }
       }
     }
     return std::nullopt;
@@ -780,11 +786,8 @@ struct cfg {
       cfg::largc = argc;
       cfg::largv = argv;
     }
-    else
-    {
-      cfg::largc = 0;
-      cfg::largv = nullptr;
-    }
+    // LOCAL PATCH: clearing them here discarded the command line captured by
+    // the cmd_line_args constructor (GCC/Clang) and by __argv (MSVC)
     parse(cfg::largc, cfg::largv);
   }
 
@@ -794,25 +797,25 @@ struct cfg {
       executable_name = argv[0];
     }
     query_pattern = "";
-    bool found_first_option = false;
     for (auto i = 1U; i < n_args && argv != nullptr; i++) {
       std::string cmd(argv[i]);
       auto cmd_option = find_arg(cmd);
       if (!cmd_option.has_value()) {
-        if (found_first_option) {
+        // LOCAL PATCH: '-' starts an option wherever it appears, the usage
+        // line promises "[<test name|pattern|tags> ... ] options"
+        if (not cmd.empty() and cmd.front() == '-') {
           std::cerr << "unknown option: '" << cmd << "' run:" << std::endl;
           std::cerr << "'" << executable_name << " --help'" << std::endl;
           std::cerr << "for additional help" << std::endl;
           std::exit(-1);
         } else {
-          if (i > 1U) {
+          if (not query_pattern.empty()) {
             query_pattern.append(" ");
           }
           query_pattern.append(cmd);
         }
         continue;
       }
-      found_first_option = true;
       auto var = std::get<value_ref>(*cmd_option);
       const bool has_option_arg = !std::get<1>(*cmd_option).empty();
       if (!has_option_arg &&
