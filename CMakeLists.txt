@@ -88,9 +88,6 @@ target_include_directories(${MAIN_LIBRARY_NAME} PRIVATE
 )
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
-target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
-    ext
-)
 # vendored external deps should be private by default
 # a public dep is an interface commitment, shared by app/ and tests/
 target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PUBLIC

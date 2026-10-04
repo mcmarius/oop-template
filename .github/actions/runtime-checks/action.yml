@@ -35,8 +35,16 @@ runs:
     - name: Smoke test
       # until we have a proper test env, we cannot fix ASan reliably
       shell: bash
-      if: runner.os == 'macOS'
+      if: runner.os != 'Windows' && (runner.os == 'macOS' || (matrix.runs_asan != true && matrix.runs_valgrind != true))
       run: |
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
+
+    - name: Smoke test (Windows)
+      shell: bash
+      if: runner.os == 'Windows' && matrix.runs_asan != true
+      run: |
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}".exe && \
+          ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
