@@ -14,7 +14,7 @@ Checked against `main` and all template branches (`main`, `common-libs`, `descar
 | `scripts/` | `cmake.sh`, `run_cppcheck.sh`, `build_cppcheck.sh`, `run_valgrind.sh` (+ suppressions), `audit_ext_libs.sh`. Same checks CI runs. |
 | `.github/` | GitHub Actions: workflows, composite actions, Renovate configs. Infrastructure — and the CI your project requires. |
 | `.clang-tidy`, `.gitattributes`, `.gitignore`, `disable_modules.props` | Static analysis + linguist/VCS/MSBuild setup. Infrastructure. |
-| `src/`, `include/`, `main.cpp` | Your code. Starter example: `include/Example.h` + `src/Example.cpp`. (`tests/gtest` puts `main.cpp` in `src/`.) |
+| `src/`, `include/`, `app/main.cpp` | Your code. Starter example: `include/Example.h` + `src/Example.cpp`. Your deliverables: an app, a library and public headers. |
 | `assets/` | Your data/images/fonts (empty `.keep` on most branches). Document precisely where you got these from. |
 | `ext/` | Vendored third-party *lightweight* code (e.g. header-only libs), marked `linguist-vendored` in `.gitattributes`. On most branches it only contains `.keep`. |
 | `tastatura.txt` | Keyboard input only (`std::cin`); file data goes in your own files under `assets/`. |
