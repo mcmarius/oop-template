@@ -104,6 +104,7 @@ This is the part no script can grade for you, and the part the oral is about.
 * 🟠 A tag per homework/stage (`v0.1`, `v0.2`, `v0.3`) with optional patch versions, placed on the commit where everything for that part is done.
 * 🟠 External libraries, datasets and resources not cited in the **Resurse** section of the README.
 * ⚪ Everything in one giant commit. Commit per feature, so a history exists to review and code review #1–#3 has something to discuss.
+* 🟠 **A test that hangs or reads `std::cin`.** CTest kills it after 60 s (the `TIMEOUT` of `register_tests`) and reddens the test row, but the ASan steps and the Valgrind step run the same test binary directly, with **no timeout**: the job sits there until the workflow timeout and takes the ASan, Valgrind and artifact rows down with it. Tests take their data from files/fixtures — `tastatura.txt` is for the app, and at EOF a "read until the input is valid" loop spins forever.
 
 ## 6. Checking your own work
 
@@ -114,7 +115,7 @@ The same things CI runs, you can run locally — see the [README](../README.md) 
 ./scripts/cmake.sh build
 ./scripts/run_cppcheck.sh
 ./scripts/run_valgrind.sh
-clang-tidy -p build src/*.cpp main.cpp   # uses the repo's .clang-tidy
+clang-tidy -p build src/*.cpp app/*.cpp tests/*.cpp   # uses the repo's .clang-tidy
 ```
 
 Practical notes:
