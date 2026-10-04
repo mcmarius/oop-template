@@ -28,7 +28,9 @@ env:
   # NOTE: update executable name if it is changed in CMakeLists.txt
   EXECUTABLE_NAME: "oop"
   INPUT_FILENAME: "tastatura.txt"
-  BIN_DIR: "bin"       # update in cmake/Options.cmake:6 if changing name here
+  BIN_DIR: "bin"       # update in cmake/Options.cmake if changing name here
+  INCLUDE_DIR: "include"
+  LIB_DIR: "lib"
   BUILD_DIR: "build"
   EXT_DIR: "ext"
 
@@ -225,6 +227,8 @@ jobs:
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
           cp -r artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          cp -r artifacts/${{ env.INCLUDE_DIR }}/ ${{ env.ZIP_NAME }}
+          cp -r artifacts/${{ env.LIB_DIR }}/ ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts
