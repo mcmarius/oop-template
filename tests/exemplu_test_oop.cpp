@@ -1,4 +1,7 @@
+#include <stdexcept>
+
 #include <gtest/gtest.h>
+
 #include "BankAccount.h"
 
 /// Acest fixture inițializează o instanță a clasei

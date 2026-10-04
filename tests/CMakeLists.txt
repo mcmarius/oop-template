@@ -1,6 +1,6 @@
 # no project(): nested projects reset PROJECT_SOURCE_DIR / PROJECT_NAME
 
-# NOTE: Also update GTEST_VERSION env var in .github/workflows/cmake.yml:31
+# NOTE: Also update GTEST_VERSION env var in .github/workflows/cmake.yml
 FetchContent_Declare(
     gtest
     SYSTEM
@@ -12,6 +12,11 @@ FetchContent_Declare(
     GIT_PROGRESS   ON
 )
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)   # build-time dep, skip artifacts
+
+# static even with -DBUILD_SHARED_LIBS=ON: oop_test ships in bin/ without gtest
+# dylibs/DLLs next to it, so a shared gtest dies at startup (no LC_RPATH's found)
+set(BUILD_SHARED_LIBS OFF)
+
 FetchContent_MakeAvailable(gtest)
 
 # MSVC does not allow mixing instrumented and uninstrumented code
@@ -33,21 +38,10 @@ target_link_libraries(${TESTS_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} gtes
 
 set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${TESTS_EXECUTABLE_NAME})
 
-# WORKING_DIRECTORY must be before PROPERTIES for TIMEOUT to take effect
 register_tests(${TESTS_EXECUTABLE_NAME}
     LIST_ARGS   "--gtest_list_tests"
     SELECT_ARG  "--gtest_also_run_disabled_tests" "--gtest_filter=<name>"
     PROPERTIES  SKIP_REGULAR_EXPRESSION "\\[  SKIPPED \\]"
 )
 
-# one CTest entry for the whole executable
-
 install(TARGETS ${TESTS_EXECUTABLE_NAME} DESTINATION ${DESTINATION_DIR})
-
-#include(GoogleTest)
-#gtest_discover_tests(${TESTS_EXECUTABLE_NAME}
-#    DISCOVERY_MODE PRE_TEST      # the build step must never run the binary
-#    DISCOVERY_TIMEOUT 60         # first run after linking exceeds the default 5s on Windows/ASan
-#    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}   # default build/tests breaks tests opening assets/
-#    PROPERTIES TIMEOUT 60
-#)
