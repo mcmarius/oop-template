@@ -4,6 +4,7 @@ INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
 EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop}
+SCRIPT_RUN_DIR="$(dirname "${0}")"
 
 if [[ -n "$1" ]]; then
     BIN_DIR="$1"
@@ -21,7 +22,7 @@ run_valgrind() {
              --leak-resolution=med \
              --vgdb=no \
              --gen-suppressions=all \
-             --suppressions=./scripts/valgrind-suppressions.supp \
+             --suppressions="${SCRIPT_RUN_DIR}/valgrind-suppressions.supp" \
              --error-exitcode=1 \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}"
 }

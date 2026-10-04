@@ -220,11 +220,11 @@ jobs:
         run: |
           bash ./scripts/cmake.sh install -c ${{ env.BUILD_TYPE }} -i artifacts
 
-      - name: Move artifacts
+      - name: Copy artifacts
         run: |
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
-          mv artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          cp -r artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts
@@ -238,6 +238,11 @@ jobs:
           include-hidden-files: true
           path: ${{ env.ZIP_NAME }}
           retention-days: 30
+
+      # - name: Run tests
+      #   if: ${{ matrix.runs_tests == 'ON' }}
+      #   run: |
+      #     bash ./scripts/cmake.sh test -c ${{ env.BUILD_TYPE }} -r
 
       - name: Runtime checks
         uses: ./.github/actions/runtime-checks
