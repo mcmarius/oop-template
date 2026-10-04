@@ -100,6 +100,17 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 - [ ] code review #3 2 proiecte
 
+## Structura proiectului
+
+* `include/` — capetele publice: tot ce pot folosi `app/` și `tests/`.
+* `src/` — implementarea, compilată o singură dată în biblioteca `oop`; `src/internal/` nu este vizibil
+  nici din `app/`, nici din `tests/`.
+* `app/` — executabilul: `main.cpp`, meniu, I/O.
+* `tests/` — testele.
+
+Fiecare director își declară țintele în propriul `CMakeLists.txt`: o sursă nouă intră în `target_sources`
+din `src/CMakeLists.txt`, o suită nouă în `add_executable` din `tests/CMakeLists.txt`.
+
 ## Instrucțiuni de compilare
 
 Proiectul este configurat cu CMake.
@@ -108,13 +119,13 @@ Instrucțiuni pentru terminal:
 
 1. Pasul de configurare
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DRUN_TESTS=ON
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 # sau ./scripts/cmake.sh configure
 ```
 
 Sau pe Windows cu GCC folosind Git Bash:
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja -DRUN_TESTS=ON
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -G Ninja
 # sau ./scripts/cmake.sh configure -g Ninja
 ```
 
@@ -126,7 +137,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
 
 
 La acest pas putem cere să generăm fișiere de proiect pentru diverse medii de lucru.
-Folosim '-DRUN_TESTS=ON' pentru a specifica că vom compila și testele.
+Testele se compilează implicit; `-DBUILD_TESTING=OFF` le scoate din configurare.
 
 
 2. Pasul de compilare
@@ -202,8 +213,7 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Teste
 
-Acest branch utilizează GTest pentru a crea teste unitare. Pentru mai multe informații despre cum
-funcționează, consultați [README_Tests](./tests/README_Tests.md)
+Acest branch folosește googletest; vezi [tests/README](./tests/README.md).
 
 
 ## License
