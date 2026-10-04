@@ -12,7 +12,9 @@ runs:
       # env:
       #   ASAN_OPTIONS: detect_leaks=1
       run: |
-        cd "${{ env.ZIP_NAME }}" && cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}"
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}" && \
+          cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${TESTS_EXECUTABLE_NAME}"
 
     - name: Sanitizers (Windows MSVC)
       shell: bash
@@ -20,7 +22,9 @@ runs:
       if: matrix.cxx == 'cl' && matrix.runs_asan == true
       continue-on-error: true
       run: |
-        cd "${{ env.ZIP_NAME }}" && cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}".exe
+        cd "${{ env.ZIP_NAME }}" && \
+          cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}".exe && \
+          cat "${INPUT_FILENAME}" | ./"${TESTS_EXECUTABLE_NAME}".exe
 
     # Check this claim: The ASan rows need no equivalent list: their `Run tests` step already runs the
     # sanitizer-instrumented test binary built by the same job.
