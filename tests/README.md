@@ -18,6 +18,6 @@ ctest --test-dir build --output-on-failure
 * Testele nu citesc de la `std::cin` și nu folosesc căi absolute; CTest le rulează cu
   `WORKING_DIRECTORY` = rădăcina proiectului și cu `TIMEOUT` (60 s), ca să nu atârne CI.
 * Ce este greu de testat — UI complex, evenimente aleatoare, dependența de un server
-  real — rămâne în `app/` și se verifică la demo.
+  real — rămâne în `app/` și se verifică pe cât posibil cât mai mult în CI sau la demo.
 * Executabilul de teste se livrează împreună cu aplicația (la rădăcina arhivei, lângă
   `oop_main`), deci testele pot fi rulate și din pachetul descărcat: `./oop_test`.

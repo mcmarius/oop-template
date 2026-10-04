@@ -1,42 +1,26 @@
 ###############################################################################
 # Framework agnostic registration of test executables with CTest.
+# No test framework code here, keep identical on every branch.
 #
-# NOTE: this file and cmake/RegisterTestsAddTests.cmake hold no test framework specific code.
-#
-#   register_tests(<target>)
-#       one CTest test for the whole executable. This is all a plain assert()
-#       based test needs: nothing has to be able to list or select a case.
-#
-#   register_tests(<target> LIST_ARGS <arg> [SELECT_ARG <template>] ...)
-#       one CTest test per test case. <arg> makes the executable print its
-#       test cases, one per line (boost::ut: "--list-test-names-only",
-#       googletest: "--gtest_list_tests"); <template> is the argument that
-#       runs a single case, with <name> replaced by the case name
-#       (boost::ut: "<name>", googletest: "--gtest_filter=<name>").
+#   register_tests(<target>)                      one CTest test for the executable
+#   register_tests(<target> LIST_ARGS <arg> ...)  one CTest test per test case
 #
 # Options (all optional):
-#   LIST_ARGS <arg>          how to list the test cases (see above)
+#   LIST_ARGS <arg>          argument that prints the test cases, one per line
 #   LIST_NOISE <regex>       removed from every line of the listing, a line left
-#                            empty is not a test case (^ and $ are not per line)
-#   SELECT_ARG <template>... how to run one test case, <name> is the placeholder,
-#                            several arguments are passed as separate arguments
-#   NAME_ESCAPE <characters> characters that must be replaced with "?" (any
-#                            single character) in a case name before it is handed
-#                            back to the executable as a selection argument.
-#                            Needed by frameworks whose selection argument is a
-#                            pattern rather than an exact name (see below).
-#   TIMEOUT <seconds>        per test timeout, default 60, so a hung test cannot
-#                            hang CI forever
-#   LIST_TIMEOUT <seconds>   timeout for the listing run, default 60; the first
-#                            run right after linking is slow on Windows/ASan
-#   WORKING_DIRECTORY <dir>  default CMAKE_SOURCE_DIR, tests open assets/ and
-#                            the default (the build directory) breaks that
+#                            empty is not a test case
+#   SELECT_ARG <template>... argument that runs one case, <name> is the
+#                            placeholder, several arguments stay separate
+#   NAME_ESCAPE <characters> characters replaced by "?" in a selection argument,
+#                            for frameworks selecting by pattern instead of name
+#   TIMEOUT <seconds>        per test timeout, default 60
+#   LIST_TIMEOUT <seconds>   timeout for the listing run, default 60
+#   WORKING_DIRECTORY <dir>  default CMAKE_SOURCE_DIR
 #   TEST_LIST <variable>     set in the calling scope to the list of test names
 #   PROPERTIES <name value>  extra CTest test properties
 ###############################################################################
 
-# CMAKE_CURRENT_LIST_DIR inside a function body is the file of the *caller*, so
-# remember where this module lives while it is being included
+# CMAKE_CURRENT_LIST_DIR inside a function body is the file of the caller
 set(REGISTER_TESTS_MODULE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 function(register_tests TARGET)
@@ -62,10 +46,8 @@ function(register_tests TARGET)
         set(ARG_LIST_TIMEOUT 60)
     endif()
 
-    ###############################################################################
-
     if(NOT ARG_LIST_ARGS)
-        # nothing can enumerate the cases (plain assert() tests): one test
+        # plain assert() tests: nothing to enumerate
         add_test(NAME ${TARGET} COMMAND ${TARGET})
 
         set_tests_properties(${TARGET} PROPERTIES
@@ -81,15 +63,9 @@ function(register_tests TARGET)
         return()
     endif()
 
-    ###############################################################################
-
-    # The list of cases is only known by running the executable, so the tests
-    # cannot be registered at configure time. Discovery runs inside ctest
-    # (before the first test), never as part of the build: the build of a test
-    # must not run tests, an ASan crash while listing looks like a build
-    # failure and CI would not tell the two apart.
-    # Same TEST_INCLUDE_FILES mechanism as gtest_discover_tests(DISCOVERY_MODE PRE_TEST)
-
+    # the cases are only known by running the executable, so discovery runs inside
+    # ctest, never during the build; same TEST_INCLUDE_FILES mechanism as
+    # gtest_discover_tests(DISCOVERY_MODE PRE_TEST)
     get_property(GENERATOR_IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 
     set(file_base "${CMAKE_CURRENT_BINARY_DIR}/ctest_${TARGET}")

@@ -1,28 +1,20 @@
 #!/usr/bin/bash
-
-# Valgrind/memcheck over the executables of the project. The Valgrind row of CI
-# calls this same script, so a local run gives the CI verdict.
 #
-#   bash ./scripts/run_valgrind.sh [BIN_DIR] [EXECUTABLE...]
+# bash ./scripts/run_valgrind.sh [BIN_DIR] [EXECUTABLE...]
 #     BIN_DIR     default: install_dir/bin if it exists, else ${BUILD_DIR}
 #     EXECUTABLE  default: ${EXECUTABLE_NAMES} = the app + the test binary
 #
-# env: BUILD_DIR (build) | INPUT_FILENAME (tastatura.txt), fed on stdin |
-#      RUN_INTERACTIVE (true = keep the terminal on stdin) |
-#      EXECUTABLE_NAME (oop_main) | TESTS_EXECUTABLE_NAME (oop_test) |
-#      EXECUTABLE_NAMES (list, replaces both names)
-#
-# The test binary is checked because it reaches library code tastatura.txt never
-# touches. A listed executable that is missing is an error, never a skip, and one
-# failing executable does not stop the others. If a framework trips memcheck, add
-# the suppression its report prints (--gen-suppressions=all); never compile a
-# second, un-instrumented copy of the library.
+# Smoke test (tastatura.txt) + test binaries (should be orthogonal to smoke test).
+# If a framework trips memcheck, add the suppression its report prints
+# (--gen-suppressions=all) and open a pull request; contributions welcome.
 
 INPUT_FILENAME=${INPUT_FILENAME:-tastatura.txt}
 RUN_INTERACTIVE=${RUN_INTERACTIVE:-false}
 BUILD_DIR=${BUILD_DIR:-build}
 EXECUTABLE_NAMES=${EXECUTABLE_NAMES:-${EXECUTABLE_NAME:-oop_main} ${TESTS_EXECUTABLE_NAME:-oop_test}}
 SCRIPT_RUN_DIR="$(dirname "${0}")"
+
+# TODO: refactor into functions
 
 if [[ -n "$1" ]]; then
     BIN_DIR="$1"

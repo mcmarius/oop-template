@@ -3,12 +3,11 @@
 # its list of test cases into add_test() calls and writes them to a file ctest
 # includes before running the tests.
 #
-# NOTE: framework agnostic, keep identical on every branch, see
-# NOTE: cmake/RegisterTests.cmake
+# Framework agnostic, keep identical on every branch, see
+# cmake/RegisterTests.cmake
 #
 # add_command / generate_testname_guards / escape_square_brackets are taken from
-# CMake's own GoogleTestAddTests.cmake (BSD-3-Clause), they turn a name into
-# something that survives being written into a CMake script.
+# CMake's own GoogleTestAddTests.cmake (BSD-3-Clause).
 ###############################################################################
 
 function(add_command NAME TEST_NAME)
@@ -50,9 +49,7 @@ function(escape_square_brackets OUTPUT BRACKET PLACEHOLDER PLACEHOLDER_VAR OUTPU
     endif()
 endfunction()
 
-# a framework that selects a test case by pattern (boost::ut) treats some
-# characters as wildcards, so such a name selects another case, or none at all;
-# "?" (any single character) still matches the character it replaces
+# replaces wildcard characters with "?", which still matches what it replaces
 function(escape_name_pattern NAME CHARACTERS OUT_NAME OUT_CHANGED)
     string(LENGTH "${NAME}" length)
     set(out "")
@@ -78,8 +75,7 @@ function(escape_name_pattern NAME CHARACTERS OUT_NAME OUT_CHANGED)
     set(${OUT_CHANGED} "${changed}" PARENT_SCOPE)
 endfunction()
 
-# what the framework does with a selection pattern: same length, every character
-# equal, "?" in the pattern matching any single character
+# same length and every character equal or matched by "?"
 function(matches_pattern PATTERN VALUE OUT_MATCH)
     string(LENGTH "${PATTERN}" pattern_length)
     string(LENGTH "${VALUE}" value_length)
@@ -106,8 +102,7 @@ function(matches_pattern PATTERN VALUE OUT_MATCH)
     set(${OUT_MATCH} TRUE PARENT_SCOPE)
 endfunction()
 
-# an escaped name still matches its own case, but it can start matching a second
-# one; returns how many of the known cases a pattern selects
+# how many of the known cases a pattern selects
 function(count_matching_cases PATTERN NAMES OUT_COUNT)
     set(count 0)
 
@@ -140,8 +135,7 @@ function(register_tests_discover)
         RESULT_VARIABLE result
     )
 
-    # a listing that failed is reported apart from a listing that worked and came
-    # back empty: both mean "nothing would run", only one of them is a test bug
+    # a failed listing is not the same as an empty one
     if(NOT result EQUAL 0)
         string(REPLACE "\n" "\n    " output "${output}${error_output}")
         message(FATAL_ERROR
@@ -161,8 +155,7 @@ function(register_tests_discover)
     string(REGEX REPLACE "${escape}\\[[0-9;]*m" "" output "${output}")
     string(REPLACE "\r" "" output "${output}")
 
-    # googletest lists a suite line per suite with the cases indented below it,
-    # boost::ut lists flat case names; only indented lines need a suite prefix
+    # googletest indents the cases under a suite line, boost::ut lists flat names
     string(FIND "${output}" "\n  " indent_position)
 
     if(NOT indent_position EQUAL -1)
@@ -173,7 +166,7 @@ function(register_tests_discover)
 
     string(LENGTH "${ARG_LIST_NOISE}" noise_length)
 
-    # brackets would end the guard written around a name, placeholders keep them
+    # brackets would end the guard written around a name
     generate_testname_guards("${output}" open_guard close_guard)
     escape_square_brackets("${output}" "[" "__osb" open_sb output)
     escape_square_brackets("${output}" "]" "__csb" close_sb output)
@@ -184,7 +177,7 @@ function(register_tests_discover)
     set(suite "")
 
     foreach(line IN LISTS lines)
-        # ^ and $ in a CMake regex are not per line, so chatter is removed line by line
+        # ^ and $ in a CMake regex are not per line, hence the per line noise removal
         if(noise_length GREATER 0)
             string(REGEX REPLACE "${ARG_LIST_NOISE}" "" line "${line}")
         endif()
@@ -209,8 +202,7 @@ function(register_tests_discover)
             set(name "${stripped}")
         endif()
 
-        # an option line of a usage message, not a test case: frameworks that
-        # print usage and exit successfully would otherwise register them
+        # an option line of a usage message is not a test case
         if(stripped MATCHES "^-")
             message(FATAL_ERROR
                 "This does not look like a test case name, it looks like the\n"
@@ -219,8 +211,7 @@ function(register_tests_discover)
             )
         endif()
 
-        # ';' would end up inside a CMake list, a newline or a quote inside a
-        # CMake script written from that list
+        # ';' ends a CMake list, a newline or a quote breaks the generated script
         if(name MATCHES "[;\n\"]")
             message(FATAL_ERROR
                 "A test case name may not contain ';', a newline or a quote:\n"
@@ -230,8 +221,7 @@ function(register_tests_discover)
 
         list(FIND names "${name}" duplicate)
         if(NOT duplicate EQUAL -1)
-            # ctest test names are unique, a second case with the same name would
-            # replace the first one and half of the tests would never run
+            # ctest test names are unique: a duplicate silently replaces the first
             message(FATAL_ERROR
                 "Two test cases share the same name, test case names have to be\n"
                 "unique across all suites: '${name}'"
@@ -266,9 +256,8 @@ function(register_tests_discover)
             if(changed)
                 count_matching_cases("${pattern}" "${names}" matching)
 
-                # "?" matches any character, so the escaped name now selects
-                # another case as well: it would run something else than its own
-                # name and still report success
+                # "?" matches any character: the escaped name could run a
+                # different case and still report success
                 if(NOT matching EQUAL 1)
                     message(FATAL_ERROR
                         "Cannot select the test case '${name}' on its own, its name\n"
@@ -306,8 +295,8 @@ function(register_tests_discover)
             ${ARG_PROPERTIES}
         )
 
-        # unbalanced brackets would make the generated list invalid, such a case
-        # is still registered, it is only left out of TEST_LIST
+        # unbalanced brackets would invalidate the generated list: registered, but
+        # left out of TEST_LIST
         if(NOT "${name}" MATCHES [[(\[|\])]])
             list(APPEND discovered "${name}")
         endif()
