@@ -201,8 +201,7 @@ Comanda este aceeași ca la pasul 1 sau 2. Nu merge combinat cu Valgrind.
 
 ## Teste
 
-Acest branch utilizează Boost-ext/ut pentru a crea teste unitare. Pentru mai multe informații
-despre cum funcționează, consultați [README_Tests](./tests/README_Tests.md).
+Acest branch folosește Boost.UT; vezi [tests/README](./tests/README.md).
 
 
 ## License
