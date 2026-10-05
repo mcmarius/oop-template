@@ -122,6 +122,7 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
+target_link_libraries(${MAIN_LIBRARY_NAME} PRIVATE pqxx)
 target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE pqxx ${MAIN_LIBRARY_NAME})
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
