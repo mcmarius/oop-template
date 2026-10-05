@@ -155,7 +155,7 @@ jobs:
             # renovate: depName=macos
             name: "macOS 26 Apple Clang 21"
             # This env does not currently run address sanitizers
-            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=ON"
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
             runs_asan: false
             runs_tests: 'ON'
