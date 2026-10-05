@@ -10,12 +10,12 @@ Checked against `main` and all template branches (`main`, `common-libs`, `descar
 
 | Path | What it is |
 |---|---|
-| `CMakeLists.txt`, `cmake/` | CMake project: options, compiler flags, sanitizers, helpers. Infrastructure. |
+| any `CMakeLists.txt`, `cmake/` | CMake project: options, compiler flags, sanitizers, helpers. Infrastructure. |
 | `scripts/` | `cmake.sh`, `run_cppcheck.sh`, `build_cppcheck.sh`, `run_tests.sh`, `run_valgrind.sh` (+ suppressions), `audit_ext_libs.sh`. Same checks CI runs. |
 | `.github/` | GitHub Actions: workflows, composite actions, Renovate configs. Infrastructure — and the CI your project requires. |
 | `.clang-tidy`, `.gitattributes`, `.gitignore`, `disable_modules.props` | Static analysis + linguist/VCS/MSBuild setup. Infrastructure. |
 | `include/` | Public headers of the library — this directory **is** your public interface. Starter example: `Example.h`. |
-| `src/` | Library implementation, compiled once. Adding a file means adding it to `target_sources` in `CMakeLists.txt` (an addition, allowed). `src/internal/` is implementation-only: not shipped, not visible to `app/` or `tests/`. |
+| `src/` | Library implementation, compiled once. Adding a file means adding it to `target_sources` in any `CMakeLists.txt` (an addition, allowed). `src/internal/` is implementation-only: not shipped, not visible to `app/` or `tests/`. |
 | `app/` | The executable: `main.cpp`, menus, wiring, I/O. Not reachable from `tests/` — by design. |
 | `tests/` | Test suites. `assert` / `static_assert` on `main`; framework examples on `tests/gtest` and `tests/Boost-ext-ut`. |
 | `assets/` | Your data/images/fonts (empty `.keep` on most branches). Document precisely where you got these from. |

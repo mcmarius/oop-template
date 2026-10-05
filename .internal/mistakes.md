@@ -142,4 +142,4 @@ or unclear in your particular project, ask — there is always a legitimate way 
 Ask early, with specifics: what you tried, what you expected, what happened. A five-minute
 discussion at lab usually beats five hours (or five days) of guessing, and design problems
 do not get cheaper with age — fixed late, they become rewrites. Read [INFRA.md](INFRA.md)
-before changing/deleting anything in `CMakeLists.txt`, `cmake/`, `scripts/` or `.github/`.
+before changing/deleting anything in any `CMakeLists.txt`, `cmake/`, `scripts/` or `.github/`.
