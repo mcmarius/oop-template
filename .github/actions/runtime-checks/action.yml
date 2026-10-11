@@ -16,10 +16,12 @@ runs:
         # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
           ./"${EXECUTABLE_NAME}" &
+        sleep 1
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
         # wait for server shutdown
+        sleep 2
         # server shutdown
         kill -TERM $(jobs -p)
 
@@ -36,10 +38,13 @@ runs:
         # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
           ./"${EXECUTABLE_NAME}".exe &
+        sleep 1
         server_pid=$!
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
+        # wait for server shutdown
+        sleep 2
         # server shutdown
         wait "${server_pid}"
 
@@ -58,9 +63,12 @@ runs:
         # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
           ./"${EXECUTABLE_NAME}" &
+        sleep 1
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | tr -d '\r' | ./"${EXECUTABLE_NAME}_client" && \
           ./"${TESTS_EXECUTABLE_NAME}" && echo "All tests pass"
+        # wait for server shutdown
+        sleep 2
         # server shutdown
         kill -TERM $(jobs -p)
 
@@ -72,8 +80,11 @@ runs:
         # run client in foreground
         cd "${{ env.ZIP_NAME }}" && \
           ./"${EXECUTABLE_NAME}".exe &
+        sleep 1
         cd "${{ env.ZIP_NAME }}" && \
           cat "${INPUT_FILENAME}" | ./"${EXECUTABLE_NAME}_client".exe && \
           ./"${TESTS_EXECUTABLE_NAME}".exe && echo "All tests pass"
+        # wait for server shutdown
+        sleep 2
         # server shutdown
         kill -TERM $(jobs -p)
