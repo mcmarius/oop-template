@@ -178,8 +178,8 @@ jobs:
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
-            # This env does not currently run address sanitizers
-            # runs_asan: true
+            # This env currently runs address sanitizers only for tests
+            runs_asan: true
             runs_tests: 'ON'
 
             # renovate: depName=windows
