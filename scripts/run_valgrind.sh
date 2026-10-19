@@ -62,7 +62,7 @@ run_check() {
     if [[ "$1" = "${EXECUTABLE_NAME}" ]]; then
         # main executable
         (run_valgrind "$1" 1) &
-        bash "./${SCRIPT_RUN_DIR}/run_test.sh" 25 4 8
+        bash "./${SCRIPT_RUN_DIR}/run_ui_test.sh" 25 4 8
     else
         # tests
         run_valgrind "$1" 1
