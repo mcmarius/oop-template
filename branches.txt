@@ -1,0 +1,14 @@
+  baze-de-date/pqxx
+  baze-de-date/sqlite
+  common-libs
+  descarcare-date-api
+  ftxui
+  http-server
+  llms
+  raylib-cpp
+  sfml3
+  sfml3-imagini-externe-api
+  sfml3-resurse-locale
+  tests/Boost-ext-ut
+  tests/gtest
+  wxwidgets
