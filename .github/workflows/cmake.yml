@@ -175,7 +175,7 @@ jobs:
             c: cl
             cxx: cl
             # renovate: depName=windows
-            name: "ASan: Windows 2025 MSVC 19.51"
+            name: "Windows 2025 MSVC 19.51"
             cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF"
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
@@ -248,6 +248,7 @@ jobs:
           mkdir -p ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }} ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}
           cp -r artifacts/${{ env.INCLUDE_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }}/
           cp -r artifacts/${{ env.LIB_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}/
+          cp ${{ env.ZIP_NAME }}/.env.example ${{ env.ZIP_NAME }}/.env
           ls -la ${{ env.ZIP_NAME }}
 
       - name: Process artifacts

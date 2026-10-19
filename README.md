@@ -102,7 +102,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 
 ## Configurare variabile de mediu
 
-Actualizați fișierul `.env` cu valori corespunzătoare mediului vostru de lucru.
+Copiați fișierul `env.example` în `.env` și configurați valori corespunzătoare mediului vostru de lucru.
 
 După aceea, configurați editorul să vă încarce acest fișier ca variabile de mediu (sau scrieți cod care să facă asta).
 
