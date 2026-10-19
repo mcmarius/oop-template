@@ -100,17 +100,6 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 - [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 - [ ] code review #3 2 proiecte
 
-## Structura proiectului
-
-* `include/` — capetele publice: tot ce pot folosi `app/` și `tests/`.
-* `src/` — implementarea, compilată o singură dată în biblioteca `oop`; `src/internal/` nu este vizibil
-  nici din `app/`, nici din `tests/`.
-* `app/` — executabilul: `main.cpp`, meniu, I/O.
-* `tests/` — testele.
-
-Fiecare director își declară țintele în propriul `CMakeLists.txt`: o sursă nouă intră în `target_sources`
-din `src/CMakeLists.txt`, o suită nouă în `add_executable` din `tests/CMakeLists.txt`.
-
 ## Instrucțiuni de compilare
 
 Proiectul este configurat cu CMake.
