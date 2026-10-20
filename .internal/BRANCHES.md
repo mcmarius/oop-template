@@ -7,7 +7,7 @@ reconcile.
 `Base` records where the branch's infrastructure came from. It is **not** an upstream to rebase, merge or
 sync with: you start from a branch and stay on it, cherry-picking from another one when you want a feature
 it has. That makes your tree a mix, so **match the tree, not the branch name** — a fork defaults to
-`main` or `master`, and an SFML setup ported onto a `main` fork is legitimate work, not a mistake.
+`main` or `master`, and a setup of another branch ported onto a `main` fork is legitimate work, not a mistake.
 
 * **Detect / ships** — evidence in the tree, strongest first, and the files the branch adds. `*` marks
   starter code: adapt, rename or delete it freely; what must survive is the separation of `include/`,
@@ -32,10 +32,10 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 | `tests/` | Test suites, one executable registered with CTest; the frameworks themselves come from `ext/` or the build dir. |
 | `assets/` | Your data/images/fonts, copied by the configured `install()`/`copy_files()` step. |
 | `ext/` | Vendored third-party *lightweight* code, marked `linguist-vendored` in `.gitattributes`. `ext/include/` is on your public interface (`SYSTEM PUBLIC`), `ext/private/` stays inside `src/`, `ext/lib/` holds a vendored dep's compilable code. |
-| `tastatura.txt` | Keyboard input only (`std::cin`); file data goes in your own files under `assets/`. |
+| `tastatura.txt` | Comprehensive keyboard input only (`std::cin`); file data goes in your own files under `assets/`. |
 | `README.md` | Project description + the homework checkboxes. Yours to edit. |
 | `LICENSE`, `LICENSE.template` | AGPLv3 for your code / Unlicense for the template. You can edit the one for your code. |
-| `launcher.command` | Double-click launcher template for the built `./oop_main` binary. Do not edit. Infrastructure. |
+| `launcher.command` | Double-click launcher template for the built `./oop_main` binary for macOS. Do not edit. Infrastructure. |
 
 ## Branches
 
@@ -58,14 +58,15 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 
 ## Different on purpose
 
-Every branch rewrites the same two README regions for its own stack (the homework checkbox block and
-`1. Pasul de configurare`), and `Resurse` belongs to the student. That is by design: never copy a README
+Every branch rewrites the README for its own stack (`1. Pasul de configurare`),
+and `Resurse` belongs to the student. That is by design: never copy a README
 region from another branch or from `main`, and never "align" two branches.
 
 ## Registering a source, a test or a target
 
 Three shapes exist and all three are correct on their branch. Adding your own `CMakeLists.txt` is fine
-too — the freeze is on deleting and changing, not on adding ([INFRA.md](INFRA.md)).
+too — the freeze is on deleting and changing, not on adding ([INFRA.md](INFRA.md)). By addition,
+we mean net genuine additions, not "additions" that modify or delete in disguise.
 
 * **Root `CMakeLists.txt`** (every branch but the two below): sources listed in
   `add_library` / `add_executable` / `target_sources`, tests in `tests/CMakeLists.txt`.
@@ -75,7 +76,7 @@ too — the freeze is on deleting and changing, not on adding ([INFRA.md](INFRA.
   targets, `oop` and the uninstrumented `oop_nslib`.
 
 Lists are registered directly even where a variable would read better because IDEs write into
-`add_executable` regardless; pick the shape your branch has and do not switch it for aesthetics.
+`add_executable` regardless; pick the shape your branch has and do not switch it without a strong reason.
 
 ## Reading CI
 
@@ -89,8 +90,8 @@ Lists are registered directly even where a variable would read better because ID
   because of your program**: the sanitizer and Valgrind output is in the step logs and you are expected to
   read it, locally too (`./scripts/run_valgrind.sh`, an ASan configure).
 * Commented matrix rows and advisory steps are **intentional**: the template keeps as many checks as it can
-  and drops only what is genuinely incompatible, with 3 OSes × 2 compilers as the floor. Re-enabling,
-  deleting or reordering a row is a forbidden edit — if a row looks broken, ask the teacher.
+  and drops only what is genuinely incompatible, with 3 OSes × 2 compilers as the floor.
+  Deleting or changing a row is a forbidden edit — if a row looks broken, ask the teacher.
 * Some external libraries do not play nice with sanitizers on some OSes; that is why
   `tests/Boost-ext-ut` compiles an uninstrumented twin of the library for the test binary.
 * `scripts/run_ui_test.sh` (sends keystrokes with `xdotool` to the window named by `APP_WINDOW`, which must
