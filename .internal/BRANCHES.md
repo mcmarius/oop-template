@@ -1,6 +1,6 @@
 # Template branches — layout and per-branch differences
 
-One row per branch in [`branches.txt`](../branches.txt) + `main` (implied unless stated otherwise).
+One row per branch in [`branches.txt`](../branches.txt) + `main` (the default branch).
 You work on **one** of them: find the row your tree matches, read that row, treat the others as
 background. Branch differences are not yours to reconcile.
 
@@ -41,7 +41,7 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 
 | Branch | Base | Detect / ships | Extra `scripts/` | CI |
 |---|---|---|---|---|
-| `main` | N/A | starter branch with no dependencies | N/A | A |
+| `main` | N/A | starter branch with no dependencies | — | A |
 | `baze-de-date/pqxx` | `main` | `include/Database.h`\*, `src/database/Database.cpp`\*, `cmake/MinGWLibpq.cmake`, `.env.example`, `find_package(PostgreSQL)`, `PQXX_VERSION` | `configure_postgres.sh` — creates database and `pgcrypto` (for creating a user, see `README.md`); CI runs it on every OS | A, but **no ASan row on Windows MSVC** |
 | `baze-de-date/sqlite` | `main` | `FetchContent` `sqlite3`, `add_library(sqlite3 STATIC …/sqlite3.c)` | — | A |
 | `common-libs` | `main` | `ext/include/{date,csv-parser}` (public), `ext/private/{digestpp,random,rlutil}`, `assets/date.csv`\* | — | A |
@@ -54,7 +54,7 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 | `sfml3-imagini-externe-api` | `sfml3` | `FetchContent` `SFML cpr` — images fetched over HTTP | GUI set (see `sfml3`) | B; see `sfml3` |
 | `sfml3-resurse-locale` | `sfml3` | `include/ResourceManager.hpp`\*, `src/ResourceManager.cpp`\*, `assets/fonts/`\*, `assets/images/`\*, `target_link_libraries(oop PUBLIC SFML::…)` | GUI set (see `sfml3`) | B; see `sfml3` |
 | `tests/Boost-ext-ut` | `main` | `ext/include/boost/ut.hpp`, `MAIN_LIBRARY_SOURCES`, second library target `oop_nslib` | — | A; the tests and `oop_nslib` are built **without** sanitizers |
-| `tests/gtest` | `main` | `app/CMakeLists.txt` and `src/CMakeLists.txt` exist, `FetchContent` `gtest` inside `tests/CMakeLists.txt`, `include/BankAccount.h`\* | — | A; googletest is fetched into the build dir, never committed |
+| `tests/gtest` | `main` | `app/CMakeLists.txt` and `src/CMakeLists.txt` exist, `FetchContent` `gtest` inside `tests/CMakeLists.txt`, `include/BankAccount.h`\* | — | A |
 | `wxwidgets` | `sfml3` | `FetchContent` `wx`, `target_link_libraries(oop PUBLIC wx::core)` — GUI plumbing only, no SFML in the tree | GUI set (see `sfml3`) | B; see `sfml3` |
 
 ## Different on purpose
@@ -85,11 +85,12 @@ Lists are registered directly even where a variable would read better because ID
   row says nothing about the checks that did not run — never tell a student a leak check or a test
   "passed" because a row was green.
 * **Profile A** (all non-GUI branches): every row blocks except the *Sanitizers (Windows MSVC)* step,
-  which is `continue-on-error` on every branch, and Clang-tidy, which was buggy in the past and can
-  fail only if the project is mis-configured. You should still try to have a clean clang-tidy.
+  which is `continue-on-error` on every branch, and Clang-tidy, which is advisory.
+  You should still have a clean clang-tidy as best-practice.
 * **Profile B** (the 5 GUI branches): on Linux the ASan and Valgrind steps are `continue-on-error` and end
-  in `|| true`; no ASan/Valgrind step that starts the app can fail; GUi smoke tests are skipped because they
-  hang a headless runner. The sanitizer and Valgrind outputs are in the step logs and you are expected to
+  in `|| true`; no ASan/Valgrind step that starts the app can fail; GUI smoke tests are skipped because they
+  hang a headless runner; only tests are re-ran again in the context of the delivered artifacts.
+  The sanitizer and Valgrind outputs are in the step logs and you are expected to
   read it, locally too (`./scripts/run_valgrind.sh`, an ASan configure). Note that valgrind may need
   additional suppressions for ext libs: those are fine to add (and please contribute them) as long as
   you do not exclude your own code.

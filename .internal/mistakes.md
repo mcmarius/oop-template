@@ -31,7 +31,7 @@ Severity: 🔴 the requirement counts as **not met** · 🟠 **costs points** ·
 | 🔴 CI green, **all** checkboxes ticked, a git tag per homework | CI is the entry ticket; an unticked box or a missing tag is a purely administrative way to lose chances to enter the exam. | Budget time for CI round-trips; see [section 6](#6-checking-your-own-work). |
 | 🔴 No OS-specific headers (`conio.h`, `windows.h`, …) | CI builds on more than one OS; these headers break it and make the code non-portable. | Standard I/O only. Ask if you really think you need one. Portable alternatives are provided in branches. |
 | 🔴 Source files must be in the repo | An empty or partially committed repo has nothing to grade. | Check `git status --ignored` once in a while: `build/` and `install_dir/` belong in `.gitignore`, your sources do not. |
-| 🔴 No memory errors | Leaks, out-of-bounds, UB. These are already checked automatically. | Run Valgrind and ASan yourself, see below. |
+| 🔴 No memory errors | Leaks, out-of-bounds, UB. These are already checked automatically where possible. | Run Valgrind and ASan yourself, see below. |
 
 ## 2. Theme requirements — how students usually misread them
 
@@ -147,11 +147,11 @@ clang-tidy -p build src/*.cpp app/*.cpp tests/*.cpp   # uses the repo's .clang-t
 
 `audit_ext_libs.sh` reads `build/compile_commands.json`, so without a configured build dir all it can
 report is that it cannot open that file. Those scripts exist on every branch; what yours adds is in
-[BRANCHES.md](BRANCHES.md). On GUI branches, there are also `run_ui_test.sh` and `run_sanitizers.sh` which
-are called by CI; to use them locally you need more setup and the sanitizers with GUI work only on Linux
-(they need `xvfb`/`xdotool`; the second expects the unpacked artifact bundle as its working directory);
-on GUI branches `run_valgrind.sh` also needs `xvfb`/`xdotool`. If you can make these work more broadly,
-tell the teacher.
+[BRANCHES.md](BRANCHES.md). On GUI branches, there are also `run_valgrind.sh` and `run_sanitizers.sh` which
+are called by CI and call in turn `run_ui_test.sh`; to use them locally you need more setup and the
+sanitizers with GUI work only on Linux (they need `xvfb`/`xdotool`; the second expects the unpacked
+artifact bundle as its working directory); on GUI branches `run_valgrind.sh` also needs `xvfb`/`xdotool`.
+If you can make these work more broadly, tell the teacher.
 
 Practical notes:
 

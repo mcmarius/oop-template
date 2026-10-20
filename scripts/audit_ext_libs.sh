@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Audits build/compile_commands.json — ON by default in cmake/Options.cmake and passed explicitly by
+# Audits build/compile_commands.json — ON by default and passed explicitly by
 # scripts/cmake.sh, so CI and a local run read the same thing, and the cppcheck CI step runs this on every
 # branch, on an unbuilt tree — for the
 # two ways an external dependency is misconfigured:
@@ -11,13 +11,16 @@
 #    runtime, or generate its headers. Declare it beside the dependency, with CACHE so this reads it:
 #        set(AUDIT_EXT_LIBS_ALLOW "<name CMake gives it>" CACHE STRING "linked, not included")
 #    Included only from tests/ is a note: for a test framework that is the design. Reported only for a
-#    dependency this project names in its own build files: one that another dependency fetched (zlib
-#    below curl, the googletest umbrella above gtest) is not the student to drop, and warning about it
-#    teaches students to ignore the audit. Vendored code below ext/ is theirs, whoever copied it in.
+#    dependency this project names in code in its own build files (a name inside a comment is prose,
+#    not a choice): one that another dependency fetched (zlib below curl, the googletest umbrella above
+#    gtest) is not the student to drop, and warning about it teaches students to ignore the audit.
+#    Vendored code below ext/ is theirs, whoever copied it in.
 #
 # Dependencies are discovered from CMakeCache.txt plus the FetchContent trees: the base directory, or
 # its default <build>/_deps. The cache alone is not enough, since FetchContent_Populate followed by a
-# hand-written target (baze-de-date/sqlite) leaves no <name>_SOURCE_DIR entry behind.
+# hand-written target (baze-de-date/sqlite) leaves no <name>_SOURCE_DIR entry behind. Only the build
+# directory given (-b, BUILD_DIR, default build) is read: a second build tree in the repository is
+# generated output, marked by the CMakeCache.txt in it, and it says nothing about this project.
 #
 # bash ./scripts/audit_ext_libs.sh [-b build dir] [-v]  (-v lists every dependency)
 # env: BUILD_DIR, EXT_DIR, TESTS_DIR, AUDIT_EXT_LIBS_ALLOW (exceptions for this run only)
@@ -29,6 +32,7 @@ DEP_ROOTS=()      # directories holding dependency code, umbrellas included
 DEP_UNITS=()      # "<name><TAB><directory>", one per dependency
 FETCH_ROOTS=()    # directories FetchContent unpacked into, parents of <name>-src
 OWN_CMAKE=()      # CMake files of this repository, the ones naming the dependencies it chose
+BUILD_TREES=()    # generated build trees below the repository, each marked by its CMakeCache.txt
 ALLOW_FROM_CACHE=""
 TAB=$'\t'         # unit separator; a literal tab here would be one editor away from silence
 
@@ -56,6 +60,14 @@ under_dep_root() { # <absolute path> below one of the dependency roots
     local root
     for root in "${DEP_ROOTS[@]}"; do
         [[ "${1}" == "${root%/}"/* ]] && return 0
+    done
+    return 1
+}
+
+under_build_tree() { # <absolute path> below a generated build tree, whichever name the IDE gave it
+    local tree
+    for tree in "${BUILD_TREES[@]}"; do
+        [[ "${1}" == "${tree%/}"/* ]] && return 0
     done
     return 1
 }
@@ -90,17 +102,31 @@ fetch_units_under() { # <dir> a FetchContent base directory
 }
 
 # The build files naming a dependency are what makes it the student choice. Dependency trees are not
-# build files: curl declaring zlib is not this project declaring zlib.
+# build files: curl declaring zlib is not this project declaring zlib. Neither is a build directory,
+# whichever name the IDE gave it (build, build-asan, cmake-build-debug, out): CMakeCache.txt marks
+# one, only the tree given to this script is ever read, and a generated cmake_install.cmake names the
+# dependencies of the build that wrote it, not the ones this repository chose.
 read_own_cmake() { # <build dir>
-    local build_dir_abs file
+    local build_dir_abs entry
+    local -a found=()
     build_dir_abs="$(abs_path "$1")"
-    while IFS= read -r file; do
-        file="$(abs_path "${file}")"
-        [[ "${file}" != "${build_dir_abs}"/* ]] || continue
-        under_dep_root "${file}" && continue
-        OWN_CMAKE+=("${file}")
-    done < <(find "${PWD}" \( -name .git -o -name _deps \) -prune -o \
-                  \( -name 'CMakeLists.txt' -o -name '*.cmake' \) -print 2>/dev/null)
+    # one walk: the caches mark the trees to drop, so they are collected with the build files;
+    # CMakeFiles is every build tree root, cutting the deep part of each one out of the walk
+    while IFS= read -r entry; do found+=("${entry}"); done < <(
+        find "${PWD}" \( -name .git -o -name _deps -o -name CMakeFiles \) -prune -o \
+              \( -name CMakeCache.txt -o -name 'CMakeLists.txt' -o -name '*.cmake' \) -print 2>/dev/null)
+    for entry in "${found[@]}"; do
+        [[ "${entry##*/}" == CMakeCache.txt ]] || continue
+        BUILD_TREES+=("$(abs_path "${entry%/*}")")
+    done
+    for entry in "${found[@]}"; do
+        [[ "${entry##*/}" == CMakeCache.txt ]] && continue
+        entry="$(abs_path "${entry}")"
+        [[ "${entry}" != "${build_dir_abs}"/* ]] || continue
+        under_dep_root "${entry}" && continue
+        under_build_tree "${entry}" && continue
+        OWN_CMAKE+=("${entry}")
+    done
 }
 
 # CMakeCache.txt split into the two views above. Our own project is not a dependency, however
@@ -393,10 +419,25 @@ audit_build_tree() {
             out = out (i > 1 ? "\n    " : "    ") display(unit_raw[unit, i])
         return out
     }
+    # a # that is not inside a quoted argument starts a CMake comment: prose about a dependency does
+    # not pick it, so the words there are not the project naming one (a disabled FetchContent_Declare
+    # in a comment must not make its library the student answer for)
+    function strip_comment(line,    out, i, len, ch, quoted) {
+        out = ""
+        quoted = 0
+        len = length(line)
+        for (i = 1; i <= len; i++) {
+            ch = substr(line, i, 1)
+            if (ch == "\"") quoted = !quoted
+            else if (ch == "#" && !quoted) break
+            out = out ch
+        }
+        return out
+    }
     # words of the build files of this repository, folded like dependency names: the names in them are
     # the dependencies this project chose, and the only ones it is asked about
     function own_words(line,    n, parts, i, word) {
-        n = split(line, parts, /[^A-Za-z0-9_]+/)
+        n = split(strip_comment(line), parts, /[^A-Za-z0-9_]+/)
         for (i = 1; i <= n; i++) {
             word = name_key(parts[i])
             if (word != "" && !(word in own_word)) {

@@ -1,6 +1,5 @@
 option(CMAKE_COLOR_DIAGNOSTICS "Enable color diagnostics" ON)
 option(CMAKE_TLS_VERIFY "Verify TLS certificates" OFF)
-option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compilation database" ON)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(USE_ASAN "Use Address Sanitizer" OFF)
