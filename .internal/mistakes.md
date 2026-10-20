@@ -24,14 +24,14 @@ Severity: 🔴 the requirement counts as **not met** · 🟠 **costs points** ·
 |---|---|---|
 | 🔴 No public data members — **fără atribute publice!** | The object's invariants can be broken from anywhere, so the class has no behaviour to speak of. | Private members, public *operations*. A getter is not an operation; `private:` is the default in `class`. |
 | 🔴 No global / file-scope variables — **fără variabile globale!** | Hidden coupling; state that no constructor, test or `main` controls. | Pass what you need; make it a member or a parameter. `static const`/`constexpr` constants are fine. |
-| 🔴 No filler — **fără cod de umplutură/fără sens!** | Members that nothing calls (or that are "called" somewhere only to look used) are noise: they tell me nothing was learned. | Write a member when the scenario needs it. Generated code you did not contribute to earns at most bonus points, and only if it genuinely helps. |
+| 🔴 No filler — **fără cod de umplutură/fără sens!** | Members that nothing calls (or that are "called" somewhere only to look used) are noise: they tell me nothing was learned. | Write a member when the scenario needs it. Forced scenarios do not count. Generated code you did not contribute to earns no points. |
 | 🔴 No copy-paste — **fără copy-paste!** | Duplicated blocks double every future bug and are the clearest sign the design was not thought through. | Pull the shared part into a function, a template, or a base class. |
 | 🔴 No data in the code — **fără date în cod!** | A project that hardcodes its dataset is not a program, it is a transcript with `if`s. | Read from your own data files as csv/json/other well-known format; do not hand-roll your own parser, use dedicated libraries (you have examples on other branches). And read from a library/DB where the topic requires it. `tastatura.txt` is for keyboard input only. |
-| 🔴 `.gitattributes` set correctly (most likely no-op) | Linguist decides what counts as C++: ≥52–60% (T1), 75–78% (T2), 80–90% (T3). Wrong settings will put a bad project under even stricter checks. | Check the language bar on GitHub after your first real commit, not after the last one. Tests do not count towards this limit. |
+| 🔴 `.gitattributes` set correctly | Linguist decides what counts as C++: ≥52–60% (T1), 75–78% (T2), 80–90% (T3) **of your own code** — meaning more code than the template ships. Wrong settings will put a bad project under even stricter checks. | The GitHub language bar is a hint, not the number: it counts `tests/` and the rest of the repo, while the graded share is measured without them. Ask before you intend to edit this, you most likely do not need to. |
 | 🔴 CI green, **all** checkboxes ticked, a git tag per homework | CI is the entry ticket; an unticked box or a missing tag is a purely administrative way to lose chances to enter the exam. | Budget time for CI round-trips; see [section 6](#6-checking-your-own-work). |
 | 🔴 No OS-specific headers (`conio.h`, `windows.h`, …) | CI builds on more than one OS; these headers break it and make the code non-portable. | Standard I/O only. Ask if you really think you need one. Portable alternatives are provided in branches. |
 | 🔴 Source files must be in the repo | An empty or partially committed repo has nothing to grade. | Check `git status --ignored` once in a while: `build/` and `install_dir/` belong in `.gitignore`, your sources do not. |
-| 🔴 No memory errors | Leaks, out-of-bounds, UB. These are already checked automatically. | Run Valgrind and ASan yourself, see below. |
+| 🔴 No memory errors | Leaks, out-of-bounds, UB. These are already checked automatically where possible. | Run Valgrind and ASan yourself, see below. |
 
 ## 2. Theme requirements — how students usually misread them
 
@@ -103,13 +103,33 @@ This is the part no script can grade for you, and the part the oral is about.
 
 * 🟠 A tag per homework/stage (`v0.1`, `v0.2`, `v0.3`) with optional patch versions, placed on the commit where everything for that part is done.
 * 🟠 External libraries, datasets and resources not cited in the **Resurse** section of the README.
+* 🟠 **A dependency you prepared but never use.** Presence of the setup is evidence of the **stack**, never
+  of usage. *Used* means all of: a header of it is `#include`d by your code, a symbol from it is called
+  somewhere in the project's story (not one call added to look used — that is filler, the mirror
+  mistake), it is linked into the target that needs it, `PUBLIC` only when a header in `include/` names its
+  type, and the **Resurse** entry cites version + licence. Until then it is downloaded and built on every
+  CI run for nothing, so deleting a dependency your branch ships is a legitimate move — do it before the
+  push. `scripts/audit_ext_libs.sh` prints a `warning` for a dependency no student `#include` reaches.
+  A dependency reached without an include (linked for its symbols, a runtime, a header your build generates)
+  is declared beside the dependency, with
+  `set(AUDIT_EXT_LIBS_ALLOW "<name CMake gives it>" CACHE STRING "why")` — it has to be `CACHE`, a plain
+  `set()` is invisible to the script. That line is an addition to your own `CMakeLists.txt`, so the freeze
+  in [INFRA.md](INFRA.md) does not forbid it. Included **only** from `tests/` is a note about design, not a
+  finding: test frameworks live there.
+  This step fails if you include an ext lib as non-SYSTEM dep. Why? Mis-configuration: we want to know about
+  errors in our own code, but we need to skip external code (so external needs to be SYSTEM). The reverse is
+  also a mistake: marking our own code as SYSTEM puts errors under the rug and then we find issues at runtime
+  instead of compile time.
 * ⚪ Everything in one giant commit. Commit per feature, so a history exists to review and code review #1–#3 has something to discuss.
 * 🟠 **A test that hangs or reads `std::cin`.** CTest kills it after 60 s, but the ASan, Valgrind and smoke steps run the same test binary directly, with **no timeout**, and eat the whole job. Tests take data from fixtures, never from `std::cin`; at EOF a "read until the input is valid" loop spins forever.
 * 🟠 **A test with no assertion.** It runs code, it verifies nothing.
 * 🟠 **Making a member public so it can be tested.** Widen nothing for a check — test through the public interface.
 * 🔴 **`tests/` written to raise the C++ share.** The percentage is measured without `tests/`, and filler is penalised anyway.
-* ⚪ **Library code whose only effect is `std::cout`.** Catalog C2, visible now that the library is separate from `app/`.
-* 🟠 **A vendored type in a public header that could have stayed private.** Parse in the `.cpp`, hand out std types, keep that dep `SYSTEM PRIVATE`.
+* ⚪ **Library code whose only effect is `std::cout`.** Visible now that the library is separate from `app/`.
+* 🟠 **A vendored type in a public header.** Ask "could this have stayed private *without* duplicating
+  the code?", not "never": on the GUI branches the public vendored type is deliberate, the alternative is a
+  copy of the resource handling. Where it is not: parse in the `.cpp`, hand out std types, keep that dep
+  `SYSTEM PRIVATE`.
 
 ## 6. Checking your own work
 
@@ -118,17 +138,34 @@ The same things CI runs, you can run locally — see the [README](../README.md) 
 ```sh
 ./scripts/cmake.sh configure      # add -e "-DUSE_ASAN=ON" for AddressSanitizer
 ./scripts/cmake.sh build
+./scripts/audit_ext_libs.sh       # needs the configure above; CI runs it inside the cppcheck step
 ./scripts/run_cppcheck.sh
+./scripts/run_tests.sh -r         # or: ./scripts/cmake.sh test
 ./scripts/run_valgrind.sh
 clang-tidy -p build src/*.cpp app/*.cpp tests/*.cpp   # uses the repo's .clang-tidy
 ```
+
+`audit_ext_libs.sh` reads `build/compile_commands.json`, so without a configured build dir all it can
+report is that it cannot open that file. Those scripts exist on every branch; what yours adds is in
+[BRANCHES.md](BRANCHES.md). On GUI branches, there are also `run_valgrind.sh` and `run_sanitizers.sh` which
+are called by CI and call in turn `run_ui_test.sh`; to use them locally you need more setup and the
+sanitizers with GUI work only on Linux (they need `xvfb`/`xdotool`; the second expects the unpacked
+artifact bundle as its working directory); on GUI branches `run_valgrind.sh` also needs `xvfb`/`xdotool`.
+If you can make these work more broadly, tell the teacher.
 
 Practical notes:
 
 * Fix **all** the independent CI failures in one push; each round-trip is minutes of waiting.
 * Keep a recent green commit on your default branch and re-run a workflow from time to time —
   the CI dependency cache expires, and pushing on a cold cache after weeks of silence is slow.
-* A green CI means your code compiles and passes the mechanical checks. It is the **minimum**, not a proof of design.
+* **Red is the only certainty.** A red row means something is wrong; a green row only means the steps that
+  ran did not fail. On the GUI branches no ASan/Valgrind row can fail because of your program, so run ASan
+  and Valgrind yourself and read the logs of the steps that ran. CI is the **minimum**, never proof of
+  memory safety or of design.
+
+Some limitations of the template are known and left as they are for lack of time — the advisory runtime
+rows on the GUI branches, and external libraries that do not cooperate with sanitizers on some OSes. Ask
+before working around one; contributions through the template repo are welcome.
 
 ## 7. Beyond CI
 
@@ -142,4 +179,4 @@ or unclear in your particular project, ask — there is always a legitimate way 
 Ask early, with specifics: what you tried, what you expected, what happened. A five-minute
 discussion at lab usually beats five hours (or five days) of guessing, and design problems
 do not get cheaper with age — fixed late, they become rewrites. Read [INFRA.md](INFRA.md)
-before changing/deleting anything in `CMakeLists.txt`, `cmake/`, `scripts/` or `.github/`.
+before changing/deleting anything in any `CMakeLists.txt`, `cmake/`, `scripts/` or `.github/`.

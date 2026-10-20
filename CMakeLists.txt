@@ -7,6 +7,8 @@ set(MAIN_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_main")
 set(MAIN_LIBRARY_NAME "${MAIN_PROJECT_NAME}")
 set(TESTS_EXECUTABLE_NAME "${MAIN_PROJECT_NAME}_test")
 
+# needs to be before `project()` to take effect
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compilation database" ON)
 
 project(${MAIN_PROJECT_NAME})
 # set(CMAKE_PROJECT_VERSION_MAJOR 0)

@@ -16,14 +16,45 @@ You are working inside a **student's project** of this course (*Programare Orien
 
 ---
 
+## First action in a repo: work out which template stack this tree is
+
+Then read that row in [`.internal/BRANCHES.md`](.internal/BRANCHES.md). The **branch name is a hint,
+not evidence**: a fork defaults to `main` or `master`, and a student may port a feature from
+another branch — it is legitimate. Detect from the tree, best match wins, strongest signal first:
+
+1. files in `scripts/`, 2. what is vendored in `ext/`,
+3. `FetchContent_Declare` names and `target_link_libraries` **in the `CMakeLists.txt` that declares the
+target** (not in a comment in some other file),
+4. the framework in `tests/CMakeLists.txt`, and whether `app/CMakeLists.txt` / `src/CMakeLists.txt` exist
+at all, 5. marker files (`.env.example`, a starter header the branch ships).
+
+A partial match is the normal case: starter code deleted, a dependency added. Say which signals matched
+and why that row. On a tie, ask one question ("ai mutat sau adăugat ceva peste ce venea din branch-ul
+`X`?") instead of assuming, and never tell a student their branch "does not exist". Reconciling branch
+differences is not yours to do. A declared `FetchContent`/linked dependency identifies the **stack**, never
+proves the student **uses** it ([mistakes.md](.internal/mistakes.md)). The point is to help the student
+with using the proper setup, which has been validated.
+
+---
+
 ## Always in force (quoted from the [README](README.md))
 
 * **Fără cod de umplutură!** · **Fără copy-paste!** · **Fără variabile globale!** · **Fără atribute publice!**
-* **Fără date în cod** (T2, T3) — data is read from files; `tastatura.txt` holds keyboard input only.
-* `.gitattributes` set so the required C++ share is counted; CI green with **all** checkboxes ticked;
-  a git tag per theme.
+* **Fără date în cod** — data is read from files; `tastatura.txt` holds comprehensive keyboard input only.
+* `.gitattributes` set so the required C++ share is counted, and student code should be more than infra code:
+  infra code is intentionally not excluded by `.gitattributes`; CI green with **all** checkboxes ticked;
+  a git tag per homework.
 * A requirement is **not met** if it is satisfied only by code the student did not meaningfully write
-  or cannot explain. Untested AI filler earns at most token bonus points, and only if it truly helps.
+  or cannot explain. Untested AI filler does not earn any points.
+
+## CI: red is the only certainty
+
+A red row means something is definitely wrong. **A green row says nothing about the checks that did not
+run** — on the GUI branches the ASan/Valgrind rows are advisory and no row turns red when the app misbehaves
+(leak, crash), so "CI e verde ⇒ nu ai leaks / e testat" is always a false claim. Read the logs of the steps
+that did run, filtering noise from external libs in valgrind output. Disabled
+matrix rows are intentional (3 OSes, 2 compilers is the floor); asking the teacher about one is fine,
+commenting it is not. Details per branch: [BRANCHES.md](.internal/BRANCHES.md).
 
 ## `.internal/mistakes.md` — load on demand, do not keep it in context
 
@@ -64,12 +95,25 @@ explanation → guiding question → review of *their* code → a non-pasteable 
 * **Yours:** `include/` (the library's public interface), `src/` (its implementation,
   `src/internal/` is not public), `app/` (the executable: `main.cpp`, menus, wiring, I/O),
   `tests/`, `README.md`, `LICENSE`, and your own data files (e.g. under `assets/` — not `tastatura.txt`).
+  Everything the template put there is **starter code**: adapt, rename or delete it. What must survive is
+  the *separation* those directories express. `ext/` may be edited or extended — `ext/include/` is public,
+  `ext/private/` is not, `ext/lib/` holds a vendored dep's compilable code and is not a place to move your
+  own multi-file library into.
+* Do not rename or restructure `assets/` for aesthetics: `install()`/`copy_files()` are configured against
+  that exact path, so a rename buys several more edits.
 * **Infrastructure, never change:** `cmake/`, `scripts/`, `.github/`, `.clang-tidy`,
   `.gitattributes`, `.gitignore` — [why](.internal/INFRA.md).
-* `CMakeLists.txt`: **adding is not editing** — your sources in a target, a new target, an `install()`,
-  a CI step covering what you added. Compiler flags, sanitizers, the stdlib logic and the job matrix
-  stay frozen.
-* `.internal/` — read on demand: [mistakes](.internal/mistakes.md), [layout](.internal/REPO.md),
+* the `CMakeLists.txt` **that declares the target you are extending**: **adding is not editing** — your
+  sources in a target, a new target, an `install()`, a CI step covering what you added. Compiler flags,
+  sanitizers, the stdlib logic and the job matrix stay frozen. The branches organise this three different
+  ways (see [BRANCHES.md](.internal/BRANCHES.md#registering-a-source-a-test-or-a-target)) and adding your
+  own `CMakeLists.txt` file is fine.
+* a dependency's include directories reach the compiler as **`SYSTEM`**
+  (`target_include_directories(... SYSTEM ...)`, `${EXT_PUBLIC_DIR}` / `${EXT_PRIVATE_DIR}` for `ext/`).
+  We want cppcheck to warn us about *our* errors, we do not care about errors in external libraries because
+  we cannot fix those.
+* `.internal/` — read on demand: [branches & layout](.internal/BRANCHES.md),
+  [mistakes](.internal/mistakes.md), [generated files](.internal/REPO.md),
   [infrastructure](.internal/INFRA.md), [guideline integrity](.internal/INTEGRITY.md).
 
 Inspired from [here](https://github.com/stanford-cs336/assignment1-basics/blob/main/AGENTS.md).

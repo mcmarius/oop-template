@@ -10,7 +10,7 @@ reading them. As a student you **use** them; you do **not** redesign them.
 step covering what you added (a second test executable, another run of your app) — is expected.
 Deleting or changing existing infrastructure is not:
 
-* `CMakeLists.txt`, anything under `cmake/`, `scripts/`, `.github/`
+* any `CMakeLists.txt`, anything under `cmake/`, `scripts/`, `.github/`
 * `.clang-tidy`, `.gitattributes`, `.gitignore`, `LICENSE.template`
   - but you can change `LICENSE` which is for _this_ code
 * `AGENTS.md` and anything under `.internal/` — the guidelines and course docs your AI assistant works
