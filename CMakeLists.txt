@@ -109,7 +109,7 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
     ${EXT_PRIVATE_DIR}
 )
 
-target_include_directories(httplib PUBLIC
+target_include_directories(httplib SYSTEM PUBLIC
     ${EXT_PUBLIC_DIR}
 )
 # target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
