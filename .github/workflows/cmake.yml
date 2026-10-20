@@ -239,7 +239,9 @@ jobs:
         run: |
           mkdir ${{ env.ZIP_NAME }}
           shopt -s dotglob
-          cp -r ${{ github.workspace }}/artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
+          ls -la artifacts/${{ env.BIN_DIR }}/
+          tar -chf - -C artifacts/bin . | tar -xf - -C ${{ env.ZIP_NAME }}/
+          # cp -rL artifacts/${{ env.BIN_DIR }}/* ${{ env.ZIP_NAME }}
           # cp -r src/ dst copies the contents on macOS and the directory on Linux: make the dst first
           mkdir -p ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }} ${{ env.ZIP_NAME }}/${{ env.LIB_DIR }}
           cp -r artifacts/${{ env.INCLUDE_DIR }}/. ${{ env.ZIP_NAME }}/${{ env.INCLUDE_DIR }}/
