@@ -83,6 +83,7 @@ target_sources(${MAIN_LIBRARY_NAME}
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
 # NOTE: RUN_SANITIZERS is optional, if it's not present it will default to true
 set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAME} ${MAIN_LIBRARY_NAME})
+set_target_properties(${MAIN_EXECUTABLE_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
 
 ###############################################################################
 
@@ -113,7 +114,8 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} wx::core Threads::Threads)
+target_link_libraries(${MAIN_LIBRARY_NAME} PUBLIC wx::core Threads::Threads)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME})
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
