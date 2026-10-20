@@ -41,6 +41,7 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 
 | Branch | Base | Detect / ships | Extra `scripts/` | CI |
 |---|---|---|---|---|
+| `main` | N/A | starter branch with no dependencies | N/A | A |
 | `baze-de-date/pqxx` | `main` | `include/Database.h`\*, `src/database/Database.cpp`\*, `cmake/MinGWLibpq.cmake`, `.env.example`, `find_package(PostgreSQL)`, `PQXX_VERSION` | `configure_postgres.sh` — creates database, user and `pgcrypto`; CI runs it on every OS | A, but **no ASan row on Windows MSVC** |
 | `baze-de-date/sqlite` | `main` | `FetchContent` `sqlite3`, `add_library(sqlite3 STATIC …/sqlite3.c)` | — | A |
 | `common-libs` | `main` | `ext/include/{date,csv-parser}` (public), `ext/private/{digestpp,random,rlutil}`, `assets/date.csv`\* | — | A |
@@ -48,13 +49,13 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 | `ftxui` | `main` | `FetchContent` `ftxui`, links `ftxui::screen` / `::dom` / `::component` | — | A |
 | `http-server` | `main` | `ext/include/httplib.h` + `ext/lib/httplib.cc` (library target `httplib`), `app/main-client.cpp`\*, target `${MAIN_EXECUTABLE_NAME}_client` | — | A; the runtime rows start the server in the background, and Valgrind analyses `oop_main_client` + `oop_test` |
 | `llms` | `descarcare-date-api` | `FetchContent` `cpr numkong`, `NUMKONG_VERSION`, `ext/include/json/` | `run_llm.sh` — fetches and starts a llamafile; CI sources it before every runtime row | A; macOS-GCC row commented |
-| `raylib-cpp` | `sfml3` | `FetchContent` `raylib raylib-cpp`, `target_link_libraries(oop PUBLIC raylib)` | GUI set (see `sfml3`) | B; macOS-GCC row commented |
-| `sfml3` | `main` | `FetchContent` `SFML`, links `SFML::Graphics`, window title `"My Window"`\* | `install-linux-deps.sh` (dev packages per distro family), `run_sanitizers.sh`, `run_ui_test.sh` | B; macOS-GCC row commented |
-| `sfml3-imagini-externe-api` | `sfml3` | `FetchContent` `SFML cpr` — images fetched over HTTP | GUI set (see `sfml3`) | B; macOS-GCC row commented |
-| `sfml3-resurse-locale` | `sfml3` | `include/ResourceManager.hpp`\*, `src/ResourceManager.cpp`\*, `assets/fonts/`\*, `assets/images/`\*, `target_link_libraries(oop PUBLIC SFML::…)` | GUI set (see `sfml3`) | B; macOS-GCC row commented |
+| `raylib-cpp` | `sfml3` | `FetchContent` `raylib raylib-cpp`, `target_link_libraries(oop PUBLIC raylib)` | GUI set (see `sfml3`) | B; see `sfml3` |
+| `sfml3` | `main` | `FetchContent` `SFML`, links `SFML::Graphics`, window title `"My Window"`\* | `install-linux-deps.sh` (dev packages per distro family), `run_sanitizers.sh`, `run_ui_test.sh` | B; macOS-GCC row commented, macOS 15 instead of 26, Clang 17 instead of 21 |
+| `sfml3-imagini-externe-api` | `sfml3` | `FetchContent` `SFML cpr` — images fetched over HTTP | GUI set (see `sfml3`) | B; see `sfml3` |
+| `sfml3-resurse-locale` | `sfml3` | `include/ResourceManager.hpp`\*, `src/ResourceManager.cpp`\*, `assets/fonts/`\*, `assets/images/`\*, `target_link_libraries(oop PUBLIC SFML::…)` | GUI set (see `sfml3`) | B; see `sfml3` |
 | `tests/Boost-ext-ut` | `main` | `ext/include/boost/ut.hpp`, `MAIN_LIBRARY_SOURCES`, second library target `oop_nslib` | — | A; the tests and `oop_nslib` are built **without** sanitizers |
 | `tests/gtest` | `main` | `app/CMakeLists.txt` and `src/CMakeLists.txt` exist, `FetchContent` `gtest` inside `tests/CMakeLists.txt`, `include/BankAccount.h`\* | — | A; googletest is fetched into the build dir, never committed |
-| `wxwidgets` | `sfml3` | `FetchContent` `wx`, `target_link_libraries(oop PUBLIC wx::core)` — GUI plumbing only, no SFML in the tree | GUI set (see `sfml3`) | B; macOS-GCC row commented |
+| `wxwidgets` | `sfml3` | `FetchContent` `wx`, `target_link_libraries(oop PUBLIC wx::core)` — GUI plumbing only, no SFML in the tree | GUI set (see `sfml3`) | B; see `sfml3` |
 
 ## Different on purpose
 

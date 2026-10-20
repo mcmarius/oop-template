@@ -24,7 +24,7 @@ Severity: 🔴 the requirement counts as **not met** · 🟠 **costs points** ·
 |---|---|---|
 | 🔴 No public data members — **fără atribute publice!** | The object's invariants can be broken from anywhere, so the class has no behaviour to speak of. | Private members, public *operations*. A getter is not an operation; `private:` is the default in `class`. |
 | 🔴 No global / file-scope variables — **fără variabile globale!** | Hidden coupling; state that no constructor, test or `main` controls. | Pass what you need; make it a member or a parameter. `static const`/`constexpr` constants are fine. |
-| 🔴 No filler — **fără cod de umplutură/fără sens!** | Members that nothing calls (or that are "called" somewhere only to look used) are noise: they tell me nothing was learned. | Write a member when the scenario needs it. Generated code you did not contribute to earns at most bonus points, and only if it genuinely helps. |
+| 🔴 No filler — **fără cod de umplutură/fără sens!** | Members that nothing calls (or that are "called" somewhere only to look used) are noise: they tell me nothing was learned. | Write a member when the scenario needs it. Forced scenarios do not count. Generated code you did not contribute to earns no points. |
 | 🔴 No copy-paste — **fără copy-paste!** | Duplicated blocks double every future bug and are the clearest sign the design was not thought through. | Pull the shared part into a function, a template, or a base class. |
 | 🔴 No data in the code — **fără date în cod!** | A project that hardcodes its dataset is not a program, it is a transcript with `if`s. | Read from your own data files as csv/json/other well-known format; do not hand-roll your own parser, use dedicated libraries (you have examples on other branches). And read from a library/DB where the topic requires it. `tastatura.txt` is for keyboard input only. |
 | 🔴 `.gitattributes` set correctly | Linguist decides what counts as C++: ≥52–60% (T1), 75–78% (T2), 80–90% (T3). Wrong settings will put a bad project under even stricter checks. | Check the language bar on GitHub after your first real commit, not after the last one. Ask before you intend to edit this, you most likely do not need to; tests do not count towards this limit. |
@@ -109,13 +109,17 @@ This is the part no script can grade for you, and the part the oral is about.
   mistake), it is linked into the target that needs it, `PUBLIC` only when a header in `include/` names its
   type, and the **Resurse** entry cites version + licence. Until then it is downloaded and built on every
   CI run for nothing, so deleting a dependency your branch ships is a legitimate move — do it before the
-  push. `scripts/audit_ext_libs.sh` prints a `warning` for a dependency no student `#include` reaches:
-  **advisory, it fails nothing**. A dependency reached without an include (linked for its symbols, a
-  runtime, a header your build generates) is declared beside the dependency, with
+  push. `scripts/audit_ext_libs.sh` prints a `warning` for a dependency no student `#include` reaches.
+  A dependency reached without an include (linked for its symbols, a runtime, a header your build generates)
+  is declared beside the dependency, with
   `set(AUDIT_EXT_LIBS_ALLOW "<name CMake gives it>" CACHE STRING "why")` — it has to be `CACHE`, a plain
   `set()` is invisible to the script. That line is an addition to your own `CMakeLists.txt`, so the freeze
   in [INFRA.md](INFRA.md) does not forbid it. Included **only** from `tests/` is a note about design, not a
   finding: test frameworks live there.
+  This step fails if you include an ext lib as non-SYSTEM dep. Why? Mis-configuration: we want to know about
+  errors in our own code, but we need to skip external code (so external needs to be SYSTEM). The reverse is
+  also a mistake: marking our own code as SYSTEM puts errors under the rug and then we find issues at runtime
+  instead of compile time.
 * ⚪ Everything in one giant commit. Commit per feature, so a history exists to review and code review #1–#3 has something to discuss.
 * 🟠 **A test that hangs or reads `std::cin`.** CTest kills it after 60 s, but the ASan, Valgrind and smoke steps run the same test binary directly, with **no timeout**, and eat the whole job. Tests take data from fixtures, never from `std::cin`; at EOF a "read until the input is valid" loop spins forever.
 * 🟠 **A test with no assertion.** It runs code, it verifies nothing.
@@ -140,9 +144,10 @@ The same things CI runs, you can run locally — see the [README](../README.md) 
 clang-tidy -p build src/*.cpp app/*.cpp tests/*.cpp   # uses the repo's .clang-tidy
 ```
 
-Those exist on every branch; what yours adds is in [BRANCHES.md](BRANCHES.md). `run_ui_test.sh` and
-`run_sanitizers.sh` are called by CI, not by you (the first needs `xvfb`/`xdotool`, the second expects the
-unpacked artifact bundle as its working directory); on the GUI branches `run_valgrind.sh` drives the window
+Those exist on every branch; what yours adds is in [BRANCHES.md](BRANCHES.md). On GUI branches,
+there are also `run_ui_test.sh` and `run_sanitizers.sh` which are called by CI; to use them locally you need
+more setup and the sanitizers work only on Linux (the first needs `xvfb`/`xdotool`, the second expects the
+unpacked artifact bundle as its working directory); on GUI branches `run_valgrind.sh` drives the window
 with `xdotool`, so run it where a display exists.
 
 Practical notes:
