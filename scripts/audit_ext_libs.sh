@@ -9,7 +9,14 @@
 # 2. a dependency no student source includes -> warning only: it may be linked for its symbols, be a
 #    runtime, or generate its headers. Declare it beside the dependency, with CACHE so this reads it:
 #        set(AUDIT_EXT_LIBS_ALLOW "<name CMake gives it>" CACHE STRING "linked, not included")
-#    Included only from tests/ is a note: for a test framework that is the design.
+#    Included only from tests/ is a note: for a test framework that is the design. Reported only for a
+#    dependency this project names in its own build files: one that another dependency fetched (zlib
+#    below curl, the googletest umbrella above gtest) is not the student to drop, and warning about it
+#    teaches students to ignore the audit. Vendored code below ext/ is theirs, whoever copied it in.
+#
+# Dependencies are discovered from CMakeCache.txt plus the FetchContent trees: the base directory, or
+# its default <build>/_deps. The cache alone is not enough, since FetchContent_Populate followed by a
+# hand-written target (baze-de-date/sqlite) leaves no <name>_SOURCE_DIR entry behind.
 #
 # bash ./scripts/audit_ext_libs.sh [-b build dir] [-v]  (-v lists every dependency)
 # env: BUILD_DIR, EXT_DIR, TESTS_DIR, AUDIT_EXT_LIBS_ALLOW (exceptions for this run only)
@@ -19,37 +26,109 @@ TESTS_DIR="${TESTS_DIR:-tests}"
 VERBOSE_AUDIT=""
 DEP_ROOTS=()      # directories holding dependency code, umbrellas included
 DEP_UNITS=()      # "<name><TAB><directory>", one per dependency
+FETCH_ROOTS=()    # directories FetchContent unpacked into, parents of <name>-src
+OWN_CMAKE=()      # CMake files of this repository, the ones naming the dependencies it chose
 ALLOW_FROM_CACHE=""
+TAB=$'\t'         # unit separator; a literal tab here would be one editor away from silence
 
+# Absolute, without a trailing slash and without a . component: a path kept as ./build/_deps/x fails
+# every prefix comparison below it, and the build directory then passes for repository code.
 abs_path() {
-    case "$1" in
-        /*|[A-Za-z]:[\\/]*) printf '%s' "${1%/}" ;;
-        *)                  printf '%s' "${PWD%/}/${1%/}" ;;
+    local path="$1"
+    while [[ "${path}" == ./* ]]; do path="${path#./}"; done
+    case "${path}" in
+        /*|[A-Za-z]:[\\/]*) printf '%s' "${path%/}" ;;
+        *)                  printf '%s' "${PWD%/}/${path%/}" ;;
     esac
 }
 
+add_fetch_root() { # <dir> FetchContent unpacks here; the cached base is often the default already
+    local root existing
+    root="$(abs_path "$1")"
+    for existing in "${FETCH_ROOTS[@]}"; do
+        [[ "${existing}" == "${root}" ]] && return 0
+    done
+    FETCH_ROOTS+=("${root}")
+}
+
+under_dep_root() { # <absolute path> below one of the dependency roots
+    local root
+    for root in "${DEP_ROOTS[@]}"; do
+        [[ "${1}" == "${root%/}"/* ]] && return 0
+    done
+    return 1
+}
+
+has_header() { # <path> a header here or below it, so this is dependency code and not a note directory
+    local path="$1"
+    if [[ -d "${path}" ]]; then
+        find "${path}" -type f \
+             \( -name '*.h' -o -name '*.hpp' -o -name '*.hxx' -o -name '*.hh' \) \
+             -print -quit 2>/dev/null | grep -q .
+        return
+    fi
+    case "${path}" in
+        *.h|*.hpp|*.hxx|*.hh) return 0 ;;
+        *)                    return 1 ;;
+    esac
+}
+
+# FetchContent unpacks every dependency as <name>-src next to <name>-build, below the base directory.
+# The cache names the ones pulled in with add_subdirectory; this adds the ones a hand-written target
+# built from a bare FetchContent_Populate, which leave no name in the cache at all.
+fetch_units_under() { # <dir> a FetchContent base directory
+    local dir="$1" entry name
+    [[ -d "${dir}" ]] || return 0
+    while IFS= read -r entry; do
+        name="${entry##*/}"
+        name="${name%-src}"
+        [[ -n "${name}" ]] || continue
+        has_header "${entry}" || continue
+        DEP_UNITS+=("${name}${TAB}$(abs_path "${entry}")")
+    done < <(find "${dir}" -mindepth 1 -maxdepth 1 -type d -name '*-src' 2>/dev/null)
+}
+
+# The build files naming a dependency are what makes it the student choice. Dependency trees are not
+# build files: curl declaring zlib is not this project declaring zlib.
+read_own_cmake() { # <build dir>
+    local build_dir_abs file
+    build_dir_abs="$(abs_path "$1")"
+    while IFS= read -r file; do
+        file="$(abs_path "${file}")"
+        [[ "${file}" != "${build_dir_abs}"/* ]] || continue
+        under_dep_root "${file}" && continue
+        OWN_CMAKE+=("${file}")
+    done < <(find "${PWD}" \( -name .git -o -name _deps \) -prune -o \
+                  \( -name 'CMakeLists.txt' -o -name '*.cmake' \) -print 2>/dev/null)
+}
+
 # CMakeCache.txt split into the two views above. Our own project is not a dependency, however
-# inviting <project>_SOURCE_DIR looks. ext/ names no dependency, so its include directories are
-# reported per child, which points at the vendored library nobody includes; ext/lib is not a unit,
-# no #include reaches it.
+# inviting <project>_SOURCE_DIR looks. An empty value means unset: never let it become the repository.
+# ext/ names no dependency, so its include directories are reported per child, which points at the
+# vendored library nobody includes; ext/lib is not a unit, no #include reaches it.
 read_cmake_deps() {
     local build_dir="$1" cache="${build_dir}/CMakeCache.txt"
-    local line key name value dir child base project=""
+    local line key name value dir child project=""
     local entries=()
 
-    [[ -f "${cache}" ]] || return 0
-    while IFS= read -r line || [[ -n "${line}" ]]; do
-        key="${line%%:*}"
-        value="${line#*=}"
-        [[ "${key}" != "${line}" && "${value}" != "${line}" ]] || continue
-        case "${key}" in
-            CMAKE_PROJECT_NAME)    project="${value}" ;;
-            AUDIT_EXT_LIBS_ALLOW)  ALLOW_FROM_CACHE="${value}" ;;
-            FETCHCONTENT_BASE_DIR) DEP_ROOTS+=("$(abs_path "${value}")") ;;
-            *_SOURCE_DIR)  entries+=("${key%_SOURCE_DIR}=${value}") ;;
-            *_BINARY_DIR)  entries+=("${key%_BINARY_DIR}=${value}") ;;
-        esac
-    done < "${cache}"
+    add_fetch_root "${build_dir}/_deps"
+
+    if [[ -f "${cache}" ]]; then
+        while IFS= read -r line || [[ -n "${line}" ]]; do
+            key="${line%%:*}"
+            value="${line#*=}"
+            [[ "${key}" != "${line}" && "${value}" != "${line}" ]] || continue
+            case "${key}" in
+                CMAKE_PROJECT_NAME)   project="${value}" ;;
+                AUDIT_EXT_LIBS_ALLOW) ALLOW_FROM_CACHE="${value}" ;;
+                FETCHCONTENT_BASE_DIR)
+                    [[ -n "${value}" ]] || value="${build_dir}/_deps"
+                    add_fetch_root "${value}" ;;
+                *_SOURCE_DIR)  [[ -n "${value}" ]] && entries+=("${key%_SOURCE_DIR}=${value}") ;;
+                *_BINARY_DIR)  [[ -n "${value}" ]] && entries+=("${key%_BINARY_DIR}=${value}") ;;
+            esac
+        done < "${cache}"
+    fi
 
     DEP_ROOTS+=("$(abs_path "${EXT_DIR:-ext}")")
     for line in "${entries[@]}"; do
@@ -58,26 +137,25 @@ read_cmake_deps() {
         [[ "${name}" == "${project}" ]] && continue
         DEP_ROOTS+=("$(abs_path "${value}")")
         [[ -d "${value}" ]] || continue
-        DEP_UNITS+=("${name}	${value}")
+        DEP_UNITS+=("${name}${TAB}${value}")
+    done
+
+    for dir in "${FETCH_ROOTS[@]}"; do
+        DEP_ROOTS+=("${dir}")
+        fetch_units_under "${dir}"
     done
 
     for dir in "${EXT_DIR:-ext}/include" "${EXT_DIR:-ext}/private"; do
         [[ -d "${dir}" ]] || continue
         while IFS= read -r child; do
             child="$(abs_path "${child}")"
-            base="${child##*/}"
-            if [[ -d "${child}" ]]; then
-                find "${child}" -type f \
-                     \( -name '*.h' -o -name '*.hpp' -o -name '*.hxx' -o -name '*.hh' \) \
-                     -print -quit 2>/dev/null | grep -q . || continue
-            else
-                [[ "${base}" == *.h || "${base}" == *.hpp || "${base}" == *.hxx || "${base}" == *.hh ]] \
-                    || continue
-            fi
+            has_header "${child}" || continue
             # name relative to the repository, directory as the compiler sees it
-            DEP_UNITS+=("${child#"${PWD}/"}	${child}")
+            DEP_UNITS+=("${child#"${PWD}/"}${TAB}${child}")
         done < <(find "${dir}" -mindepth 1 -maxdepth 1 2>/dev/null)
     done
+
+    read_own_cmake "${build_dir}"
 }
 
 audit_build_tree() {
@@ -90,6 +168,7 @@ audit_build_tree() {
     AUDIT_EXT_ROOT="$(abs_path "${EXT_DIR:-ext}")" \
     AUDIT_ROOTS="$(printf '%s\n' "${DEP_ROOTS[@]}")" \
     AUDIT_UNITS="$(printf '%s\n' "${DEP_UNITS[@]}")" \
+    AUDIT_OWN_CMAKE="$(printf '%s\n' "${OWN_CMAKE[@]}")" \
     AUDIT_ALLOW="${ALLOW_FROM_CACHE};${AUDIT_EXT_LIBS_ALLOW:-}" \
     awk '
     # norm() lowercases for comparison; never hand it to the filesystem, a real path is not lower
@@ -128,9 +207,12 @@ audit_build_tree() {
         sub(/\/[^\/]*$/, "", dir)
         return dir
     }
-    # getline: 1 a line, 0 empty but present, -1 nothing to read; a directory reads as an error
+    # getline: 1 a line, 0 empty but present, -1 nothing to read; a directory reads as an error.
+    # A path scan() is reading must never be closed here: closing restarts it at the first line, so a
+    # header naming itself would be scanned forever and the audit would never reach the report.
     function exists(path,    found, probe) {
         if (path in exists_memo) return exists_memo[path]
+        if (path in open_path) return 1
         found = (getline probe < path)
         close(path)
         exists_memo[path] = (found >= 0)
@@ -216,6 +298,7 @@ audit_build_tree() {
         if (product) scanned_product[path] = 1
         scans++
         base = dirname_of(path)
+        open_path[path] = 1
         while ((getline line < path) > 0) {
             if (!match(line, /^[ \t]*#[ \t]*include[ \t]*[<"]/)) continue
             quoted = substr(line, RSTART + RLENGTH - 1, 1) == "\""
@@ -235,6 +318,7 @@ audit_build_tree() {
             if (is_own_file(norm(resolved)) || is_dep_dir(norm(resolved))) enqueue(resolved, product)
         }
         close(path)
+        delete open_path[path]
     }
     function note_usage(resolved, product,    unit) {
         unit = unit_of(norm(resolved))
@@ -254,10 +338,28 @@ audit_build_tree() {
                 }
         return unit
     }
+    function is_vendored(unit,    i) {
+        for (i = 1; i <= unit_n[unit]; i++)
+            if (inside(unit_dir[unit, i], ext_root))
+                return 1
+        return 0
+    }
+    # Whose dependency is it: a name absent from the build files of this repository was fetched by
+    # another dependency (zlib below curl, the googletest umbrella above gtest) or unpacked into a
+    # shared FETCHCONTENT_BASE_DIR by a different project. Nobody here can drop it, so reporting it
+    # would only teach students to silence the audit. ext/ is different: the student tree holds it.
+    # With no build file readable, fall back to reporting: quiet is worse than noisy here.
+    function is_ours(unit) {
+        if (is_vendored(unit)) return 1
+        if (n_own_words == 0) return 1
+        # unit is already a name_key (unit_order holds keys, never labels) and own_word is folded the
+        # same way; keying the label again would only invite a mismatch
+        return (unit in own_word)
+    }
     # a dependency inside another one is that dependency to add or drop, never ours; reporting it
     # would only teach students to silence the audit. Children of ext/ are ours, not parts of one.
     function is_nested(unit,    name, i, j) {
-        if (inside(unit_dir[unit, 1], ext_root)) return 0
+        if (is_vendored(unit)) return 0
         for (name in unit_n) {
             if (name == unit) continue
             for (i = 1; i <= unit_n[unit]; i++)
@@ -290,6 +392,18 @@ audit_build_tree() {
             out = out (i > 1 ? "\n    " : "    ") display(unit_raw[unit, i])
         return out
     }
+    # words of the build files of this repository, folded like dependency names: the names in them are
+    # the dependencies this project chose, and the only ones it is asked about
+    function own_words(line,    n, parts, i, word) {
+        n = split(line, parts, /[^A-Za-z0-9_]+/)
+        for (i = 1; i <= n; i++) {
+            word = name_key(parts[i])
+            if (word != "" && !(word in own_word)) {
+                own_word[word] = 1
+                n_own_words++
+            }
+        }
+    }
     function audit_unused(    i, file, unit, status) {
         if (n_units == 0) return                    # no dependency configured, nothing to say
         for (file in tu_kind) enqueue(tu_raw[file], tu_kind[file] == 1)
@@ -305,8 +419,9 @@ audit_build_tree() {
                 if (unit in used) status = (unit in used_product ? "used" : "tests only")
                 else if (allowed_flag[unit]) status = "declared as used without including"
                 else if (nested_flag[unit]) status = "part of another dependency"
+                else if (!ours_flag[unit]) status = "not named by this project"
                 else status = "NOT INCLUDED"
-                printf "  %-26s %s\n", unit, status
+                printf "  %-26s %s\n", unit_label[unit], status
             }
         }
         for (i = 1; i <= n_unit_names; i++) {
@@ -318,7 +433,7 @@ audit_build_tree() {
                            relative_tests
                 continue
             }
-            if (allowed_flag[unit] || nested_flag[unit]) continue
+            if (allowed_flag[unit] || nested_flag[unit] || !ours_flag[unit]) continue
             warn(sprintf("no student source includes anything from dependency %s", unit_label[unit]))
             print unit_dirs(unit)
             printf "    downloaded and built on every CI run for nothing; drop the dependency, or\n"
@@ -327,8 +442,8 @@ audit_build_tree() {
                    unit_label[unit]
         }
         if (warnings)
-            printf "%d of %d configured dependencies are not included by any student source\n", \
-                   warnings, n_unit_names
+            printf "%d of the %d dependencies named by this project are not included by any student source\n", \
+                   warnings, ours_checked
         if (truncated)
             printf "note: the #include closure stopped after %d files; some dependencies may look\n" \
                    "       worse than they are\n", max_files
@@ -354,6 +469,7 @@ audit_build_tree() {
             if (lines[i] !~ /\t/) continue
             name = lines[i]
             dir = lines[i]
+            key_dir = ""
             sub(/\t.*$/, "", name)
             sub(/^[^\t]*\t/, "", dir)
             key = name_key(name)
@@ -362,6 +478,9 @@ audit_build_tree() {
                 unit_order[n_unit_names] = key
                 unit_label[key] = name
             }
+            key_dir = key SUBSEP norm(dir)                      # cache and fetch tree name it twice
+            if (key_dir in seen_dir) continue
+            seen_dir[key_dir] = 1
             unit_n[key]++
             unit_dir[key, unit_n[key]] = norm(dir)
             unit_raw[key, unit_n[key]] = dir
@@ -374,11 +493,20 @@ audit_build_tree() {
             allow[i] = (entry ~ /\//) ? norm(entry) : name_key(entry)
         }
 
-        # nested dependencies and declared exceptions, decided once, before any scanning
+        n_own_files = split(ENVIRON["AUDIT_OWN_CMAKE"], own_files, "\n")
+        for (i = 1; i <= n_own_files; i++) {
+            if (own_files[i] == "") continue
+            while ((getline own_line < own_files[i]) > 0) own_words(own_line)
+            close(own_files[i])
+        }
+
+        # nested dependencies, declared exceptions and whose dependency it is, decided before scanning
         for (i = 1; i <= n_unit_names; i++) {
             unit = unit_order[i]
             nested_flag[unit] = is_nested(unit)
             allowed_flag[unit] = is_allowed(unit)
+            ours_flag[unit] = is_ours(unit)
+            if (!nested_flag[unit] && !allowed_flag[unit] && ours_flag[unit]) ours_checked++
         }
         errors = 0
         warnings = 0
