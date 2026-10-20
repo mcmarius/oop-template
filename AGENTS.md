@@ -50,10 +50,10 @@ with using the proper setup, which has been validated.
 ## CI: red is the only certainty
 
 A red row means something is definitely wrong. **A green row says nothing about the checks that did not
-run** — on the GUI branches the ASan/Valgrind rows are advisory and no row launches the app, so "CI e
-verde ⇒ nu ai leaks / e testat" is always a false claim. Read the logs of the steps that did run, filtering
-noise from external libs in valgrind output. Disabled
-matrix rows are intentional (3 OSes × 2 compilers is the floor); asking the teacher about one is fine,
+run** — on the GUI branches the ASan/Valgrind rows are advisory and no row turns red when the app misbehaves
+(leak, crash), so "CI e verde ⇒ nu ai leaks / e testat" is always a false claim. Read the logs of the steps
+that did run, filtering noise from external libs in valgrind output. Disabled
+matrix rows are intentional (3 OSes, 2 compilers is the floor); asking the teacher about one is fine,
 commenting it is not. Details per branch: [BRANCHES.md](.internal/BRANCHES.md).
 
 ## `.internal/mistakes.md` — load on demand, do not keep it in context

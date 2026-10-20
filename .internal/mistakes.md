@@ -27,7 +27,7 @@ Severity: 🔴 the requirement counts as **not met** · 🟠 **costs points** ·
 | 🔴 No filler — **fără cod de umplutură/fără sens!** | Members that nothing calls (or that are "called" somewhere only to look used) are noise: they tell me nothing was learned. | Write a member when the scenario needs it. Forced scenarios do not count. Generated code you did not contribute to earns no points. |
 | 🔴 No copy-paste — **fără copy-paste!** | Duplicated blocks double every future bug and are the clearest sign the design was not thought through. | Pull the shared part into a function, a template, or a base class. |
 | 🔴 No data in the code — **fără date în cod!** | A project that hardcodes its dataset is not a program, it is a transcript with `if`s. | Read from your own data files as csv/json/other well-known format; do not hand-roll your own parser, use dedicated libraries (you have examples on other branches). And read from a library/DB where the topic requires it. `tastatura.txt` is for keyboard input only. |
-| 🔴 `.gitattributes` set correctly | Linguist decides what counts as C++: ≥52–60% (T1), 75–78% (T2), 80–90% (T3). Wrong settings will put a bad project under even stricter checks. | Check the language bar on GitHub after your first real commit, not after the last one. Ask before you intend to edit this, you most likely do not need to; tests do not count towards this limit. |
+| 🔴 `.gitattributes` set correctly | Linguist decides what counts as C++: ≥52–60% (T1), 75–78% (T2), 80–90% (T3) **of your own code** — meaning more code than the template ships. Wrong settings will put a bad project under even stricter checks. | The GitHub language bar is a hint, not the number: it counts `tests/` and the rest of the repo, while the graded share is measured without them. Ask before you intend to edit this, you most likely do not need to. |
 | 🔴 CI green, **all** checkboxes ticked, a git tag per homework | CI is the entry ticket; an unticked box or a missing tag is a purely administrative way to lose chances to enter the exam. | Budget time for CI round-trips; see [section 6](#6-checking-your-own-work). |
 | 🔴 No OS-specific headers (`conio.h`, `windows.h`, …) | CI builds on more than one OS; these headers break it and make the code non-portable. | Standard I/O only. Ask if you really think you need one. Portable alternatives are provided in branches. |
 | 🔴 Source files must be in the repo | An empty or partially committed repo has nothing to grade. | Check `git status --ignored` once in a while: `build/` and `install_dir/` belong in `.gitignore`, your sources do not. |
@@ -138,17 +138,20 @@ The same things CI runs, you can run locally — see the [README](../README.md) 
 ```sh
 ./scripts/cmake.sh configure      # add -e "-DUSE_ASAN=ON" for AddressSanitizer
 ./scripts/cmake.sh build
+./scripts/audit_ext_libs.sh       # needs the configure above; CI runs it inside the cppcheck step
 ./scripts/run_cppcheck.sh
 ./scripts/run_tests.sh -r         # or: ./scripts/cmake.sh test
 ./scripts/run_valgrind.sh
 clang-tidy -p build src/*.cpp app/*.cpp tests/*.cpp   # uses the repo's .clang-tidy
 ```
 
-Those exist on every branch; what yours adds is in [BRANCHES.md](BRANCHES.md). On GUI branches,
-there are also `run_ui_test.sh` and `run_sanitizers.sh` which are called by CI; to use them locally you need
-more setup and the sanitizers work only on Linux (the first needs `xvfb`/`xdotool`, the second expects the
-unpacked artifact bundle as its working directory); on GUI branches `run_valgrind.sh` drives the window
-with `xdotool`, so run it where a display exists.
+`audit_ext_libs.sh` reads `build/compile_commands.json`, so without a configured build dir all it can
+report is that it cannot open that file. Those scripts exist on every branch; what yours adds is in
+[BRANCHES.md](BRANCHES.md). On GUI branches, there are also `run_ui_test.sh` and `run_sanitizers.sh` which
+are called by CI; to use them locally you need more setup and the sanitizers with GUI work only on Linux
+(they need `xvfb`/`xdotool`; the second expects the unpacked artifact bundle as its working directory);
+on GUI branches `run_valgrind.sh` also needs `xvfb`/`xdotool`. If you can make these work more broadly,
+tell the teacher.
 
 Practical notes:
 
@@ -156,9 +159,9 @@ Practical notes:
 * Keep a recent green commit on your default branch and re-run a workflow from time to time —
   the CI dependency cache expires, and pushing on a cold cache after weeks of silence is slow.
 * **Red is the only certainty.** A red row means something is wrong; a green row only means the steps that
-  ran did not fail. On the GUI branches no row can fail because of your program, so run ASan and Valgrind
-  yourself and read the logs of the steps that ran. CI is the **minimum**, never proof of memory safety or
-  of design.
+  ran did not fail. On the GUI branches no ASan/Valgrind row can fail because of your program, so run ASan
+  and Valgrind yourself and read the logs of the steps that ran. CI is the **minimum**, never proof of
+  memory safety or of design.
 
 Some limitations of the template are known and left as they are for lack of time — the advisory runtime
 rows on the GUI branches, and external libraries that do not cooperate with sanitizers on some OSes. Ask

@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
-# Audits build/compile_commands.json — the file scripts/cmake.sh enables, so CI and a local run read
-# the same thing, and the cppcheck CI step runs this on every branch, on an unbuilt tree — for the
+# Audits build/compile_commands.json — ON by default in cmake/Options.cmake and passed explicitly by
+# scripts/cmake.sh, so CI and a local run read the same thing, and the cppcheck CI step runs this on every
+# branch, on an unbuilt tree — for the
 # two ways an external dependency is misconfigured:
 #
 # 1. a dependency include directory given with -I instead of -isystem -> error, exit 1. cppcheck

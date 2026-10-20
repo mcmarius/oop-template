@@ -1,8 +1,8 @@
 # Template branches — layout and per-branch differences
 
-One row per branch in [`branches.txt`](../branches.txt). You work on **one** of them: find the row your
-tree matches, read that row, treat the others as background. Branch differences are not yours to
-reconcile.
+One row per branch in [`branches.txt`](../branches.txt) + `main` (implied unless stated otherwise).
+You work on **one** of them: find the row your tree matches, read that row, treat the others as
+background. Branch differences are not yours to reconcile.
 
 `Base` records where the branch's infrastructure came from. It is **not** an upstream to rebase, merge or
 sync with: you start from a branch and stay on it, cherry-picking from another one when you want a feature
@@ -31,7 +31,7 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 | `app/` | The executable: `main.cpp`, menus, wiring, I/O. Not reachable from `tests/` — by design. |
 | `tests/` | Test suites, one executable registered with CTest; the frameworks themselves come from `ext/` or the build dir. |
 | `assets/` | Your data/images/fonts, copied by the configured `install()`/`copy_files()` step. |
-| `ext/` | Vendored third-party *lightweight* code, marked `linguist-vendored` in `.gitattributes`. `ext/include/` is on your public interface (`SYSTEM PUBLIC`), `ext/private/` stays inside `src/`, `ext/lib/` holds a vendored dep's compilable code. |
+| `ext/` | Vendored third-party *lightweight* code, marked `linguist-vendored` in `.gitattributes`. `ext/include/` is on your public interface (`SYSTEM PUBLIC`), `ext/private/` stays inside `src/`; where present, `ext/lib/` holds a vendored dep's compilable code. |
 | `tastatura.txt` | Comprehensive keyboard input only (`std::cin`); file data goes in your own files under `assets/`. |
 | `README.md` | Project description + the homework checkboxes. Yours to edit. |
 | `LICENSE`, `LICENSE.template` | AGPLv3 for your code / Unlicense for the template. You can edit the one for your code. |
@@ -42,7 +42,7 @@ you, [REPO.md](REPO.md) what is generated and never committed.
 | Branch | Base | Detect / ships | Extra `scripts/` | CI |
 |---|---|---|---|---|
 | `main` | N/A | starter branch with no dependencies | N/A | A |
-| `baze-de-date/pqxx` | `main` | `include/Database.h`\*, `src/database/Database.cpp`\*, `cmake/MinGWLibpq.cmake`, `.env.example`, `find_package(PostgreSQL)`, `PQXX_VERSION` | `configure_postgres.sh` — creates database, user and `pgcrypto`; CI runs it on every OS | A, but **no ASan row on Windows MSVC** |
+| `baze-de-date/pqxx` | `main` | `include/Database.h`\*, `src/database/Database.cpp`\*, `cmake/MinGWLibpq.cmake`, `.env.example`, `find_package(PostgreSQL)`, `PQXX_VERSION` | `configure_postgres.sh` — creates database and `pgcrypto` (for creating a user, see `README.md`); CI runs it on every OS | A, but **no ASan row on Windows MSVC** |
 | `baze-de-date/sqlite` | `main` | `FetchContent` `sqlite3`, `add_library(sqlite3 STATIC …/sqlite3.c)` | — | A |
 | `common-libs` | `main` | `ext/include/{date,csv-parser}` (public), `ext/private/{digestpp,random,rlutil}`, `assets/date.csv`\* | — | A |
 | `descarcare-date-api` | `main` | `FetchContent` `cpr`, `ext/include/json/` | — | A; macOS-GCC row commented |
@@ -85,17 +85,20 @@ Lists are registered directly even where a variable would read better because ID
   row says nothing about the checks that did not run — never tell a student a leak check or a test
   "passed" because a row was green.
 * **Profile A** (all non-GUI branches): every row blocks except the *Sanitizers (Windows MSVC)* step,
-  which is `continue-on-error` on every branch.
+  which is `continue-on-error` on every branch, and Clang-tidy, which was buggy in the past and can
+  fail only if the project is mis-configured. You should still try to have a clean clang-tidy.
 * **Profile B** (the 5 GUI branches): on Linux the ASan and Valgrind steps are `continue-on-error` and end
-  in `|| true`, and no step starts the app — a GUI hangs a headless runner. There, **no CI row can fail
-  because of your program**: the sanitizer and Valgrind output is in the step logs and you are expected to
-  read it, locally too (`./scripts/run_valgrind.sh`, an ASan configure).
+  in `|| true`; no ASan/Valgrind step that starts the app can fail; GUi smoke tests are skipped because they
+  hang a headless runner. The sanitizer and Valgrind outputs are in the step logs and you are expected to
+  read it, locally too (`./scripts/run_valgrind.sh`, an ASan configure). Note that valgrind may need
+  additional suppressions for ext libs: those are fine to add (and please contribute them) as long as
+  you do not exclude your own code.
 * Commented matrix rows and advisory steps are **intentional**: the template keeps as many checks as it can
   and drops only what is genuinely incompatible, with 3 OSes × 2 compilers as the floor.
   Deleting or changing a row is a forbidden edit — if a row looks broken, ask the teacher.
 * Some external libraries do not play nice with sanitizers on some OSes; that is why
   `tests/Boost-ext-ut` compiles an uninstrumented twin of the library for the test binary.
 * `scripts/run_ui_test.sh` (sends keystrokes with `xdotool` to the window named by `APP_WINDOW`, which must
-  match the window title set in `app/`) and `scripts/run_sanitizers.sh` are **CI-internal**: the first
-  needs `xvfb`, the second expects the unpacked artifact bundle as its working directory. Neither is
+  match the window title set in `app/`) and `scripts/run_sanitizers.sh` are **CI-internal**: they
+  need `xvfb`/`xdotool`; the second expects the unpacked artifact bundle as its working directory. Neither is
   related to `scripts/run_tests.sh`.
