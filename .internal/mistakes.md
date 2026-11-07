@@ -52,12 +52,25 @@ Severity: 🔴 the requirement counts as **not met** · 🟠 **costs points** ·
   Borrowing interfaces from external libraries (or inheriting from them) does not count either.
 * 🟠 *Virtuals declared and then called on concrete types.* They must be called **through a base pointer**
   held by the class that owns the collection — that pointer member is the whole exercise.
+* ⚪ *One member per derived class instead of a container.* Several fields of the same base type, each pointing
+  at a different derived class, is the hierarchy driven one type at a time: every new derived class buys a new
+  field, a new initialiser and a new line in every loop. Hold one container of the base and let the base treat
+  them uniformly. A deliberate pair — the current one and the selected one — is legitimate; say which you have.
 * 🟠 *Only `print`/`read`/`draw`/`update` virtuals.* At least one virtual must be **specific to your theme**;
   library-ish verbs and clone constructors don't qualify.
 * 🔴 *Missing `virtual` destructor in a polymorphic base.* Deleting through a base pointer is undefined
   behaviour and leaks.
 * 🟠 *`dynamic_cast` sprinkled around, or never used.* A downcast needs a reason; say it in the review.
-  Useful only sparingly. When used for most derived classes, it is definitely code smell.
+  Useful only sparingly. When used for most derived classes, it is definitely code smell — and the smell is not
+  always in the cast. If nearly every derived class needs one, the inheritance itself is what is wrong: classes
+  with nothing in common stitched into one hierarchy by a forced abstraction, which would be honest as
+  independent classes. Repairing that abstraction deletes the casts on its own; bolting more virtuals onto a
+  base that never described those classes keeps them and hides the question.
+* 🟠 *Testing which derived class you have.* `if (auto* d = dynamic_cast<D*>(b))`, a `switch` on `typeid`, an
+  `else if` chain over the derived types: that condition is the decision a virtual was supposed to make. Cast
+  when the base interface genuinely cannot express what one derived class needs; otherwise dispatch and let the
+  override decide. A design that asks you to find every such test again is also the one that cannot take a
+  4th derived class *without touching the rest of the code*.
 * 🟠 *Exception hierarchy built on top of the class hierarchy, or one class reused for every error.*
   Own base derived from `std::exception`, **≥3 distinct error categories**, and that hierarchy is
   **independent** of the one with the virtuals.
@@ -173,6 +186,13 @@ There are additional automated checks besides CI. They **cannot be circumvented*
 attempting to route around a requirement is an instant fail for the whole
 project, so the only strategy that works is writing it properly. If a rule seems impossible
 or unclear in your particular project, ask — there is always a legitimate way to do it.
+
+Some of them report a **warning** or an **info** instead of a verdict: the course is testing a rule on
+real projects before it can cost you anything, and the finding is the test. Read it for the shape it
+names, not as permission — "the check only warned" is the same mistake as "CI is verde, deci nu am
+leaks". Silence is not clearance either: these rows catch what they were written to catch and nothing
+more, same as [section 6](#6-checking-your-own-work). A warning is also not a rule you can negotiate —
+if you think it is wrong for your project, ask, exactly as above.
 
 ## 8. When something is stuck
 
