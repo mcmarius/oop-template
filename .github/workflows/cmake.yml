@@ -35,9 +35,9 @@ env:
   BUILD_DIR: "build"
   EXT_DIR: "ext"
   APP_WINDOW: "My Window"
-  # NOTE: also update in CMakeLists FetchContent
-  # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-  SFML_VERSION: "3.1.0"
+  # Qt is found with find_package(Qt6) and installed by .github/actions/install-qt
+  # TODO: figure out renovate
+  QT_VERSION: "6.8.3"
 
 defaults:
   run:
@@ -51,7 +51,7 @@ jobs:
     name: "Cppcheck"
     # renovate: depName=ubuntu
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       # renovate: datasource=github-tags depName=cppcheck-opensource/cppcheck versioning=loose
       CPPCHECK_VER: "2.22.0"
@@ -60,6 +60,9 @@ jobs:
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v7.0.1
 
+      - name: Install Qt
+        uses: ./.github/actions/install-qt
+
       - name: Run cppcheck
         uses: ./.github/actions/cppcheck
 
@@ -67,7 +70,7 @@ jobs:
     name: "Clang-Tidy"
     # renovate: depName=ubuntu
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
       CC: clang-18
       CXX: clang++-18
@@ -77,6 +80,9 @@ jobs:
         # renovate: datasource=github-tags depName=actions/checkout versioning=loose
         uses: actions/checkout@v7.0.1
 
+      - name: Install Qt
+        uses: ./.github/actions/install-qt
+
       - name: Run clang-tidy
         uses: ./.github/actions/clang-tidy
 
@@ -84,7 +90,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       attestations: write
       contents: write
@@ -118,6 +124,7 @@ jobs:
             # renovate: depName=ubuntu
             name: "Ubuntu 24.04 Clang 18"
             cmake_generator: Ninja
+            qt_arch: linux_gcc_64
             runs_tests: 'ON'
 
             # renovate: depName=ubuntu
@@ -128,6 +135,7 @@ jobs:
             name: "ASan: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
+            qt_arch: linux_gcc_64
             # This env runs address sanitizers
             runs_asan: true
             # this is used to add a suffix to the archive name since we use the same compiler version
@@ -142,6 +150,7 @@ jobs:
             name: "Valgrind: Ubuntu 24.04 GCC 14"
             cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
+            qt_arch: linux_gcc_64
             # This env runs valgrind
             runs_valgrind: true
             runs_tests: 'ON'
@@ -153,8 +162,9 @@ jobs:
             # renovate: depName=macos
             name: "macOS 15 Apple Clang 17"
             # This env does not currently run address sanitizers
-            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF -DSFML_BUILD_FRAMEWORKS=OFF -DSFML_DEPENDENCIES_INSTALL_PREFIX=$GITHUB_WORKSPACE/artifacts "
+            cmake_flags: "-DUSE_ASAN=OFF -DBUILD_SHARED_LIBS=OFF"
             cmake_generator: Ninja
+            qt_arch: clang_64
             runs_asan: false
             runs_tests: 'ON'
 
@@ -166,6 +176,7 @@ jobs:
           #   name: "macOS 26 GCC 15"
           #   cmake_flags: "-DBUILD_SHARED_LIBS=OFF"
           #   cmake_generator: Ninja
+          #   qt_arch: clang_64
           #   runs_tests: 'ON'
 
             # renovate: depName=windows
@@ -175,6 +186,7 @@ jobs:
             # renovate: depName=windows
             name: "ASan: Windows 2025 MSVC 19.51"
             cmake_flags: "-DUSE_ASAN=ON -DBUILD_SHARED_LIBS=ON"
+            qt_arch: win64_msvc2022_64
             # Ninja is not faster on MSVC because... MSVC
             # cmake_generator: "Ninja"
             # cmake_generator: "Ninja Multi-Config"
@@ -190,6 +202,7 @@ jobs:
             name: "Windows 2025 MinGW GCC 16"
             cmake_flags: "-DBUILD_SHARED_LIBS=ON"
             cmake_generator: Ninja
+            qt_arch: win64_mingw
             runs_tests: 'ON'
 
     steps:
@@ -217,6 +230,12 @@ jobs:
 
       - name: Install packages
         uses: ./.github/actions/install-packages
+
+      - name: Install Qt
+        id: install-qt
+        uses: ./.github/actions/install-qt
+        with:
+          arch: ${{ matrix.qt_arch }}
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake

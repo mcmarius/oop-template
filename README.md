@@ -106,7 +106,20 @@ Proiectul este configurat cu CMake.
 
 Instrucțiuni pentru terminal:
 
-0. Biblioteci necesare pe Linux (ar trebui să meargă pe sisteme bazate pe Debian/Arch/Fedora/OpenSUSE, necesită `sudo`)
+0. Biblioteci necesare
+
+Bibliotecă adăugată doar la cererea publicului, deoarece contravine principiului "out-of-the-box"
+a acestui proiect. QT necesită să fie instalat la nivel de sistem (sau prin vcpkg care necesită
+clonarea vcpkg sau alt setup dubios, dezactivat telemetrie etc.).
+
+Vezi și [instalatorul oficial](https://www.qt.io/download-qt-installer) (varianta open source).
+
+Dacă CMake nu găsește Qt, indicați-i locația:
+```sh
+./scripts/cmake.sh configure -e "-DCMAKE_PREFIX_PATH=$HOME/Qt/6.8.3/gcc_64"
+```
+
+Restul dependențelor de build pe Linux:
 ```sh
 bash ./scripts/install-linux-deps.sh
 ```
@@ -212,6 +225,7 @@ The project is licensed under [AGPLv3](LICENSE).
 The [template repository](https://github.com/mcmarius/oop-template) itself is licensed under [Unlicense](LICENSE.template).
 
 ## Resurse
-<!-- renovate: datasource=github-tags depName=SFML/SFML versioning=loose -->
-- [SFML](https://github.com/SFML/SFML/tree/3.1.0) (Zlib)
+- [Qt 6.8 (LTS)](https://doc.qt.io/qt-6/) (LGPLv3 / comercial) — în special
+  [Widgets Tutorial](https://doc.qt.io/qt-6/widgetstutorial.html) și
+  [exemplele de Widgets](https://doc.qt.io/qt-6/examples-widgets.html)
 - adăugați trimiteri **detaliate** către resursele externe care v-au ajutat sau pe care le-ați folosit

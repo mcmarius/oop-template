@@ -1,0 +1,40 @@
+name: 'Install Qt'
+description: 'Install a prebuilt Qt6 for find_package(Qt6)'
+inputs:
+  arch:
+    description: >
+      aqt build variant: linux_gcc_64, clang_64, win64_msvc2022_64, win64_mingw, ...
+      Must exist for this host/target/version: https://ddalcino.github.io/aqt-list-server/
+      The default is the one used by the Linux-only jobs (cppcheck, clang-tidy).
+    required: false
+    default: 'linux_gcc_64'
+outputs:
+  qt-root-dir:
+    description: 'Absolute path to the installed Qt root directory'
+    value: ${{ steps.install-qt.outputs.qt-root-dir }}
+  version:
+    description: 'Exact Qt version installed (the action resolves the pin)'
+    value: ${{ steps.install-qt.outputs.version }}
+  arch:
+    description: 'Build variant actually installed'
+    value: ${{ steps.install-qt.outputs.arch }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Qt
+      id: install-qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_VERSION }}
+        target: desktop
+        arch: ${{ inputs.arch }}
+        cache: 'true'
+
+    - name: Point CMake at Qt
+      shell: bash
+      # install-qt-action v4 does not set CMAKE_PREFIX_PATH
+      run: |
+        echo "CMAKE_PREFIX_PATH=${QT_ROOT_DIR}${CMAKE_PREFIX_PATH:+:${CMAKE_PREFIX_PATH}}" >> "${GITHUB_ENV}"
+        echo "Using Qt from ${QT_ROOT_DIR}:"
+        ls "${QT_ROOT_DIR}/lib/cmake" | head

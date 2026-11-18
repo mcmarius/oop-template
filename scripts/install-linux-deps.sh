@@ -37,6 +37,7 @@ LINUX_DEPS=(
     libmbedtls-dev
     libssh2-dev
     libharfbuzz-dev
+    qt6-base-dev
     xorg
 )
 
@@ -57,6 +58,7 @@ declare -A DEB_MAP=(
     [libmbedtls-dev]=libmbedtls-dev
     [libssh2-dev]=libssh2-1-dev
     [libharfbuzz-dev]=libharfbuzz-dev
+    [qt6-base-dev]=qt6-base-dev
     [xorg]=xorg
 )
 
@@ -76,6 +78,7 @@ declare -A RPM_MAP=(
     [libmbedtls-dev]=mbedtls-devel
     [libssh2-dev]=libssh2-devel
     [libharfbuzz-dev]=harfbuzz-devel
+    [qt6-base-dev]=qt6-qtbase-devel
     [xorg]=xorg-x11-server-Xorg           # meta‑package that pulls the whole X server stack
 )
 
@@ -95,6 +98,7 @@ declare -A SUSE_MAP=(
     [libmbedtls-dev]=mbedtls-devel
     [libssh2-dev]=libssh2-devel
     [libharfbuzz-dev]=harfbuzz-devel
+    [qt6-base-dev]=qt6-qtbase-devel
     [xorg]=xorg-x11-server
 )
 
@@ -114,6 +118,7 @@ declare -A ARCH_MAP=(
     [libmbedtls-dev]=mbedtls
     [libssh2-dev]=libssh2
     [libharfbuzz-dev]=harfbuzz
+    [qt6-qtbase-dev]=qt6-base
     [xorg]=xorg-x11-server
 )
 

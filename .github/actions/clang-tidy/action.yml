@@ -31,4 +31,5 @@ runs:
           jq -r '.[] | .file' |                    # select source file paths from CMake project; -r to strip quotes
           grep -v "/${BUILD_DIR}/_deps/" |         # ignore external dependencies
           grep -v "/${EXT_DIR}/" |                 # ignore external vendored dependencies
-          xargs clang-tidy-${{ env.CLANG_VER }} -p "${BUILD_DIR}"
+          grep -v "/mocs_compilation.cpp$" |       # AUTOMOC writes this TU at build time; this job only configures
+          xargs -r clang-tidy-${{ env.CLANG_VER }} -p "${BUILD_DIR}"

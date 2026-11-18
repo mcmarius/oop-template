@@ -1,0 +1,6 @@
+# the root of all stacks (libQt6XcbQpa -> XOpenDisplay / libxcb)
+leak:QXcb
+# same allocations when the plugin frames are missing from the trace
+leak:^XOpenDisplay$
+leak:^_XConnectXCB$
+leak:^xcb_connect_to_fd$

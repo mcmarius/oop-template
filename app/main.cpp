@@ -1,9 +1,11 @@
-#include <iostream>
 #include <array>
-#include <chrono>
-#include <thread>
+#include <iostream>
 
-#include <SFML/Graphics.hpp>
+#include <QApplication>
+#include <QCloseEvent>
+#include <QKeyEvent>
+#include <QResizeEvent>
+#include <QWidget>
 
 #include "Example.h"
 
@@ -19,8 +21,51 @@ SomeClass *getC() {
 }
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+/// Fereastra exemplului.
+///
+/// Stă în .cpp, nu în include/: interfața publică a bibliotecii rămâne Example.h, iar
+/// UI-ul este doar wiring în app/ — astfel tests/ licheiază biblioteca și rulează fără Qt.
+///
+/// Suprasciem handlerii virtuali moșteniți din QWidget, deci nu declarăm Q_OBJECT și moc
+/// nu are nimic de generat. Cum adăugați un semnal/slot propriu, adăugați Q_OBJECT în
+/// clasă; CMAKE_AUTOMOC este deja activat în CMakeLists.txt și se ocupă de restul.
+class Fereastra : public QWidget {
+public:
+    explicit Fereastra(QWidget *parent = nullptr) : QWidget(parent) {
+        ///////////////////////////////////////////////////////////////////////////
+        /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml
+        /// xdotool caută fereastra după titlu în scripts/run_ui_test.sh
+        setWindowTitle(QStringLiteral("My Window"));
+        ///////////////////////////////////////////////////////////////////////////
+        resize(800, 700);
+        /// Un QWidget simplu nu primește evenimente de la tastatură decât dacă cere focus.
+        setFocusPolicy(Qt::StrongFocus);
+    }
 
-int main() {
+protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QWidget::resizeEvent(event);
+        std::cout << "New width: " << event->size().width() << '\n'
+                  << "New height: " << event->size().height() << '\n';
+    }
+
+    void keyPressEvent(QKeyEvent *event) override {
+        std::cout << "Received key " << (event->key() == Qt::Key_X ? "X" : "(other)") << "\n";
+        if (event->key() == Qt::Key_Escape) {
+            close();  // close() cere închiderea; QCloseEvent de mai jos confirmă că s-a întâmplat
+            return;
+        }
+        QWidget::keyPressEvent(event);
+    }
+
+    void closeEvent(QCloseEvent *event) override {
+        std::cout << "Fereastra a fost închisă\n";
+        QWidget::closeEvent(event);
+    }
+};
+
+int main(int argc, char *argv[]) {
     std::cout << "Hello, world!\n";
     Example e1;
     e1.add(3);
@@ -35,8 +80,6 @@ int main() {
     /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
     /// De asemenea, trebuie să adăugați în acest fișier date de intrare
     /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
     ///
     /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
     /// pentru a simula date introduse de la tastatură.
@@ -73,50 +116,29 @@ int main() {
     std::cout << c << "\n";
     delete c;  // comentarea acestui rând ar trebui să ducă la semnalarea unui mem leak
 
-    sf::RenderWindow window;
     ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
-    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
+    /// QApplication = legătura cu platforma grafică + bucla de evenimente.
+    /// Exact unul per proces, creat înainte de orice QWidget.
+    QApplication app(argc, argv);
+
+    Fereastra window;
+    window.show();
     std::cout << "Fereastra a fost creată\n";
     ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                                    ///
-    /// window.setFramerateLimit(60);                                       ///
+    /// NOTE: obligatoriu să limitați rata de redraw, ca să nu ardeți CPU/GPU ///
+    /// Qt nu are bucla „clear → display” din SFML: redeseăm doar când ceva    ///
+    /// s-a schimbat, cerând singuri un redraw prin update(). Dacă animați,    ///
+    /// QTimer este echivalentul setFramerateLimit (nu un sleep într-o buclă): ///
+    /// QTimer fps;                                                           ///
+    /// QObject::connect(&fps, &QTimer::timeout, &window,                      ///
+    ///                  [&window] { window.update(); });                     ///
+    /// fps.start(33);                        // ~30 FPS                      ///
     ///////////////////////////////////////////////////////////////////////////
 
-    while(window.isOpen()) {
-        bool shouldExit = false;
-
-        while(const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-                std::cout << "Fereastra a fost închisă\n";
-            }
-            else if (event->is<sf::Event::Resized>()) {
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-            }
-            else if (event->is<sf::Event::KeyPressed>()) {
-                const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                std::cout << "Received key " << (keyPressed->scancode == sf::Keyboard::Scancode::X ? "X" : "(other)") << "\n";
-                if(keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
-                    shouldExit = true;
-                }
-            }
-        }
-        if(shouldExit) {
-            window.close();
-            std::cout << "Fereastra a fost închisă (shouldExit == true)\n";
-            break;
-        }
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(300ms);
-
-        window.clear();
-        window.display();
-    }
+    /// exec() rulează bucla de evenimente și se întoarce când fereastra se închide
+    /// (implicit, aplicația se termină atunci când ultima fereastră vizibilă a fost închisă).
+    /// E funcție statică; `app` de mai sus contează doar pentru durată de viață.
+    QApplication::exec();
 
     std::cout << "Programul a terminat execuția\n";
     return 0;

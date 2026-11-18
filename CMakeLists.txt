@@ -31,38 +31,23 @@ include(cmake/RegisterTests.cmake)
 
 # External dependencies with FetchContent
 
-include(FetchContent)
+# include(FetchContent)
 
-set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-set(SFML_WARNINGS_AS_ERRORS OFF)
-
-# NOTE: Also update SFML_VERSION and other env vars used for caching in
-#     - .github/actions/configure-cmake/action.yml
-#     - .github/workflows/cmake.yml
-FetchContent_Declare(
-    SFML
-    SYSTEM
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
-    GIT_TAG        3.1.0
-    # renovate: depName=SFML/SFML
-    # GIT_TAG        8835b6b955c96fa1ad1278a8dae6f05c4143effc # 3.1.0
-    GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-    GIT_PROGRESS   ON
-)
-
-FetchContent_MakeAvailable(SFML)
+# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
 
 ###############################################################################
 
 # External dependencies with find_package
 
+
+# TODO: figure out renovate
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+# might also need AUTOUIC/AUTORCC
+set(CMAKE_AUTOMOC ON)
+
 find_package(Threads REQUIRED)
-if(APPLE)
-elseif(UNIX)
-    find_package(X11)
-endif()
 
 ###############################################################################
 
@@ -113,15 +98,10 @@ target_include_directories(${MAIN_LIBRARY_NAME} SYSTEM PRIVATE
 
 # Link libraries
 
-target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} SFML::Graphics SFML::Window SFML::System Threads::Threads)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE ${MAIN_LIBRARY_NAME} Qt6::Widgets Threads::Threads)
 
 # target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
 # target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
-
-if(APPLE)
-elseif(UNIX)
-    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
-endif()
 
 ###############################################################################
 
